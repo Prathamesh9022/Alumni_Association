@@ -35,3 +35,6 @@ coverage/
 
 .vercel
 uploads/
+
+# Ignore uploads directory for local storage of profile photos
+uploads/
