@@ -381,17 +381,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Call to Action Section */}
-        <section className="cta-section">
-          <div className="cta-content">
-            <h2>Ready to Connect with Your Alumni Network?</h2>
-            <p>Join thousands of MGM alumni who are already part of our thriving community.</p>
-            <div className="cta-buttons">
-              <Link to="/auth" className="btn btn-primary btn-lg" style={{ minWidth: 160, borderRadius: '2em', boxShadow: '0 4px 15px rgba(26,42,108,0.15)', fontWeight: 600, transition: 'all 0.2s', display: 'inline-flex', alignItems: 'center', gap: '0.5em' }}>Sign Up Now</Link>
-              <Link to="/events" className="btn btn-secondary btn-lg" style={{ minWidth: 160, borderRadius: '2em', boxShadow: '0 4px 15px rgba(26,42,108,0.10)', fontWeight: 600, transition: 'all 0.2s', display: 'inline-flex', alignItems: 'center', gap: '0.5em' }}>Explore Events</Link>
-            </div>
-          </div>
-        </section>
         
       </div>
     </>
