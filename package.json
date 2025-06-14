@@ -1,0 +1,15 @@
+{
+  "name": "alumni-association",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "cd backend && npm install",
+    "start": "cd backend && npm start"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "mongoose": "^8.15.1",
+    "nodemailer": "^7.0.3",
+    "react-collapse": "^5.1.1"
+  }
+}
