@@ -11,9 +11,11 @@ const Footer = () => {
         <div className="footer-section">
           <h3>Contact Us</h3>
           <div className="contact-info">
-            <p><FaEnvelope /> alumni@example.com</p>
-            <p><FaPhone /> +91 1234567890</p>
-            <p><FaMapMarkerAlt /> Mumbai, Maharashtra, India</p>
+            <p><FaEnvelope /> daserushikesh@gmail.com</p>
+            <p><FaEnvelope /> prathameshbembre01@gmail.com</p>
+            <p><FaPhone /> +91 94044 65593</p>
+            <p><FaPhone /> +91 90226 54357</p>
+            <p><FaMapMarkerAlt /> Nanded, Maharashtra, India</p>
           </div>
         </div>
 
@@ -30,25 +32,16 @@ const Footer = () => {
         <div className="footer-section">
           <h3>Connect With Us</h3>
           <div className="social-links">
-            <a href="https://github.com/your-org" target="_blank" rel="noopener noreferrer">
+            <a href="https://github.com/Bembre" target="_blank" rel="noopener noreferrer">
               <FaGithub />
             </a>
-            <a href="https://linkedin.com/company/your-org" target="_blank" rel="noopener noreferrer">
+            <a href="linkedin.com/in/bembre" target="_blank" rel="noopener noreferrer">
               <FaLinkedin />
-            </a>
-            <a href="https://twitter.com/your-org" target="_blank" rel="noopener noreferrer">
-              <FaTwitter />
             </a>
           </div>
         </div>
 
-        <div className="footer-section">
-          <h3>Newsletter</h3>
-          <div className="newsletter-form">
-            <input type="email" placeholder="Enter your email" />
-            <button type="submit">Subscribe</button>
-          </div>
-        </div>
+        
       </div>
 
       <div className="footer-bottom">
