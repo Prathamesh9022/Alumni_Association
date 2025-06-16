@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { FaUser, FaGraduationCap, FaBriefcase, FaSave, FaIdCard, FaTrash, FaPlus, FaTrophy, FaProjectDiagram, FaCode } from 'react-icons/fa';
 import Header from './Header';
-import axios from 'axios';
+import axiosInstance from '../utils/axiosConfig';
 import './Adash.css';
 import { toast } from 'react-hot-toast';
 import { alumniService, uploadService } from '../services/api';
@@ -61,6 +61,27 @@ const AlumniDashboard = () => {
 
   const location = useLocation();
 
+  const [formData, setFormData] = useState({
+    firstName: '',
+    middleName: '',
+    lastName: '',
+    dob: '',
+    gender: '',
+    department: 'Information Technology',
+    course: 'B. Tech. Information Technology',
+    passingYear: '',
+    alumniId: '',
+    phone: '',
+    altPhone: '',
+    currentAddress: '',
+    permanentAddress: '',
+    profilePic: null,
+    current_company: '',
+    designation: '',
+    current_location: '',
+    joined_date: ''
+  });
+
   useEffect(() => {
     const token = localStorage.getItem('token');
     const user = JSON.parse(localStorage.getItem('user'));
@@ -95,29 +116,27 @@ const AlumniDashboard = () => {
     try {
       const token = localStorage.getItem('token');
       const user = JSON.parse(localStorage.getItem('user'));
-      const userEmail = user?.email; // Get email from stored user data
+      const userEmail = user?.email;
       
-      const response = await axios.get('https://alumni-2tzp.onrender.com/api/alumni/profile', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-
+      const response = await axiosInstance.get('/api/alumni/profile');
       const data = response.data;
       
-      // Ensure email is set even if API doesn't return it
       if (!data.email && userEmail) {
         data.email = userEmail;
       }
       
-      // Check if this is a new user
       const isNewUser = !data.profileCompleted && (!data.experience || data.experience.length === 0);
       
       if (isNewUser) {
-        // Initialize with empty data for new users
         setUserData({
           ...data,
-          email: data.email || userEmail, // Ensure email is included
+          email: data.email || userEmail,
           department: 'Information Technology',
           course: 'B. Tech. Information Technology',
+          current_company: '',
+          designation: '',
+          current_location: '',
+          joined_date: '',
           experience: [{
             company: '',
             position: '',
@@ -142,12 +161,18 @@ const AlumniDashboard = () => {
             }
           ]
         });
-        setIsEditing(true); // Automatically enable editing for new users
+        setIsEditing(true);
       } else {
-        // Use existing data for returning users
         setUserData(data);
-        setEmail(data.email || userEmail); // Set email with fallback to token
+        setEmail(data.email || userEmail);
         setProfilePic(data.profile || null);
+        setFormData(prev => ({
+          ...prev,
+          current_company: data.current_company || '',
+          designation: data.designation || '',
+          current_location: data.current_location || '',
+          joined_date: data.joined_date || ''
+        }));
         setExperience(data.experience || [{
           company: '',
           position: '',
@@ -177,12 +202,15 @@ const AlumniDashboard = () => {
     } catch (error) {
       console.error("Error fetching profile:", error);
       if (error.response?.status === 404) {
-        // Handle new user case
         const userEmail = JSON.parse(localStorage.getItem('user'))?.email;
         setUserData({
-          email: userEmail, // Use email from token
+          email: userEmail,
           department: 'Information Technology',
           course: 'B. Tech. Information Technology',
+          current_company: '',
+          designation: '',
+          current_location: '',
+          joined_date: '',
           experience: [{
             company: '',
             position: '',
@@ -207,9 +235,9 @@ const AlumniDashboard = () => {
             }
           ]
         });
-        setEmail(userEmail); // Set email from token
+        setEmail(userEmail);
         setProfileCompleted(false);
-        setIsEditing(true); // Automatically enable editing for new users
+        setIsEditing(true);
       } else {
         setError(error.response?.data?.error || "Failed to fetch profile");
       }
@@ -283,7 +311,7 @@ const AlumniDashboard = () => {
     if (["phone", "alt_phone"].includes(name)) {
       if (!/^\d{0,10}$/.test(value)) return;
     }
-    setUserData((prev) => ({ ...prev, [name]: value }));
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   // Convert potential null values to empty strings for form inputs
@@ -299,54 +327,92 @@ const AlumniDashboard = () => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    setError(null);
-    setIsSubmitting(true);
-
     try {
       const token = localStorage.getItem('token');
+      if (!token) {
+        toast.error('Invalid authentication token. Please try logging in again.');
+        return;
+      }
+
+      // Get user from localStorage
       const user = JSON.parse(localStorage.getItem('user'));
-
-      if (!token || !user) {
-        navigate('/auth');
+      if (!user) {
+        toast.error('User not found. Please log in again.');
         return;
       }
 
-      // Validate only the basic required fields
-      if (!userData.first_name || !userData.last_name || !userData.department || !userData.course) {
-        setError('Please fill in all required fields (First Name, Last Name, Department, and Course)');
-        setIsSubmitting(false);
+      // Validation
+      if (!formData.firstName || !formData.lastName || !formData.dob || !formData.phone || !formData.currentAddress) {
+        toast.error('Please fill all required fields.');
         return;
       }
 
-      // Prepare the payload
       const payload = {
-        ...userData,
         email: user.email,
-        role: user.role,
+        department: formData.department,
+        course: formData.course,
+        first_name: formData.firstName,
+        middle_name: formData.middleName || '',
+        last_name: formData.lastName,
+        dob: formData.dob,
+        gender: formData.gender,
+        passing_year: formData.passingYear,
+        phone: formData.phone,
+        alt_phone: formData.altPhone || '',
+        alumni_id: formData.alumniId || '',
+        current_address: formData.currentAddress,
+        permanent_address: formData.permanentAddress,
+        profile: profilePic || null,
+        current_company: formData.current_company || '',
+        designation: formData.designation || '',
+        current_location: formData.current_location || '',
+        joined_date: formData.joined_date || '',
+        experience: experience.filter(exp => exp.company && exp.position && exp.duration),
+        skillset: skills.filter(s => typeof s === 'string' && s.trim() !== ''),
+        education: education.filter(edu => edu.institution && edu.board && edu.year && edu.grade && edu.percentage),
+        projects: projects.filter(p => p.title || p.description).map(proj => ({
+          title: proj.title,
+          description: proj.description,
+          technologies: proj.technologies || '',
+          duration: proj.duration || '',
+          link: proj.link || ''
+        })),
+        achievements: achievements.filter(a => a.title || a.description).map(ach => ({
+          type: ach.type || 'sports',
+          title: ach.title,
+          description: ach.description,
+          date: ach.date || '',
+          organization: ach.organization || ''
+        })),
         profileCompleted: true
       };
 
       console.log('Submitting alumni profile payload:', payload);
+<<<<<<< Updated upstream
 
       // Use the profileService to update the profile
       const response = await alumniService.updateProfile(payload);
+=======
+>>>>>>> Stashed changes
       
-      if (response) {
+      // Use axiosInstance for the API call
+      const response = await axiosInstance.put('/api/alumni/profile', payload);
+
+      if (response.data) {
         toast.success('Profile updated successfully!');
         setProfileCompleted(true);
         setIsEditing(false);
         // Update local storage with new profile data
         const updatedUser = { ...user, profileCompleted: true };
         localStorage.setItem('user', JSON.stringify(updatedUser));
-        // Redirect to dashboard
-        navigate('/adash');
+        // Redirect to home page after successful update
+        navigate('/home');
       }
     } catch (error) {
       console.error('Error updating profile:', error);
-      setError(error.response?.data?.error || 'Failed to update profile. Please try again.');
-      toast.error(error.response?.data?.error || 'Failed to update profile. Please try again.');
-    } finally {
-      setIsSubmitting(false);
+      const errorMessage = error.response?.data?.error || 'Failed to update profile. Please try again.';
+      toast.error(errorMessage);
+      console.error('Full error details:', error.response?.data);
     }
   };
 
@@ -628,7 +694,7 @@ const AlumniDashboard = () => {
                         type="text"
                         className="form-control"
                         name="first_name"
-                        value={safeValue(userData.first_name)}
+                        value={safeValue(formData.firstName)}
                         onChange={handleFieldChange}
                         required
                         disabled={!isEditing}
@@ -640,7 +706,7 @@ const AlumniDashboard = () => {
                         type="text"
                         className="form-control"
                         name="middle_name"
-                        value={safeValue(userData.middle_name)}
+                        value={safeValue(formData.middleName)}
                         onChange={handleFieldChange}
                         disabled={!isEditing}
                       />
@@ -651,7 +717,7 @@ const AlumniDashboard = () => {
                         type="text"
                         className="form-control"
                         name="last_name"
-                        value={safeValue(userData.last_name)}
+                        value={safeValue(formData.lastName)}
                         onChange={handleFieldChange}
                         required
                         disabled={!isEditing}
@@ -672,7 +738,7 @@ const AlumniDashboard = () => {
                         type="date"
                         className="form-control"
                         name="dob"
-                        value={userData.dob ? new Date(userData.dob).toISOString().split('T')[0] : ''}
+                        value={formData.dob ? new Date(formData.dob).toISOString().split('T')[0] : ''}
                         onChange={handleFieldChange}
                         min={minDob}
                         max={maxDob}
@@ -685,7 +751,7 @@ const AlumniDashboard = () => {
                       <select
                         name="gender"
                         className="form-select"
-                        value={safeValue(userData.gender)}
+                        value={safeValue(formData.gender)}
                         onChange={handleFieldChange}
                         required
                         disabled={!isEditing}
@@ -716,7 +782,7 @@ const AlumniDashboard = () => {
                         type="text"
                         className="form-control"
                         name="department"
-                        value="Information Technology"
+                        value={safeValue(formData.department)}
                         readOnly
                       />
                     </div>
@@ -726,7 +792,7 @@ const AlumniDashboard = () => {
                         type="text"
                         className="form-control"
                         name="course"
-                        value="B. Tech. Information Technology"
+                        value={safeValue(formData.course)}
                         readOnly
                       />
                     </div>
@@ -735,7 +801,11 @@ const AlumniDashboard = () => {
                       <input
                         type="number"
                         name="passing_year"
+<<<<<<< Updated upstream
                         value={userData.passing_year}
+=======
+                        value={safeValue(formData.passingYear)}
+>>>>>>> Stashed changes
                         onChange={handleFieldChange}
                         className="form-control"
                         min={2003}
@@ -762,7 +832,7 @@ const AlumniDashboard = () => {
                         type="text"
                         className="form-control"
                         name="current_company"
-                        value={safeValue(userData.current_company)}
+                        value={safeValue(formData.current_company)}
                         onChange={handleFieldChange}
                         required
                         disabled={!isEditing}
@@ -774,7 +844,7 @@ const AlumniDashboard = () => {
                         type="text"
                         className="form-control"
                         name="designation"
-                        value={safeValue(userData.designation)}
+                        value={safeValue(formData.designation)}
                         onChange={handleFieldChange}
                         required
                         disabled={!isEditing}
@@ -786,7 +856,7 @@ const AlumniDashboard = () => {
                         type="text"
                         className="form-control"
                         name="current_location"
-                        value={safeValue(userData.current_location)}
+                        value={safeValue(formData.current_location)}
                         onChange={handleFieldChange}
                         placeholder="e.g., Mumbai, Maharashtra"
                         required
@@ -799,9 +869,9 @@ const AlumniDashboard = () => {
                         type="date"
                         className="form-control"
                         name="joined_date"
-                        value={userData.joined_date ? new Date(userData.joined_date).toISOString().split('T')[0] : ''}
+                        value={formData.joined_date ? new Date(formData.joined_date).toISOString().split('T')[0] : ''}
                         onChange={handleFieldChange}
-                        min={userData.passing_year ? new Date(userData.passing_year).toISOString().split('T')[0] : ''}
+                        min={formData.passing_year ? new Date(formData.passing_year).toISOString().split('T')[0] : ''}
                         max={new Date().toISOString().split('T')[0]}
                         required
                         disabled={!isEditing}
@@ -832,7 +902,7 @@ const AlumniDashboard = () => {
                         type="text"
                         className="form-control"
                         name="phone"
-                        value={userData.phone}
+                        value={formData.phone}
                         onChange={handleFieldChange}
                         maxLength={10}
                         pattern="\d{10}"
@@ -847,7 +917,7 @@ const AlumniDashboard = () => {
                         type="text"
                         className="form-control"
                         name="alt_phone"
-                        value={userData.alt_phone}
+                        value={formData.altPhone}
                         onChange={handleFieldChange}
                         maxLength={10}
                         pattern="\d{10}"
@@ -859,7 +929,11 @@ const AlumniDashboard = () => {
                       <label>Current Address</label>
                       <textarea
                         name="current_address"
+<<<<<<< Updated upstream
                         value={userData.current_address}
+=======
+                        value={safeValue(formData.currentAddress)}
+>>>>>>> Stashed changes
                         onChange={handleFieldChange}
                         className="form-control"
                         rows="3"
@@ -880,7 +954,11 @@ const AlumniDashboard = () => {
                       <label>Permanent Address</label>
                       <textarea
                         name="permanent_address"
+<<<<<<< Updated upstream
                         value={userData.permanent_address}
+=======
+                        value={safeValue(formData.permanentAddress)}
+>>>>>>> Stashed changes
                         onChange={handleFieldChange}
                         className="form-control"
                         rows="3"
