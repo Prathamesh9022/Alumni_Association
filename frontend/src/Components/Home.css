@@ -136,7 +136,6 @@
 .success-story-card {
   position: relative;
   transition: all 0.3s ease;
-  transform-origin: center top;
 }
 
 .success-story-card:hover {
@@ -150,7 +149,7 @@
   left: 0;
   right: 0;
   height: 5px;
-  background: linear-gradient(90deg, #4e54c8, #8f94fb);
+  background: linear-gradient(135deg, #1a2a6c, #b21f1f 50%, #fdbb2d);
   border-radius: 5px 5px 0 0;
 }
 
@@ -256,7 +255,6 @@
 
   .success-stories-carousel {
     width: 100%;
-    margin-top: 1rem;
   }
 }
 
