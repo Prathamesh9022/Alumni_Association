@@ -369,7 +369,7 @@ const AlumniDashboard = () => {
         joined_date: formData.joined_date || '',
         experience: experience.filter(exp => exp.company && exp.position && exp.duration),
         skillset: skills.filter(s => typeof s === 'string' && s.trim() !== ''),
-        education: education.filter(edu => edu.institution && edu.board && edu.year && edu.grade && edu.percentage),
+        education: education.filter(edu => edu.institution && edu.board && edu.year && edu.percentage),
         projects: projects.filter(p => p.title || p.description).map(proj => ({
           title: proj.title,
           description: proj.description,
@@ -388,15 +388,9 @@ const AlumniDashboard = () => {
       };
 
       console.log('Submitting alumni profile payload:', payload);
-<<<<<<< Updated upstream
-
-      // Use the profileService to update the profile
-      const response = await alumniService.updateProfile(payload);
-=======
->>>>>>> Stashed changes
       
-      // Use axiosInstance for the API call
-      const response = await axiosInstance.put('/api/alumni/profile', payload);
+      // Use alumniService to update the profile
+      const response = await alumniService.updateProfile(payload);
 
       if (response.data) {
         toast.success('Profile updated successfully!');
@@ -801,11 +795,7 @@ const AlumniDashboard = () => {
                       <input
                         type="number"
                         name="passing_year"
-<<<<<<< Updated upstream
-                        value={userData.passing_year}
-=======
                         value={safeValue(formData.passingYear)}
->>>>>>> Stashed changes
                         onChange={handleFieldChange}
                         className="form-control"
                         min={2003}
@@ -929,11 +919,7 @@ const AlumniDashboard = () => {
                       <label>Current Address</label>
                       <textarea
                         name="current_address"
-<<<<<<< Updated upstream
-                        value={userData.current_address}
-=======
                         value={safeValue(formData.currentAddress)}
->>>>>>> Stashed changes
                         onChange={handleFieldChange}
                         className="form-control"
                         rows="3"
@@ -954,11 +940,7 @@ const AlumniDashboard = () => {
                       <label>Permanent Address</label>
                       <textarea
                         name="permanent_address"
-<<<<<<< Updated upstream
-                        value={userData.permanent_address}
-=======
                         value={safeValue(formData.permanentAddress)}
->>>>>>> Stashed changes
                         onChange={handleFieldChange}
                         className="form-control"
                         rows="3"
