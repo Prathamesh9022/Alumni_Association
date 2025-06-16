@@ -40,19 +40,19 @@
 }
 
 @keyframes slideUp {
-  from {
+  0% {
     transform: translateY(100%);
   }
-  to {
+  100% {
     transform: translateY(-100%);
   }
 }
 
 @keyframes slideDown {
-  from {
+  0% {
     transform: translateY(-100%);
   }
-  to {
+  100% {
     transform: translateY(100%);
   }
 }
@@ -60,14 +60,15 @@
 .success-stories-slider {
   position: relative;
   overflow: hidden;
+  height: 100%;
 }
 
 .success-stories-slider.left {
-  animation: slideUp 30s linear infinite;
+  animation: slideUp 2s linear infinite;
 }
 
 .success-stories-slider.right {
-  animation: slideDown 30s linear infinite;
+  animation: slideDown 2s linear infinite;
 }
 
 .success-stories-slider:hover {
@@ -76,6 +77,10 @@
 
 .success-story-card {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  height: calc(100vh - 4rem); /* Full viewport height minus padding */
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
 }
 
 .success-story-card:hover {
@@ -83,9 +88,26 @@
   box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
+.success-story-image {
+  width: 100%;
+  height: 40%;
+  object-fit: cover;
+  border-radius: 8px 8px 0 0;
+}
+
+.success-story-content {
+  padding: 1rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
 .vision-mission-section {
   scrollbar-width: thin;
   scrollbar-color: #1a2a6c #f8f9fa;
+  height: calc(100vh - 4rem); /* Full viewport height minus padding */
+  overflow-y: auto;
 }
 
 .vision-mission-section::-webkit-scrollbar {

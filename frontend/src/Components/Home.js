@@ -27,25 +27,24 @@ const styles = {
     gap: '2rem',
     backgroundColor: '#f8f9fa',
     minHeight: '100vh',
+    height: '100vh',
+    overflow: 'hidden',
   },
   successStoriesSlider: {
     flex: 1,
     display: 'flex',
     flexDirection: 'column',
     gap: '1rem',
-    maxHeight: '80vh',
+    height: '100%',
     overflow: 'hidden',
   },
   successStoryCard: {
     backgroundColor: 'white',
     borderRadius: '10px',
-    padding: '1rem',
     boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
     transition: 'transform 0.3s ease',
     cursor: 'pointer',
-    '&:hover': {
-      transform: 'translateY(-5px)',
-    },
+    overflow: 'hidden',
   },
   visionMissionSection: {
     flex: 1.5,
@@ -53,8 +52,6 @@ const styles = {
     borderRadius: '10px',
     padding: '2rem',
     boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-    overflowY: 'auto',
-    maxHeight: '80vh',
   },
   sectionTitle: {
     color: '#1a2a6c',
@@ -247,12 +244,16 @@ export default function Home() {
 
   // Function to render success story card
   const renderSuccessStoryCard = (story) => (
-    <div style={styles.successStoryCard} key={story.id}>
-      <img src={story.image} alt={story.name} style={styles.successStoryImage} />
-      <h3 style={styles.successStoryName}>{story.name}</h3>
-      <p style={styles.successStoryYear}>{story.year}</p>
-      <p style={styles.successStoryCompany}>{story.company}</p>
-      <p style={styles.successStoryText}>{story.story}</p>
+    <div className="success-story-card" key={story.id}>
+      <img src={story.image} alt={story.name} className="success-story-image" />
+      <div className="success-story-content">
+        <div>
+          <h3 style={styles.successStoryName}>{story.name}</h3>
+          <p style={styles.successStoryYear}>{story.year}</p>
+          <p style={styles.successStoryCompany}>{story.company}</p>
+          <p style={styles.successStoryText}>{story.story}</p>
+        </div>
+      </div>
     </div>
   );
 
