@@ -232,17 +232,20 @@ export default function Home() {
     return () => clearInterval(eventInterval);
   }, [events.length]);
 
-  // Add new state for success stories animation
-  const [leftStories, setLeftStories] = useState([]);
-  const [rightStories, setRightStories] = useState([]);
+  // Carousel state for success stories
+  const [leftIndex, setLeftIndex] = useState(0); // 0 to 5
+  const [rightIndex, setRightIndex] = useState(successStories.length - 1); // 5 to 0
 
-  // Initialize success stories on component mount
+  // Set up interval for carousel
   useEffect(() => {
-    setLeftStories(successStories);
-    setRightStories([...successStories].reverse());
+    const interval = setInterval(() => {
+      setLeftIndex((prev) => (prev + 1) % successStories.length);
+      setRightIndex((prev) => (prev - 1 + successStories.length) % successStories.length);
+    }, 2000);
+    return () => clearInterval(interval);
   }, []);
 
-  // Function to render success story card
+  // Function to render a single success story card
   const renderSuccessStoryCard = (story) => (
     <div className="success-story-card" key={story.id}>
       <img src={story.image} alt={story.name} className="success-story-image" />
@@ -503,9 +506,9 @@ export default function Home() {
 
         {/* New Success Stories and Vision & Mission Section */}
         <section style={styles.successVisionContainer}>
-          {/* Left Success Stories Slider */}
-          <div className="success-stories-slider left" style={styles.successStoriesSlider}>
-            {leftStories.map(renderSuccessStoryCard)}
+          {/* Left Vertical Carousel */}
+          <div className="success-stories-carousel left" style={styles.successStoriesSlider}>
+            {renderSuccessStoryCard(successStories[leftIndex])}
           </div>
 
           {/* Vision & Mission Section */}
@@ -513,9 +516,9 @@ export default function Home() {
             {renderVisionMission()}
           </div>
 
-          {/* Right Success Stories Slider */}
-          <div className="success-stories-slider right" style={styles.successStoriesSlider}>
-            {rightStories.map(renderSuccessStoryCard)}
+          {/* Right Vertical Carousel */}
+          <div className="success-stories-carousel right" style={styles.successStoriesSlider}>
+            {renderSuccessStoryCard(successStories[rightIndex])}
           </div>
         </section>
 
