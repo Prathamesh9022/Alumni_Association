@@ -106,7 +106,7 @@
 .vision-mission-section {
   scrollbar-width: thin;
   scrollbar-color: #1a2a6c #f8f9fa;
-  height: calc(120vh- 4rem); /* Full viewport height minus padding */
+  height: calc(110vh- 4rem); /* Full viewport height minus padding */
   overflow-y: auto;
 }
 
@@ -151,25 +151,6 @@
   height: 5px;
   background: linear-gradient(135deg, #1a2a6c, #b21f1f 50%, #fdbb2d);
   border-radius: 5px 5px 0 0;
-}
-
-.vision-mission-section {
-  position: relative;
-  transition: all 0.3s ease;
-}
-
-.vision-mission-section:hover {
-  box-shadow: 0 15px 40px rgba(0,0,0,0.15);
-}
-
-.content {
-  position: relative;
-  transition: all 0.3s ease;
-}
-
-.content:hover {
-  transform: translateX(5px);
-  background: rgba(78,84,200,0.08);
 }
 
 /* Animation for success stories */
