@@ -37,4 +37,66 @@
 
 .hero-button:hover svg {
   transform: translateX(5px);
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(-100%);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+
+.success-stories-slider {
+  position: relative;
+  overflow: hidden;
+}
+
+.success-stories-slider.left {
+  animation: slideUp 30s linear infinite;
+}
+
+.success-stories-slider.right {
+  animation: slideDown 30s linear infinite;
+}
+
+.success-stories-slider:hover {
+  animation-play-state: paused;
+}
+
+.success-story-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.success-story-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.vision-mission-section {
+  scrollbar-width: thin;
+  scrollbar-color: #1a2a6c #f8f9fa;
+}
+
+.vision-mission-section::-webkit-scrollbar {
+  width: 8px;
+}
+
+.vision-mission-section::-webkit-scrollbar-track {
+  background: #f8f9fa;
+}
+
+.vision-mission-section::-webkit-scrollbar-thumb {
+  background-color: #1a2a6c;
+  border-radius: 4px;
 } 

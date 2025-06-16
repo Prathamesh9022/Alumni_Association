@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { FaCalendarAlt, FaGraduationCap, FaLightbulb, FaUsers, FaChevronRight, FaArrowRight } from "react-icons/fa";
+import { FaCalendarAlt, FaGraduationCap, FaLightbulb, FaUsers, FaChevronRight, FaArrowRight, FaBullseye, FaFlag } from "react-icons/fa";
 import "./Article.css";
 import "../App.css";
 import Header from "./Header";
@@ -17,6 +17,91 @@ import success4 from "../img/success4.jpg";
 import success5 from "../img/success5.jpg";
 import success6 from "../img/success6.jpg";
 import axiosInstance from "../utils/axiosConfig";
+import './Home.css';
+
+// Add new CSS for the success stories and vision section
+const styles = {
+  successVisionContainer: {
+    display: 'flex',
+    padding: '2rem',
+    gap: '2rem',
+    backgroundColor: '#f8f9fa',
+    minHeight: '100vh',
+  },
+  successStoriesSlider: {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '1rem',
+    maxHeight: '80vh',
+    overflow: 'hidden',
+  },
+  successStoryCard: {
+    backgroundColor: 'white',
+    borderRadius: '10px',
+    padding: '1rem',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+    transition: 'transform 0.3s ease',
+    cursor: 'pointer',
+    '&:hover': {
+      transform: 'translateY(-5px)',
+    },
+  },
+  visionMissionSection: {
+    flex: 1.5,
+    backgroundColor: 'white',
+    borderRadius: '10px',
+    padding: '2rem',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+    overflowY: 'auto',
+    maxHeight: '80vh',
+  },
+  sectionTitle: {
+    color: '#1a2a6c',
+    marginBottom: '1.5rem',
+    fontSize: '1.8rem',
+    fontWeight: 'bold',
+  },
+  subsectionTitle: {
+    color: '#1a2a6c',
+    marginTop: '2rem',
+    marginBottom: '1rem',
+    fontSize: '1.4rem',
+    fontWeight: 'bold',
+  },
+  content: {
+    lineHeight: '1.6',
+    color: '#333',
+    marginBottom: '1rem',
+  },
+  successStoryImage: {
+    width: '100%',
+    height: '200px',
+    objectFit: 'cover',
+    borderRadius: '8px',
+    marginBottom: '1rem',
+  },
+  successStoryName: {
+    fontSize: '1.2rem',
+    fontWeight: 'bold',
+    color: '#1a2a6c',
+    marginBottom: '0.5rem',
+  },
+  successStoryYear: {
+    color: '#666',
+    fontSize: '0.9rem',
+    marginBottom: '0.5rem',
+  },
+  successStoryCompany: {
+    color: '#1a2a6c',
+    fontSize: '1rem',
+    marginBottom: '0.5rem',
+  },
+  successStoryText: {
+    color: '#666',
+    fontSize: '0.9rem',
+  },
+};
 
 export default function Home() {
   // Add user role state
@@ -149,6 +234,109 @@ export default function Home() {
     
     return () => clearInterval(eventInterval);
   }, [events.length]);
+
+  // Add new state for success stories animation
+  const [leftStories, setLeftStories] = useState([]);
+  const [rightStories, setRightStories] = useState([]);
+
+  // Initialize success stories on component mount
+  useEffect(() => {
+    setLeftStories(successStories);
+    setRightStories([...successStories].reverse());
+  }, []);
+
+  // Function to render success story card
+  const renderSuccessStoryCard = (story) => (
+    <div style={styles.successStoryCard} key={story.id}>
+      <img src={story.image} alt={story.name} style={styles.successStoryImage} />
+      <h3 style={styles.successStoryName}>{story.name}</h3>
+      <p style={styles.successStoryYear}>{story.year}</p>
+      <p style={styles.successStoryCompany}>{story.company}</p>
+      <p style={styles.successStoryText}>{story.story}</p>
+    </div>
+  );
+
+  // Function to render Vision & Mission section
+  const renderVisionMission = () => (
+    <div style={styles.visionMissionSection}>
+      <h2 style={styles.sectionTitle}>Vision & Mission</h2>
+      
+      <div>
+        <h3 style={styles.subsectionTitle}>Vision of the Institution</h3>
+        <p style={styles.content}>
+          To be one of the leading Institutions for Engineering education developing proficient
+          Engineers with global acceptance in the service of mankind
+        </p>
+      </div>
+
+      <div>
+        <h3 style={styles.subsectionTitle}>Mission of the Institution</h3>
+        <p style={styles.content}>
+          • Providing quality Engineering education to cater the needs of Industry and society
+          with a multidisciplinary approach on a sustainable basis.<br />
+          • Developing globally competent Engineers having ability to solve real-life problems
+          addressing environmental issues through technological advancements.<br />
+          • Inculcating professionalism, teamwork, research, innovation and entrepreneurship,
+          maintaining the spirit of continuous learning<br />
+          • Fostering collaboration with industry, academia, research organizations, experts
+          and alumni.<br />
+          • Imparting employability skills, nurturing leadership qualities with ethical and social
+          values among students.
+        </p>
+      </div>
+
+      <div>
+        <h3 style={styles.subsectionTitle}>Vision of the Department</h3>
+        <p style={styles.content}>
+          To be one of the leading Department to develop proficient IT Engineers with global
+          acceptance in the service of society and the IT industry.
+        </p>
+      </div>
+
+      <div>
+        <h3 style={styles.subsectionTitle}>Mission of the Department</h3>
+        <p style={styles.content}>
+          • Developing successful IT Professionals with strong practical and theoretical
+          knowledge of Engineering, Programming, Hardware and Software Systems With
+          multidisciplinary approach.<br />
+          • Grooming the graduates as professional problem solvers having ability to use
+          technological advancements in Software Engineering, Information and Communication
+          Technologies with global outlook.<br />
+          • Inculcating employability skills, leadership qualities, entrepreneurial skills, innovation
+          and research in collaboration with IT industry, academia and alumni.<br />
+          • Imbibing professional ethics, social values and environmental awareness with a
+          commitment for lifelong learning.
+        </p>
+      </div>
+
+      <div>
+        <h3 style={styles.subsectionTitle}>Program Educational Objectives</h3>
+        <p style={styles.content}>
+          Graduates of the Program will:<br />
+          • Demonstrate breadth and depth of knowledge in Hardware, Software Systems and
+          Programming to solve real-life problems.<br />
+          • Exhibit analytical and design skills to develop sustainable solutions using modern
+          tools and techniques with a focus on Software Development.<br />
+          • Pursue higher education and research in emerging areas of Information Technology
+          such as Data Science, Information and Network Security, Machine Learning and
+          Artificial Intelligence applicable for professional development.<br />
+          • Showcase leadership qualities and entrepreneurial skills with effective communication
+          skills, teamwork, social values and passion for lifelong learning.
+        </p>
+      </div>
+
+      <div>
+        <h3 style={styles.subsectionTitle}>Program Specific Outcomes</h3>
+        <p style={styles.content}>
+          • Ability to apply standard Software Engineering practices in system development
+          using different hardware and programming platforms.<br />
+          • Analyze, design and develop efficient software applications in the areas related to
+          Embedded Systems, IOT, Data Mining, Cloud Computing, Database Systems,
+          Mobile and Web Technologies.
+        </p>
+      </div>
+    </div>
+  );
 
   // Render role-specific call-to-action buttons
   const renderCtaButtons = () => {
@@ -309,6 +497,24 @@ export default function Home() {
                 <img src={timg} alt="Trustees" className="trustee-image" />
               </div>
             </div>
+          </div>
+        </section>
+
+        {/* New Success Stories and Vision & Mission Section */}
+        <section style={styles.successVisionContainer}>
+          {/* Left Success Stories Slider */}
+          <div className="success-stories-slider left" style={styles.successStoriesSlider}>
+            {leftStories.map(renderSuccessStoryCard)}
+          </div>
+
+          {/* Vision & Mission Section */}
+          <div className="vision-mission-section" style={styles.visionMissionSection}>
+            {renderVisionMission()}
+          </div>
+
+          {/* Right Success Stories Slider */}
+          <div className="success-stories-slider right" style={styles.successStoriesSlider}>
+            {rightStories.map(renderSuccessStoryCard)}
           </div>
         </section>
 
