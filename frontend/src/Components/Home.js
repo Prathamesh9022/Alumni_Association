@@ -23,20 +23,24 @@ import './Home.css';
 const styles = {
   successVisionContainer: {
     display: 'flex',
-    padding: '2rem',
+    justifyContent: 'space-between',
+    alignItems: 'stretch',
     gap: '2rem',
+    padding: '2rem',
     backgroundColor: '#f8f9fa',
-    minHeight: '100vh',
-    height: '100vh',
-    overflow: 'hidden',
+    minHeight: '600px',
   },
   successStoriesSlider: {
     flex: 1,
+    backgroundColor: 'white',
+    padding: '2rem',
+    borderRadius: '10px',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
     display: 'flex',
     flexDirection: 'column',
-    gap: '1rem',
-    height: '100%',
-    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
+    minHeight: '600px',
   },
   successStoryCard: {
     backgroundColor: 'white',
@@ -49,27 +53,30 @@ const styles = {
   visionMissionSection: {
     flex: 1.5,
     backgroundColor: 'white',
-    borderRadius: '10px',
     padding: '2rem',
+    borderRadius: '10px',
     boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+    overflowY: 'auto',
+    maxHeight: '600px',
   },
   sectionTitle: {
-    color: '#1a2a6c',
-    marginBottom: '1.5rem',
-    fontSize: '1.8rem',
+    fontSize: '2rem',
+    color: '#2c3e50',
+    marginBottom: '2rem',
+    textAlign: 'center',
     fontWeight: 'bold',
   },
   subsectionTitle: {
-    color: '#1a2a6c',
-    marginTop: '2rem',
+    fontSize: '1.5rem',
+    color: '#2c3e50',
     marginBottom: '1rem',
-    fontSize: '1.4rem',
     fontWeight: 'bold',
   },
   content: {
+    fontSize: '1.1rem',
+    color: '#34495e',
     lineHeight: '1.6',
-    color: '#333',
-    marginBottom: '1rem',
+    marginBottom: '2rem',
   },
   successStoryImage: {
     width: '100%',
@@ -260,83 +267,60 @@ export default function Home() {
     </div>
   );
 
-  // Function to render Vision & Mission section
+  // Function to render Vision & Mission section with summarized content
   const renderVisionMission = () => (
-    <div style={styles.visionMissionSection}>
+    <div className="vision-mission-section" style={styles.visionMissionSection}>
       <h2 style={styles.sectionTitle}>Vision & Mission</h2>
       
       <div>
-        <h3 style={styles.subsectionTitle}>Vision of the Institution</h3>
+        <h3 style={styles.subsectionTitle}>Institution Vision</h3>
         <p style={styles.content}>
-          To be one of the leading Institutions for Engineering education developing proficient
-          Engineers with global acceptance in the service of mankind
+          To be a leading Engineering institution developing proficient Engineers with global acceptance in the service of mankind.
         </p>
       </div>
 
       <div>
-        <h3 style={styles.subsectionTitle}>Mission of the Institution</h3>
+        <h3 style={styles.subsectionTitle}>Institution Mission</h3>
         <p style={styles.content}>
-          • Providing quality Engineering education to cater the needs of Industry and society
-          with a multidisciplinary approach on a sustainable basis.<br />
-          • Developing globally competent Engineers having ability to solve real-life problems
-          addressing environmental issues through technological advancements.<br />
-          • Inculcating professionalism, teamwork, research, innovation and entrepreneurship,
-          maintaining the spirit of continuous learning<br />
-          • Fostering collaboration with industry, academia, research organizations, experts
-          and alumni.<br />
-          • Imparting employability skills, nurturing leadership qualities with ethical and social
-          values among students.
+          • Quality Engineering education with multidisciplinary approach<br />
+          • Develop globally competent Engineers solving real-life problems<br />
+          • Foster innovation, research, and industry collaboration<br />
+          • Nurture leadership and ethical values
         </p>
       </div>
 
       <div>
-        <h3 style={styles.subsectionTitle}>Vision of the Department</h3>
+        <h3 style={styles.subsectionTitle}>Department Vision</h3>
         <p style={styles.content}>
-          To be one of the leading Department to develop proficient IT Engineers with global
-          acceptance in the service of society and the IT industry.
+          To be a leading Department developing proficient IT Engineers with global acceptance in the service of society and IT industry.
         </p>
       </div>
 
       <div>
-        <h3 style={styles.subsectionTitle}>Mission of the Department</h3>
+        <h3 style={styles.subsectionTitle}>Department Mission</h3>
         <p style={styles.content}>
-          • Developing successful IT Professionals with strong practical and theoretical
-          knowledge of Engineering, Programming, Hardware and Software Systems With
-          multidisciplinary approach.<br />
-          • Grooming the graduates as professional problem solvers having ability to use
-          technological advancements in Software Engineering, Information and Communication
-          Technologies with global outlook.<br />
-          • Inculcating employability skills, leadership qualities, entrepreneurial skills, innovation
-          and research in collaboration with IT industry, academia and alumni.<br />
-          • Imbibing professional ethics, social values and environmental awareness with a
-          commitment for lifelong learning.
+          • Develop IT Professionals with strong technical knowledge<br />
+          • Create problem solvers using modern technologies<br />
+          • Foster innovation and industry collaboration<br />
+          • Promote ethics and lifelong learning
         </p>
       </div>
 
       <div>
-        <h3 style={styles.subsectionTitle}>Program Educational Objectives</h3>
+        <h3 style={styles.subsectionTitle}>Program Objectives</h3>
         <p style={styles.content}>
-          Graduates of the Program will:<br />
-          • Demonstrate breadth and depth of knowledge in Hardware, Software Systems and
-          Programming to solve real-life problems.<br />
-          • Exhibit analytical and design skills to develop sustainable solutions using modern
-          tools and techniques with a focus on Software Development.<br />
-          • Pursue higher education and research in emerging areas of Information Technology
-          such as Data Science, Information and Network Security, Machine Learning and
-          Artificial Intelligence applicable for professional development.<br />
-          • Showcase leadership qualities and entrepreneurial skills with effective communication
-          skills, teamwork, social values and passion for lifelong learning.
+          • Technical expertise in Hardware and Software Systems<br />
+          • Analytical and design skills for sustainable solutions<br />
+          • Research in emerging IT areas<br />
+          • Leadership and entrepreneurial skills
         </p>
       </div>
 
       <div>
-        <h3 style={styles.subsectionTitle}>Program Specific Outcomes</h3>
+        <h3 style={styles.subsectionTitle}>Program Outcomes</h3>
         <p style={styles.content}>
-          • Ability to apply standard Software Engineering practices in system development
-          using different hardware and programming platforms.<br />
-          • Analyze, design and develop efficient software applications in the areas related to
-          Embedded Systems, IOT, Data Mining, Cloud Computing, Database Systems,
-          Mobile and Web Technologies.
+          • Apply Software Engineering practices<br />
+          • Develop applications in emerging technologies
         </p>
       </div>
     </div>
@@ -504,92 +488,24 @@ export default function Home() {
           </div>
         </section>
 
-        {/* New Success Stories and Vision & Mission Section */}
+        {/* Reorganized Success Stories and Vision & Mission Section */}
         <section style={styles.successVisionContainer}>
-          {/* Left Vertical Carousel */}
+          {/* Left Success Stories Carousel */}
           <div className="success-stories-carousel left" style={styles.successStoriesSlider}>
             {renderSuccessStoryCard(successStories[leftIndex])}
           </div>
 
-          {/* Vision & Mission Section */}
+          {/* Middle Vision & Mission Section */}
           <div className="vision-mission-section" style={styles.visionMissionSection}>
             {renderVisionMission()}
           </div>
 
-          {/* Right Vertical Carousel */}
+          {/* Right Success Stories Carousel */}
           <div className="success-stories-carousel right" style={styles.successStoriesSlider}>
             {renderSuccessStoryCard(successStories[rightIndex])}
           </div>
         </section>
 
-        {/* Success Stories Section */}
-        <section className="success-stories-section">
-          <div className="section-header">
-            <h2 className="section-title">Success Stories</h2>
-            <div className="section-divider"></div>
-            <p className="section-subtitle">Our alumni are making waves across various industries worldwide</p>
-          </div>
-          <div className="success-stories-container" style={{ display: 'flex', flexWrap: 'wrap', gap: '2rem', justifyContent: 'center' }}>
-            {successStories.map(story => (
-              <div className="success-story-card" key={story.id} style={{ background: '#fff', borderRadius: 24, boxShadow: '0 4px 24px rgba(26,42,108,0.10)', padding: '2rem 1.5rem', maxWidth: 340, minWidth: 260, display: 'flex', flexDirection: 'column', alignItems: 'center', transition: 'box-shadow 0.3s, transform 0.3s' }}>
-                <div className="story-image" style={{ marginBottom: 18 }}>
-                  <img src={story.image} alt={story.name} style={{ width: 150, height: 150, objectFit: 'cover', borderRadius: '50%', border: '4px solid #4e54c8', boxShadow: '0 2px 12px #4e54c822' }} />
-                </div>
-                <div className="story-content" style={{ textAlign: 'center' }}>
-                  <h4 style={{ fontWeight: 700, color: '#4e54c8', marginBottom: 4 }}>{story.name}</h4>
-                  <p className="story-year" style={{ fontWeight: 500, color: '#888', marginBottom: 2 }}>{story.year}</p>
-                  <p className="story-company" style={{ fontWeight: 600, color: '#222', marginBottom: 10 }}>{story.company}</p>
-                  <p className="story-description" style={{ fontSize: '1rem', color: '#444', lineHeight: 1.5 }}>{story.story}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-          <div className="section-cta" style={{ textAlign: 'center', marginTop: 32 }}>
-            <Link to="/directory1" className="cta-button" style={{ borderRadius: 24, background: '#4e54c8', color: '#fff', padding: '0.8em 2.2em', fontWeight: 700, fontSize: '1.1rem', boxShadow: '0 2px 12px #4e54c822', display: 'inline-flex', alignItems: 'center', gap: 8, textDecoration: 'none', transition: 'background 0.2s' }}>View All Alumni <FaArrowRight /></Link>
-          </div>
-        </section>
-
-        {/* Vision & Mission Section */}
-        <section className="vision-mission-section">
-          <div className="section-header">
-            <h2 className="section-title">Vision & Mission</h2>
-            <div className="section-divider"></div>
-          </div>
-          
-          <div className="article-container">
-            <div className="article-content">
-              <div className="image-side">
-                <img src={pimg} alt="Campus" className="photo-image" />
-              </div>
-              <div className="text-side">
-                <div className="vision-box">
-                  <h4>Vision</h4>
-                  <p>
-                    To be one of the leading Institutions for Engineering education
-                    developing proficient Engineers with global acceptance in the
-                    service of mankind.
-                  </p>
-                </div>
-                <div className="mission-box">
-                  <h4>Mission</h4>
-                  <p>
-                    Providing quality Engineering education to cater the needs of
-                    industry and society with multidisciplinary approach on
-                    sustainable basis. Developing globally competent Engineers having
-                    ability to solve real-life problems addressing environmental
-                    issues through technological advancements. Inculcating
-                    professionalism, teamwork, research, innovation and
-                    entrepreneurship, maintaining the spirit of continuous learning.
-                    Fostering the collaboration with industry, academia, research
-                    organizations, experts and alumni. Imparting employability
-                    skills, nurturing leadership qualities with ethical and social
-                    values among students.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
 
         
       </div>
