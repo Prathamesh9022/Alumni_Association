@@ -151,27 +151,24 @@ const alumniSchema = new mongoose.Schema({
     type: [{
       title: {
         type: String,
-        required: false
+        required: true
       },
       description: {
         type: String,
-        required: false
+        required: true
       },
       technologies: {
         type: String,
-        required: false
+        required: true
       },
-      years: {
+      duration: {
         type: Number,
-        required: false
-      },
-      months: {
-        type: Number,
-        required: false
+        required: true,
+        min: 1,
+        max: 12
       },
       link: {
-        type: String,
-        required: false
+        type: String
       }
     }],
     default: []
@@ -206,33 +203,33 @@ const alumniSchema = new mongoose.Schema({
     type: [{
       type: {
         type: String,
-        enum: ['10th', '12th', 'Graduation', 'Post Graduation', ''],
-        required: false,
-        default: ''
+        enum: ['10th', '12th', 'Graduation', 'Post Graduation'],
+        required: true
       },
       institution: {
         type: String,
-        required: false,
-        default: ''
+        required: true
       },
       board: {
         type: String,
-        required: false,
-        default: ''
+        required: true
       },
       year: {
         type: Number,
-        required: false
-      },
-      grade: {
-        type: String,
-        required: false,
-        default: ''
+        required: true,
+        validate: {
+          validator: function(v) {
+            const birthYear = this.parent().dob ? new Date(this.parent().dob).getFullYear() : 0;
+            return v >= birthYear + 16;
+          },
+          message: 'Year must be at least 16 years after birth year'
+        }
       },
       percentage: {
-        type: String,
-        required: false,
-        default: ''
+        type: Number,
+        required: true,
+        min: 0,
+        max: 100
       }
     }],
     default: []

@@ -6,6 +6,7 @@ import axios from 'axios';
 import './Adash.css';
 import { toast } from 'react-hot-toast';
 import { profileService } from '../services/api';
+import { uploadService } from '../services/upload';
 
 const AlumniDashboard = () => {
   const navigate = useNavigate();
@@ -23,7 +24,6 @@ const AlumniDashboard = () => {
       institution: '',
       board: '',
       year: '',
-      grade: '',
       percentage: ''
     },
     {
@@ -31,12 +31,15 @@ const AlumniDashboard = () => {
       institution: '',
       board: '',
       year: '',
-      grade: '',
       percentage: ''
     }
   ]);
   const [email, setEmail] = useState("");
-  const [userData, setUserData] = useState(null);
+  const [userData, setUserData] = useState({
+    passing_year: '',
+    current_address: '',
+    permanent_address: '',
+  });
   const [profileCompleted, setProfileCompleted] = useState(false);
   const [isEditing, setIsEditing] = useState(true);
   const [projects, setProjects] = useState([{
@@ -129,7 +132,6 @@ const AlumniDashboard = () => {
               institution: '',
               board: '',
               year: '',
-              grade: '',
               percentage: ''
             },
             {
@@ -137,7 +139,6 @@ const AlumniDashboard = () => {
               institution: '',
               board: '',
               year: '',
-              grade: '',
               percentage: ''
             }
           ]
@@ -161,7 +162,6 @@ const AlumniDashboard = () => {
             institution: '',
             board: '',
             year: '',
-            grade: '',
             percentage: ''
           },
           {
@@ -169,7 +169,6 @@ const AlumniDashboard = () => {
             institution: '',
             board: '',
             year: '',
-            grade: '',
             percentage: ''
           }
         ]);
@@ -198,7 +197,6 @@ const AlumniDashboard = () => {
               institution: '',
               board: '',
               year: '',
-              grade: '',
               percentage: ''
             },
             {
@@ -206,7 +204,6 @@ const AlumniDashboard = () => {
               institution: '',
               board: '',
               year: '',
-              grade: '',
               percentage: ''
             }
           ]
@@ -229,12 +226,33 @@ const AlumniDashboard = () => {
   const maxDob = new Date(currentYear - 20, 0, 1).toISOString().split("T")[0];
   const minDob = "1997-01-01";
 
-  const handleProfilePicChange = (e) => {
+  const handleProfilePicChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => setProfilePic(reader.result);
-      reader.readAsDataURL(file);
+      try {
+        // Check file size (max 2MB)
+        if (file.size > 2 * 1024 * 1024) {
+          toast.error('Image size should be less than 2MB');
+          return;
+        }
+
+        // Check file type
+        if (!file.type.startsWith('image/')) {
+          toast.error('Please select an image file');
+          return;
+        }
+
+        // Upload file and get URLs
+        const urls = await uploadService.uploadProfilePhoto(file);
+        
+        // Update form with GitHub URL
+        setUserData(prev => ({ ...prev, profile: urls.githubUrl }));
+        setProfilePic(urls.githubUrl);
+        toast.success('Profile photo uploaded successfully!');
+      } catch (err) {
+        console.error('Error uploading profile photo:', err);
+        toast.error('Error uploading profile photo. Please try again.');
+      }
     }
   };
 
@@ -395,7 +413,6 @@ const AlumniDashboard = () => {
           institution: '',
           board: '',
           year: '',
-          grade: '',
           percentage: ''
         },
         {
@@ -403,7 +420,6 @@ const AlumniDashboard = () => {
           institution: '',
           board: '',
           year: '',
-          grade: '',
           percentage: ''
         }
       ]);
@@ -466,7 +482,6 @@ const AlumniDashboard = () => {
       institution: '',
       board: '',
       year: '',
-      grade: '',
       percentage: ''
     }]);
   };
@@ -476,6 +491,41 @@ const AlumniDashboard = () => {
     if (education[index].type === 'Post Graduation') {
       setEducation(education.filter((_, i) => i !== index));
     }
+  };
+
+  // Add function to handle copying current address
+  const handleCopyCurrentAddress = (e) => {
+    if (e.target.checked) {
+      setUserData(prev => ({
+        ...prev,
+        permanent_address: prev.current_address
+      }));
+    }
+  };
+
+  // Add validation for education year and percentage
+  const validateEducation = (edu) => {
+    const birthYear = userData.dob ? new Date(userData.dob).getFullYear() : 0;
+    const minYear = birthYear + 16;
+    
+    if (edu.year < minYear) {
+      return `Year must be at least ${minYear} (16 years after birth)`;
+    }
+    
+    if (edu.percentage < 0 || edu.percentage > 100) {
+      return 'Percentage must be between 0 and 100';
+    }
+    
+    return null;
+  };
+
+  // Add validation for project duration
+  const validateProjectDuration = (duration) => {
+    const months = parseInt(duration);
+    if (isNaN(months) || months < 1 || months > 12) {
+      return 'Project duration must be between 1 and 12 months';
+    }
+    return null;
   };
 
   if (!userData) {
@@ -684,15 +734,13 @@ const AlumniDashboard = () => {
                     <div className="col-md-6">
                       <label className="form-label">Passing Year *</label>
                       <input
-                        type="month"
-                        className="form-control"
+                        type="number"
                         name="passing_year"
-                        value={safeValue(userData.passing_year)}
+                        value={userData.passing_year}
                         onChange={handleFieldChange}
-                        min={minPassingYear}
-                        max={maxPassingYear}
-                        required
-                        disabled={!isEditing}
+                        className="form-control"
+                        min={2003}
+                        max={new Date().getFullYear()}
                       />
                     </div>
                   </div>
@@ -808,28 +856,35 @@ const AlumniDashboard = () => {
                         disabled={!isEditing}
                       />
                     </div>
-                    <div className="col-md-6">
-                      <label className="form-label">Current Address *</label>
+                    <div className="col-md-12">
+                      <label>Current Address</label>
                       <textarea
-                        className="form-control"
                         name="current_address"
-                        value={safeValue(userData.current_address)}
+                        value={userData.current_address}
                         onChange={handleFieldChange}
+                        className="form-control"
                         rows="3"
-                        required
-                        disabled={!isEditing}
                       />
                     </div>
-                    <div className="col-md-6">
-                      <label className="form-label">Permanent Address *</label>
+                    <div className="col-md-12">
+                      <div className="form-check mb-2">
+                        <input
+                          type="checkbox"
+                          className="form-check-input"
+                          id="copyAddress"
+                          onChange={handleCopyCurrentAddress}
+                        />
+                        <label className="form-check-label" htmlFor="copyAddress">
+                          Same as Current Address
+                        </label>
+                      </div>
+                      <label>Permanent Address</label>
                       <textarea
-                        className="form-control"
                         name="permanent_address"
-                        value={safeValue(userData.permanent_address)}
+                        value={userData.permanent_address}
                         onChange={handleFieldChange}
+                        className="form-control"
                         rows="3"
-                        required
-                        disabled={!isEditing}
                       />
                     </div>
                   </div>
@@ -1002,77 +1057,47 @@ const AlumniDashboard = () => {
                 </div>
                 <div className="card-body">
                   {education.map((edu, index) => (
-                    <div key={index} className="mb-3 p-3 border rounded">
-                      <div className="d-flex justify-content-between align-items-center mb-2">
-                        <h6 className="mb-0">Education {index + 1}</h6>
-                        {isEditing && edu.type === 'Post Graduation' && (
-                          <button
-                            type="button"
-                            className="btn btn-danger btn-sm"
-                            onClick={() => handleRemoveEducation(index)}
-                          >
-                            <FaTrash />
-                          </button>
-                        )}
-                      </div>
-                      <div className="row g-3">
+                    <div key={index} className="education-item mb-4">
+                      <div className="row">
                         <div className="col-md-6">
-                          <label className="form-label">Type</label>
+                          <label>Institution</label>
                           <input
                             type="text"
-                            className="form-control"
-                            value={edu.type}
-                            readOnly
-                          />
-                        </div>
-                        <div className="col-md-6">
-                          <label className="form-label">Institution</label>
-                          <input
-                            type="text"
-                            className="form-control"
                             value={edu.institution}
                             onChange={(e) => handleChange(setEducation, education, index, 'institution', e.target.value)}
-                            disabled={!isEditing}
+                            className="form-control"
                           />
                         </div>
                         <div className="col-md-6">
-                          <label className="form-label">Board</label>
+                          <label>Board</label>
                           <input
                             type="text"
-                            className="form-control"
                             value={edu.board}
                             onChange={(e) => handleChange(setEducation, education, index, 'board', e.target.value)}
-                            disabled={!isEditing}
+                            className="form-control"
                           />
                         </div>
                         <div className="col-md-6">
-                          <label className="form-label">Year</label>
+                          <label>Year</label>
                           <input
                             type="number"
-                            className="form-control"
                             value={edu.year}
                             onChange={(e) => handleChange(setEducation, education, index, 'year', e.target.value)}
-                            disabled={!isEditing}
-                          />
-                        </div>
-                        <div className="col-md-6">
-                          <label className="form-label">Grade</label>
-                          <input
-                            type="text"
                             className="form-control"
-                            value={edu.grade}
-                            onChange={(e) => handleChange(setEducation, education, index, 'grade', e.target.value)}
-                            disabled={!isEditing}
+                            min={userData.dob ? new Date(userData.dob).getFullYear() + 16 : 2000}
+                            max={new Date().getFullYear()}
                           />
                         </div>
                         <div className="col-md-6">
-                          <label className="form-label">Percentage</label>
+                          <label>Percentage</label>
                           <input
                             type="number"
-                            className="form-control"
                             value={edu.percentage}
                             onChange={(e) => handleChange(setEducation, education, index, 'percentage', e.target.value)}
-                            disabled={!isEditing}
+                            className="form-control"
+                            min="0"
+                            max="100"
+                            step="0.01"
                           />
                         </div>
                       </div>
@@ -1091,74 +1116,53 @@ const AlumniDashboard = () => {
                 </div>
                 <div className="card-body">
                   {projects.map((project, index) => (
-                    <div key={index} className="mb-4 p-3 border rounded">
-                      <div className="d-flex justify-content-between align-items-center mb-3">
-                        <h6 className="mb-0">Project {index + 1}</h6>
-                        {index > 0 && (
-                          <button
-                            type="button"
-                            className="btn btn-danger btn-sm"
-                            onClick={() => handleRemoveProject(index)}
-                            disabled={!isEditing}
-                          >
-                            <FaTrash />
-                          </button>
-                        )}
-                      </div>
-                      <div className="row g-3">
+                    <div key={index} className="project-item mb-4">
+                      <div className="row">
                         <div className="col-md-6">
-                          <label className="form-label">Title</label>
+                          <label>Title</label>
                           <input
                             type="text"
-                            className="form-control"
                             value={project.title}
                             onChange={(e) => handleProjectChange(index, 'title', e.target.value)}
-                            placeholder="Project Title"
-                            disabled={!isEditing}
+                            className="form-control"
                           />
                         </div>
                         <div className="col-md-6">
-                          <label className="form-label">Technologies</label>
+                          <label>Duration (months)</label>
                           <input
-                            type="text"
-                            className="form-control"
-                            value={project.technologies}
-                            onChange={(e) => handleProjectChange(index, 'technologies', e.target.value)}
-                            placeholder="Technologies Used"
-                            disabled={!isEditing}
-                          />
-                        </div>
-                        <div className="col-12">
-                          <label className="form-label">Description</label>
-                          <textarea
-                            className="form-control"
-                            value={project.description}
-                            onChange={(e) => handleProjectChange(index, 'description', e.target.value)}
-                            placeholder="Project Description"
-                            rows="3"
-                            disabled={!isEditing}
-                          />
-                        </div>
-                        <div className="col-md-6">
-                          <label className="form-label">Duration</label>
-                          <input
-                            type="text"
-                            className="form-control"
+                            type="number"
                             value={project.duration}
                             onChange={(e) => handleProjectChange(index, 'duration', e.target.value)}
-                            placeholder="Duration"
-                            disabled={!isEditing}
+                            className="form-control"
+                            min="1"
+                            max="12"
+                          />
+                        </div>
+                        <div className="col-md-12">
+                          <label>Description</label>
+                          <textarea
+                            value={project.description}
+                            onChange={(e) => handleProjectChange(index, 'description', e.target.value)}
+                            className="form-control"
+                            rows="3"
                           />
                         </div>
                         <div className="col-md-6">
-                          <label className="form-label">Project Link</label>
+                          <label>Technologies</label>
                           <input
                             type="text"
+                            value={project.technologies}
+                            onChange={(e) => handleProjectChange(index, 'technologies', e.target.value)}
                             className="form-control"
+                          />
+                        </div>
+                        <div className="col-md-6">
+                          <label>Project Link</label>
+                          <input
+                            type="url"
                             value={project.link}
                             onChange={(e) => handleProjectChange(index, 'link', e.target.value)}
-                            placeholder="Project Link"
-                            disabled={!isEditing}
+                            className="form-control"
                           />
                         </div>
                       </div>
@@ -1293,3 +1297,4 @@ const AlumniDashboard = () => {
 };
 
 export default AlumniDashboard;
+
