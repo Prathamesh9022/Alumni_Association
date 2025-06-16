@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FaFilter, FaUser, FaGraduationCap, FaBriefcase, FaEnvelope, FaPhone, FaMapMarkerAlt, FaCode, FaCheck, FaTimes, FaTrash } from 'react-icons/fa';
+import { FaFilter, FaUser, FaGraduationCap, FaBriefcase, FaEnvelope, FaPhone, FaMapMarkerAlt, FaCode, FaCheck, FaTimes, FaTrash, FaSearch } from 'react-icons/fa';
 import Header from './Header';
 import '../App.css'
 
 const Directory1 = () => {
   const [alumni, setAlumni] = useState([]);
+  const [filteredAlumni, setFilteredAlumni] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -15,6 +17,12 @@ const Directory1 = () => {
     setIsAdmin(user && user.role === 'admin');
     fetchAlumni();
   }, []);
+
+  useEffect(() => {
+    if (alumni.length > 0) {
+      handleSearch(searchTerm);
+    }
+  }, [searchTerm, alumni]);
 
   const fetchAlumni = async () => {
     try {
@@ -30,12 +38,48 @@ const Directory1 = () => {
       }));
       
       setAlumni(alumniData);
+      setFilteredAlumni(alumniData);
       setLoading(false);
     } catch (err) {
       setError('Failed to fetch alumni data');
       setLoading(false);
       console.error('Error fetching alumni:', err);
     }
+  };
+
+  const handleSearch = (term) => {
+    const searchTermLower = term.toLowerCase();
+    const filtered = alumni.filter(alum => {
+      return (
+        // Basic Information
+        (alum.fullName?.toLowerCase().includes(searchTermLower)) ||
+        (alum.email?.toLowerCase().includes(searchTermLower)) ||
+        (alum.phone?.toLowerCase().includes(searchTermLower)) ||
+        (alum.gender?.toLowerCase().includes(searchTermLower)) ||
+        
+        // Educational Information
+        (alum.department?.toLowerCase().includes(searchTermLower)) ||
+        (alum.course?.toLowerCase().includes(searchTermLower)) ||
+        (alum.passing_year?.toString().includes(searchTermLower)) ||
+        
+        // Professional Information
+        (alum.currentCompany?.toLowerCase().includes(searchTermLower)) ||
+        (alum.currentRole?.toLowerCase().includes(searchTermLower)) ||
+        (alum.designation?.toLowerCase().includes(searchTermLower)) ||
+        (alum.current_location?.toLowerCase().includes(searchTermLower)) ||
+        
+        // Skills and Projects
+        (alum.skillset?.some(skill => skill.toLowerCase().includes(searchTermLower))) ||
+        (alum.projects?.some(project => project.title.toLowerCase().includes(searchTermLower))) ||
+        
+        // Achievements
+        (alum.achievements?.some(achievement => achievement.title.toLowerCase().includes(searchTermLower))) ||
+        
+        // Education
+        (alum.education?.some(edu => edu.institution.toLowerCase().includes(searchTermLower)))
+      );
+    });
+    setFilteredAlumni(filtered);
   };
 
   const handleApprove = async (id) => {
@@ -102,8 +146,23 @@ const Directory1 = () => {
         <div className="card shadow-sm mb-4">
           <div className="card-body">
             <h2 className="text-primary mb-4">Alumni Directory</h2>
+            
+            {/* Search Bar */}
+            <div className="search-container mb-4">
+              <div className="search-box">
+                <FaSearch className="search-icon" />
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Search by name, email, department, company, skills..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+            </div>
+
             <div className="row">
-              {alumni.map(alum => (
+              {filteredAlumni.map(alum => (
                 <div className="col-md-6 col-lg-4 mb-4" key={alum._id}>
                   <div className="card h-100">
                     <div className="card-body">
@@ -156,6 +215,12 @@ const Directory1 = () => {
                 </div>
               ))}
             </div>
+
+            {filteredAlumni.length === 0 && (
+              <div className="alert alert-info text-center mt-4">
+                No alumni found matching your search criteria.
+              </div>
+            )}
           </div>
         </div>
       </div>
