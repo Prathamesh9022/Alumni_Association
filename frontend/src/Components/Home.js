@@ -18,6 +18,8 @@ import success5 from "../img/success5.jpg";
 import success6 from "../img/success6.jpg";
 import axiosInstance from "../utils/axiosConfig";
 import './Home.css';
+import { motion } from 'framer-motion';
+import { FaQuoteLeft, FaQuoteRight } from 'react-icons/fa';
 
 // Add new CSS for the success stories and vision section
 const styles = {
@@ -29,81 +31,146 @@ const styles = {
     padding: '2rem',
     backgroundColor: '#f8f9fa',
     minHeight: '600px',
+    position: 'relative',
+    overflow: 'hidden',
   },
   successStoriesSlider: {
     flex: 1,
     backgroundColor: 'white',
     padding: '2rem',
-    borderRadius: '10px',
-    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+    borderRadius: '20px',
+    boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
     minHeight: '600px',
+    position: 'relative',
+    overflow: 'hidden',
+    transition: 'transform 0.3s ease',
+    '&:hover': {
+      transform: 'translateY(-5px)',
+    },
   },
   successStoryCard: {
-    backgroundColor: 'white',
-    borderRadius: '10px',
-    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-    transition: 'transform 0.3s ease',
-    cursor: 'pointer',
+    background: 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)',
+    borderRadius: '20px',
+    padding: '2rem',
+    boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '1.5rem',
+    width: '100%',
+    maxWidth: '400px',
+    position: 'relative',
     overflow: 'hidden',
+    '&::before': {
+      content: '""',
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      height: '5px',
+      background: 'linear-gradient(90deg, #4e54c8, #8f94fb)',
+    },
   },
   visionMissionSection: {
     flex: 1.5,
     backgroundColor: 'white',
     padding: '2rem',
-    borderRadius: '10px',
-    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+    borderRadius: '20px',
+    boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
     overflowY: 'auto',
     maxHeight: '600px',
+    position: 'relative',
+    zIndex: 1,
+    backdropFilter: 'blur(10px)',
+    border: '1px solid rgba(255,255,255,0.2)',
   },
   sectionTitle: {
-    fontSize: '2rem',
-    color: '#2c3e50',
+    fontSize: '2.5rem',
+    background: 'linear-gradient(90deg, #4e54c8, #8f94fb)',
+    WebkitBackgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
     marginBottom: '2rem',
     textAlign: 'center',
     fontWeight: 'bold',
+    position: 'relative',
+    '&::after': {
+      content: '""',
+      position: 'absolute',
+      bottom: '-10px',
+      left: '50%',
+      transform: 'translateX(-50%)',
+      width: '100px',
+      height: '4px',
+      background: 'linear-gradient(90deg, #4e54c8, #8f94fb)',
+      borderRadius: '2px',
+    },
   },
   subsectionTitle: {
-    fontSize: '1.5rem',
+    fontSize: '1.8rem',
     color: '#2c3e50',
-    marginBottom: '1rem',
+    marginBottom: '1.5rem',
     fontWeight: 'bold',
+    position: 'relative',
+    paddingLeft: '1rem',
+    '&::before': {
+      content: '""',
+      position: 'absolute',
+      left: 0,
+      top: '50%',
+      transform: 'translateY(-50%)',
+      width: '4px',
+      height: '70%',
+      background: 'linear-gradient(180deg, #4e54c8, #8f94fb)',
+      borderRadius: '2px',
+    },
   },
   content: {
     fontSize: '1.1rem',
     color: '#34495e',
-    lineHeight: '1.6',
+    lineHeight: '1.8',
     marginBottom: '2rem',
+    padding: '1rem',
+    backgroundColor: 'rgba(78,84,200,0.05)',
+    borderRadius: '10px',
+    transition: 'transform 0.3s ease',
+    '&:hover': {
+      transform: 'translateX(5px)',
+    },
   },
   successStoryImage: {
-    width: '100%',
-    height: '200px',
+    width: '150px',
+    height: '150px',
+    borderRadius: '50%',
     objectFit: 'cover',
-    borderRadius: '8px',
-    marginBottom: '1rem',
+    border: '4px solid #4e54c8',
+    boxShadow: '0 5px 15px rgba(78,84,200,0.3)',
+    transition: 'transform 0.3s ease',
+    '&:hover': {
+      transform: 'scale(1.05)',
+    },
   },
-  successStoryName: {
-    fontSize: '1.2rem',
-    fontWeight: 'bold',
-    color: '#1a2a6c',
-    marginBottom: '0.5rem',
+  successStoryContent: {
+    textAlign: 'center',
+    position: 'relative',
+    padding: '1rem',
   },
-  successStoryYear: {
-    color: '#666',
-    fontSize: '0.9rem',
-    marginBottom: '0.5rem',
+  quoteIcon: {
+    position: 'absolute',
+    color: '#4e54c8',
+    opacity: 0.1,
+    fontSize: '4rem',
   },
-  successStoryCompany: {
-    color: '#1a2a6c',
-    fontSize: '1rem',
-    marginBottom: '0.5rem',
+  quoteLeft: {
+    top: '-20px',
+    left: '-20px',
   },
-  successStoryText: {
-    color: '#666',
-    fontSize: '0.9rem',
+  quoteRight: {
+    bottom: '-20px',
+    right: '-20px',
   },
 };
 
@@ -254,32 +321,61 @@ export default function Home() {
 
   // Function to render a single success story card
   const renderSuccessStoryCard = (story) => (
-    <div className="success-story-card" key={story.id}>
-      <img src={story.image} alt={story.name} className="success-story-image" />
-      <div className="success-story-content">
-        <div>
-          <h3 style={styles.successStoryName}>{story.name}</h3>
-          <p style={styles.successStoryYear}>{story.year}</p>
-          <p style={styles.successStoryCompany}>{story.company}</p>
-          <p style={styles.successStoryText}>{story.story}</p>
-        </div>
+    <motion.div
+      className="success-story-card"
+      style={styles.successStoryCard}
+      initial={{ opacity: 0, y: 50 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -50 }}
+      transition={{ duration: 0.5 }}
+    >
+      <img src={story.image} alt={story.name} style={styles.successStoryImage} />
+      <div style={styles.successStoryContent}>
+        <FaQuoteLeft style={{ ...styles.quoteIcon, ...styles.quoteLeft }} />
+        <FaQuoteRight style={{ ...styles.quoteIcon, ...styles.quoteRight }} />
+        <h4 style={{ fontWeight: 700, color: '#4e54c8', marginBottom: 8, fontSize: '1.4rem' }}>
+          {story.name}
+        </h4>
+        <p style={{ fontWeight: 500, color: '#888', marginBottom: 4, fontSize: '1.1rem' }}>
+          {story.year}
+        </p>
+        <p style={{ fontWeight: 600, color: '#222', marginBottom: 12, fontSize: '1.2rem' }}>
+          {story.company}
+        </p>
+        <p style={{ fontSize: '1.1rem', color: '#444', lineHeight: 1.6 }}>
+          {story.story}
+        </p>
       </div>
-    </div>
+    </motion.div>
   );
 
   // Function to render Vision & Mission section with summarized content
   const renderVisionMission = () => (
-    <div className="vision-mission-section" style={styles.visionMissionSection}>
+    <motion.div
+      className="vision-mission-section"
+      style={styles.visionMissionSection}
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.5 }}
+    >
       <h2 style={styles.sectionTitle}>Vision & Mission</h2>
       
-      <div>
+      <motion.div
+        initial={{ opacity: 0, x: -50 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 0.2 }}
+      >
         <h3 style={styles.subsectionTitle}>Institution Vision</h3>
         <p style={styles.content}>
           To be a leading Engineering institution developing proficient Engineers with global acceptance in the service of mankind.
         </p>
-      </div>
+      </motion.div>
 
-      <div>
+      <motion.div
+        initial={{ opacity: 0, x: -50 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 0.3 }}
+      >
         <h3 style={styles.subsectionTitle}>Institution Mission</h3>
         <p style={styles.content}>
           • Quality Engineering education with multidisciplinary approach<br />
@@ -287,16 +383,24 @@ export default function Home() {
           • Foster innovation, research, and industry collaboration<br />
           • Nurture leadership and ethical values
         </p>
-      </div>
+      </motion.div>
 
-      <div>
+      <motion.div
+        initial={{ opacity: 0, x: -50 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 0.4 }}
+      >
         <h3 style={styles.subsectionTitle}>Department Vision</h3>
         <p style={styles.content}>
           To be a leading Department developing proficient IT Engineers with global acceptance in the service of society and IT industry.
         </p>
-      </div>
+      </motion.div>
 
-      <div>
+      <motion.div
+        initial={{ opacity: 0, x: -50 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 0.5 }}
+      >
         <h3 style={styles.subsectionTitle}>Department Mission</h3>
         <p style={styles.content}>
           • Develop IT Professionals with strong technical knowledge<br />
@@ -304,9 +408,13 @@ export default function Home() {
           • Foster innovation and industry collaboration<br />
           • Promote ethics and lifelong learning
         </p>
-      </div>
+      </motion.div>
 
-      <div>
+      <motion.div
+        initial={{ opacity: 0, x: -50 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 0.6 }}
+      >
         <h3 style={styles.subsectionTitle}>Program Objectives</h3>
         <p style={styles.content}>
           • Technical expertise in Hardware and Software Systems<br />
@@ -314,16 +422,20 @@ export default function Home() {
           • Research in emerging IT areas<br />
           • Leadership and entrepreneurial skills
         </p>
-      </div>
+      </motion.div>
 
-      <div>
+      <motion.div
+        initial={{ opacity: 0, x: -50 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 0.7 }}
+      >
         <h3 style={styles.subsectionTitle}>Program Outcomes</h3>
         <p style={styles.content}>
           • Apply Software Engineering practices<br />
           • Develop applications in emerging technologies
         </p>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 
   // Render role-specific call-to-action buttons

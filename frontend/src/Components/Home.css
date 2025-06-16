@@ -121,4 +121,153 @@
 .vision-mission-section::-webkit-scrollbar-thumb {
   background-color: #1a2a6c;
   border-radius: 4px;
+}
+
+/* Success Stories and Vision & Mission Section Styles */
+.success-stories-carousel {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.success-stories-carousel:hover {
+  transform: translateY(-5px);
+}
+
+.success-story-card {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.success-story-card:hover {
+  transform: scale(1.02);
+}
+
+.success-story-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: linear-gradient(90deg, #4e54c8, #8f94fb);
+  border-radius: 5px 5px 0 0;
+}
+
+.vision-mission-section {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.vision-mission-section:hover {
+  box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+}
+
+.content {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.content:hover {
+  transform: translateX(5px);
+  background: rgba(78,84,200,0.08);
+}
+
+/* Animation for success stories */
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.success-stories-carousel.left .success-story-card {
+  animation: slideUp 0.5s ease-out;
+}
+
+.success-stories-carousel.right .success-story-card {
+  animation: slideDown 0.5s ease-out;
+}
+
+/* Gradient background animation */
+@keyframes gradientBG {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.successVisionContainer {
+  background: linear-gradient(-45deg, #f8f9fa, #ffffff, #f0f2ff, #f8f9fa);
+  background-size: 400% 400%;
+  animation: gradientBG 15s ease infinite;
+}
+
+/* Quote icon animation */
+@keyframes quotePulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.2;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.1;
+  }
+}
+
+.quoteIcon {
+  animation: quotePulse 3s ease-in-out infinite;
+}
+
+/* Responsive styles */
+@media (max-width: 1200px) {
+  .successVisionContainer {
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .vision-mission-section {
+    order: -1;
+  }
+
+  .success-stories-carousel {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .sectionTitle {
+    font-size: 2rem;
+  }
+
+  .subsectionTitle {
+    font-size: 1.5rem;
+  }
+
+  .content {
+    font-size: 1rem;
+  }
 } 
