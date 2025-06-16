@@ -5,7 +5,7 @@ import Header from './Header';
 import axiosInstance from '../utils/axiosConfig';
 import './Adash.css';
 import { toast } from 'react-hot-toast';
-import { alumniService, uploadService } from '../services/api';
+import { profileService } from '../services/api';
 
 const AlumniDashboard = () => {
   const navigate = useNavigate();
@@ -23,6 +23,7 @@ const AlumniDashboard = () => {
       institution: '',
       board: '',
       year: '',
+      grade: '',
       percentage: ''
     },
     {
@@ -30,15 +31,12 @@ const AlumniDashboard = () => {
       institution: '',
       board: '',
       year: '',
+      grade: '',
       percentage: ''
     }
   ]);
   const [email, setEmail] = useState("");
-  const [userData, setUserData] = useState({
-    passing_year: '',
-    current_address: '',
-    permanent_address: '',
-  });
+  const [userData, setUserData] = useState(null);
   const [profileCompleted, setProfileCompleted] = useState(false);
   const [isEditing, setIsEditing] = useState(true);
   const [projects, setProjects] = useState([{
@@ -60,27 +58,6 @@ const AlumniDashboard = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const location = useLocation();
-
-  const [formData, setFormData] = useState({
-    firstName: '',
-    middleName: '',
-    lastName: '',
-    dob: '',
-    gender: '',
-    department: 'Information Technology',
-    course: 'B. Tech. Information Technology',
-    passingYear: '',
-    alumniId: '',
-    phone: '',
-    altPhone: '',
-    currentAddress: '',
-    permanentAddress: '',
-    profilePic: null,
-    current_company: '',
-    designation: '',
-    current_location: '',
-    joined_date: ''
-  });
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -116,27 +93,29 @@ const AlumniDashboard = () => {
     try {
       const token = localStorage.getItem('token');
       const user = JSON.parse(localStorage.getItem('user'));
-      const userEmail = user?.email;
+      const userEmail = user?.email; // Get email from stored user data
       
-      const response = await axiosInstance.get('/api/alumni/profile');
+      const response = await axiosInstance.get('/api/alumni/profile', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
       const data = response.data;
       
+      // Ensure email is set even if API doesn't return it
       if (!data.email && userEmail) {
         data.email = userEmail;
       }
       
+      // Check if this is a new user
       const isNewUser = !data.profileCompleted && (!data.experience || data.experience.length === 0);
       
       if (isNewUser) {
+        // Initialize with empty data for new users
         setUserData({
           ...data,
-          email: data.email || userEmail,
+          email: data.email || userEmail, // Ensure email is included
           department: 'Information Technology',
           course: 'B. Tech. Information Technology',
-          current_company: '',
-          designation: '',
-          current_location: '',
-          joined_date: '',
           experience: [{
             company: '',
             position: '',
@@ -150,6 +129,7 @@ const AlumniDashboard = () => {
               institution: '',
               board: '',
               year: '',
+              grade: '',
               percentage: ''
             },
             {
@@ -157,22 +137,17 @@ const AlumniDashboard = () => {
               institution: '',
               board: '',
               year: '',
+              grade: '',
               percentage: ''
             }
           ]
         });
-        setIsEditing(true);
+        setIsEditing(true); // Automatically enable editing for new users
       } else {
+        // Use existing data for returning users
         setUserData(data);
-        setEmail(data.email || userEmail);
+        setEmail(data.email || userEmail); // Set email with fallback to token
         setProfilePic(data.profile || null);
-        setFormData(prev => ({
-          ...prev,
-          current_company: data.current_company || '',
-          designation: data.designation || '',
-          current_location: data.current_location || '',
-          joined_date: data.joined_date || ''
-        }));
         setExperience(data.experience || [{
           company: '',
           position: '',
@@ -186,6 +161,7 @@ const AlumniDashboard = () => {
             institution: '',
             board: '',
             year: '',
+            grade: '',
             percentage: ''
           },
           {
@@ -193,6 +169,7 @@ const AlumniDashboard = () => {
             institution: '',
             board: '',
             year: '',
+            grade: '',
             percentage: ''
           }
         ]);
@@ -202,15 +179,12 @@ const AlumniDashboard = () => {
     } catch (error) {
       console.error("Error fetching profile:", error);
       if (error.response?.status === 404) {
+        // Handle new user case
         const userEmail = JSON.parse(localStorage.getItem('user'))?.email;
         setUserData({
-          email: userEmail,
+          email: userEmail, // Use email from token
           department: 'Information Technology',
           course: 'B. Tech. Information Technology',
-          current_company: '',
-          designation: '',
-          current_location: '',
-          joined_date: '',
           experience: [{
             company: '',
             position: '',
@@ -224,6 +198,7 @@ const AlumniDashboard = () => {
               institution: '',
               board: '',
               year: '',
+              grade: '',
               percentage: ''
             },
             {
@@ -231,13 +206,14 @@ const AlumniDashboard = () => {
               institution: '',
               board: '',
               year: '',
+              grade: '',
               percentage: ''
             }
           ]
         });
-        setEmail(userEmail);
+        setEmail(userEmail); // Set email from token
         setProfileCompleted(false);
-        setIsEditing(true);
+        setIsEditing(true); // Automatically enable editing for new users
       } else {
         setError(error.response?.data?.error || "Failed to fetch profile");
       }
@@ -253,33 +229,12 @@ const AlumniDashboard = () => {
   const maxDob = new Date(currentYear - 20, 0, 1).toISOString().split("T")[0];
   const minDob = "1997-01-01";
 
-  const handleProfilePicChange = async (e) => {
+  const handleProfilePicChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      try {
-        // Check file size (max 2MB)
-        if (file.size > 2 * 1024 * 1024) {
-          toast.error('Image size should be less than 2MB');
-          return;
-        }
-
-        // Check file type
-        if (!file.type.startsWith('image/')) {
-          toast.error('Please select an image file');
-          return;
-        }
-
-        // Upload file and get URLs
-        const urls = await uploadService.uploadProfilePhoto(file);
-        
-        // Update form with GitHub URL
-        setUserData(prev => ({ ...prev, profile: urls.githubUrl }));
-        setProfilePic(urls.githubUrl);
-        toast.success('Profile photo uploaded successfully!');
-      } catch (err) {
-        console.error('Error uploading profile photo:', err);
-        toast.error('Error uploading profile photo. Please try again.');
-      }
+      const reader = new FileReader();
+      reader.onloadend = () => setProfilePic(reader.result);
+      reader.readAsDataURL(file);
     }
   };
 
@@ -311,7 +266,7 @@ const AlumniDashboard = () => {
     if (["phone", "alt_phone"].includes(name)) {
       if (!/^\d{0,10}$/.test(value)) return;
     }
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setUserData((prev) => ({ ...prev, [name]: value }));
   };
 
   // Convert potential null values to empty strings for form inputs
@@ -342,34 +297,30 @@ const AlumniDashboard = () => {
       }
 
       // Validation
-      if (!formData.firstName || !formData.lastName || !formData.dob || !formData.phone || !formData.currentAddress) {
+      if (!userData.first_name || !userData.last_name || !userData.dob || !userData.phone || !userData.current_address) {
         toast.error('Please fill all required fields.');
         return;
       }
 
       const payload = {
-        email: user.email,
-        department: formData.department,
-        course: formData.course,
-        first_name: formData.firstName,
-        middle_name: formData.middleName || '',
-        last_name: formData.lastName,
-        dob: formData.dob,
-        gender: formData.gender,
-        passing_year: formData.passingYear,
-        phone: formData.phone,
-        alt_phone: formData.altPhone || '',
-        alumni_id: formData.alumniId || '',
-        current_address: formData.currentAddress,
-        permanent_address: formData.permanentAddress,
+        email: user.email, // Use email from user object
+        department: userData.department,
+        course: userData.course,
+        first_name: userData.first_name,
+        middle_name: userData.middle_name || '',
+        last_name: userData.last_name,
+        dob: userData.dob,
+        gender: userData.gender,
+        passing_year: userData.passing_year,
+        phone: userData.phone,
+        alt_phone: userData.alt_phone || '',
+        alumni_id: userData.alumni_id || '',
+        current_address: userData.current_address,
+        permanent_address: userData.permanent_address,
         profile: profilePic || null,
-        current_company: formData.current_company || '',
-        designation: formData.designation || '',
-        current_location: formData.current_location || '',
-        joined_date: formData.joined_date || '',
         experience: experience.filter(exp => exp.company && exp.position && exp.duration),
         skillset: skills.filter(s => typeof s === 'string' && s.trim() !== ''),
-        education: education.filter(edu => edu.institution && edu.board && edu.year && edu.percentage),
+        education: education.filter(edu => edu.institution && edu.board && edu.year && edu.grade && edu.percentage),
         projects: projects.filter(p => p.title || p.description).map(proj => ({
           title: proj.title,
           description: proj.description,
@@ -389,8 +340,8 @@ const AlumniDashboard = () => {
 
       console.log('Submitting alumni profile payload:', payload);
       
-      // Use alumniService to update the profile
-      const response = await alumniService.updateProfile(payload);
+      // Use axiosInstance for the API call
+      const response = await axiosInstance.put('/api/alumni/profile', payload);
 
       if (response.data) {
         toast.success('Profile updated successfully!');
@@ -399,8 +350,6 @@ const AlumniDashboard = () => {
         // Update local storage with new profile data
         const updatedUser = { ...user, profileCompleted: true };
         localStorage.setItem('user', JSON.stringify(updatedUser));
-        // Redirect to home page after successful update
-        navigate('/home');
       }
     } catch (error) {
       console.error('Error updating profile:', error);
@@ -472,6 +421,7 @@ const AlumniDashboard = () => {
           institution: '',
           board: '',
           year: '',
+          grade: '',
           percentage: ''
         },
         {
@@ -479,6 +429,7 @@ const AlumniDashboard = () => {
           institution: '',
           board: '',
           year: '',
+          grade: '',
           percentage: ''
         }
       ]);
@@ -541,6 +492,7 @@ const AlumniDashboard = () => {
       institution: '',
       board: '',
       year: '',
+      grade: '',
       percentage: ''
     }]);
   };
@@ -550,41 +502,6 @@ const AlumniDashboard = () => {
     if (education[index].type === 'Post Graduation') {
       setEducation(education.filter((_, i) => i !== index));
     }
-  };
-
-  // Add function to handle copying current address
-  const handleCopyCurrentAddress = (e) => {
-    if (e.target.checked) {
-      setUserData(prev => ({
-        ...prev,
-        permanent_address: prev.current_address
-      }));
-    }
-  };
-
-  // Add validation for education year and percentage
-  const validateEducation = (edu) => {
-    const birthYear = userData.dob ? new Date(userData.dob).getFullYear() : 0;
-    const minYear = birthYear + 16;
-    
-    if (edu.year < minYear) {
-      return `Year must be at least ${minYear} (16 years after birth)`;
-    }
-    
-    if (edu.percentage < 0 || edu.percentage > 100) {
-      return 'Percentage must be between 0 and 100';
-    }
-    
-    return null;
-  };
-
-  // Add validation for project duration
-  const validateProjectDuration = (duration) => {
-    const months = parseInt(duration);
-    if (isNaN(months) || months < 1 || months > 12) {
-      return 'Project duration must be between 1 and 12 months';
-    }
-    return null;
   };
 
   if (!userData) {
@@ -688,7 +605,7 @@ const AlumniDashboard = () => {
                         type="text"
                         className="form-control"
                         name="first_name"
-                        value={safeValue(formData.firstName)}
+                        value={safeValue(userData.first_name)}
                         onChange={handleFieldChange}
                         required
                         disabled={!isEditing}
@@ -700,7 +617,7 @@ const AlumniDashboard = () => {
                         type="text"
                         className="form-control"
                         name="middle_name"
-                        value={safeValue(formData.middleName)}
+                        value={safeValue(userData.middle_name)}
                         onChange={handleFieldChange}
                         disabled={!isEditing}
                       />
@@ -711,7 +628,7 @@ const AlumniDashboard = () => {
                         type="text"
                         className="form-control"
                         name="last_name"
-                        value={safeValue(formData.lastName)}
+                        value={safeValue(userData.last_name)}
                         onChange={handleFieldChange}
                         required
                         disabled={!isEditing}
@@ -732,7 +649,7 @@ const AlumniDashboard = () => {
                         type="date"
                         className="form-control"
                         name="dob"
-                        value={formData.dob ? new Date(formData.dob).toISOString().split('T')[0] : ''}
+                        value={userData.dob ? new Date(userData.dob).toISOString().split('T')[0] : ''}
                         onChange={handleFieldChange}
                         min={minDob}
                         max={maxDob}
@@ -745,7 +662,7 @@ const AlumniDashboard = () => {
                       <select
                         name="gender"
                         className="form-select"
-                        value={safeValue(formData.gender)}
+                        value={safeValue(userData.gender)}
                         onChange={handleFieldChange}
                         required
                         disabled={!isEditing}
@@ -776,7 +693,7 @@ const AlumniDashboard = () => {
                         type="text"
                         className="form-control"
                         name="department"
-                        value={safeValue(formData.department)}
+                        value="Information Technology"
                         readOnly
                       />
                     </div>
@@ -786,20 +703,22 @@ const AlumniDashboard = () => {
                         type="text"
                         className="form-control"
                         name="course"
-                        value={safeValue(formData.course)}
+                        value="B. Tech. Information Technology"
                         readOnly
                       />
                     </div>
                     <div className="col-md-6">
                       <label className="form-label">Passing Year *</label>
                       <input
-                        type="number"
-                        name="passing_year"
-                        value={safeValue(formData.passingYear)}
-                        onChange={handleFieldChange}
+                        type="month"
                         className="form-control"
-                        min={2003}
-                        max={new Date().getFullYear()}
+                        name="passing_year"
+                        value={safeValue(userData.passing_year)}
+                        onChange={handleFieldChange}
+                        min={minPassingYear}
+                        max={maxPassingYear}
+                        required
+                        disabled={!isEditing}
                       />
                     </div>
                   </div>
@@ -822,7 +741,7 @@ const AlumniDashboard = () => {
                         type="text"
                         className="form-control"
                         name="current_company"
-                        value={safeValue(formData.current_company)}
+                        value={safeValue(userData.current_company)}
                         onChange={handleFieldChange}
                         required
                         disabled={!isEditing}
@@ -834,7 +753,7 @@ const AlumniDashboard = () => {
                         type="text"
                         className="form-control"
                         name="designation"
-                        value={safeValue(formData.designation)}
+                        value={safeValue(userData.designation)}
                         onChange={handleFieldChange}
                         required
                         disabled={!isEditing}
@@ -846,7 +765,7 @@ const AlumniDashboard = () => {
                         type="text"
                         className="form-control"
                         name="current_location"
-                        value={safeValue(formData.current_location)}
+                        value={safeValue(userData.current_location)}
                         onChange={handleFieldChange}
                         placeholder="e.g., Mumbai, Maharashtra"
                         required
@@ -859,9 +778,9 @@ const AlumniDashboard = () => {
                         type="date"
                         className="form-control"
                         name="joined_date"
-                        value={formData.joined_date ? new Date(formData.joined_date).toISOString().split('T')[0] : ''}
+                        value={userData.joined_date ? new Date(userData.joined_date).toISOString().split('T')[0] : ''}
                         onChange={handleFieldChange}
-                        min={formData.passing_year ? new Date(formData.passing_year).toISOString().split('T')[0] : ''}
+                        min={userData.passing_year ? new Date(userData.passing_year).toISOString().split('T')[0] : ''}
                         max={new Date().toISOString().split('T')[0]}
                         required
                         disabled={!isEditing}
@@ -892,7 +811,7 @@ const AlumniDashboard = () => {
                         type="text"
                         className="form-control"
                         name="phone"
-                        value={formData.phone}
+                        value={userData.phone}
                         onChange={handleFieldChange}
                         maxLength={10}
                         pattern="\d{10}"
@@ -907,7 +826,7 @@ const AlumniDashboard = () => {
                         type="text"
                         className="form-control"
                         name="alt_phone"
-                        value={formData.altPhone}
+                        value={userData.alt_phone}
                         onChange={handleFieldChange}
                         maxLength={10}
                         pattern="\d{10}"
@@ -915,35 +834,28 @@ const AlumniDashboard = () => {
                         disabled={!isEditing}
                       />
                     </div>
-                    <div className="col-md-12">
-                      <label>Current Address</label>
+                    <div className="col-md-6">
+                      <label className="form-label">Current Address *</label>
                       <textarea
-                        name="current_address"
-                        value={safeValue(formData.currentAddress)}
-                        onChange={handleFieldChange}
                         className="form-control"
+                        name="current_address"
+                        value={safeValue(userData.current_address)}
+                        onChange={handleFieldChange}
                         rows="3"
+                        required
+                        disabled={!isEditing}
                       />
                     </div>
-                    <div className="col-md-12">
-                      <div className="form-check mb-2">
-                        <input
-                          type="checkbox"
-                          className="form-check-input"
-                          id="copyAddress"
-                          onChange={handleCopyCurrentAddress}
-                        />
-                        <label className="form-check-label" htmlFor="copyAddress">
-                          Same as Current Address
-                        </label>
-                      </div>
-                      <label>Permanent Address</label>
+                    <div className="col-md-6">
+                      <label className="form-label">Permanent Address *</label>
                       <textarea
-                        name="permanent_address"
-                        value={safeValue(formData.permanentAddress)}
-                        onChange={handleFieldChange}
                         className="form-control"
+                        name="permanent_address"
+                        value={safeValue(userData.permanent_address)}
+                        onChange={handleFieldChange}
                         rows="3"
+                        required
+                        disabled={!isEditing}
                       />
                     </div>
                   </div>
@@ -1116,47 +1028,77 @@ const AlumniDashboard = () => {
                 </div>
                 <div className="card-body">
                   {education.map((edu, index) => (
-                    <div key={index} className="education-item mb-4">
-                      <div className="row">
+                    <div key={index} className="mb-3 p-3 border rounded">
+                      <div className="d-flex justify-content-between align-items-center mb-2">
+                        <h6 className="mb-0">Education {index + 1}</h6>
+                        {isEditing && edu.type === 'Post Graduation' && (
+                          <button
+                            type="button"
+                            className="btn btn-danger btn-sm"
+                            onClick={() => handleRemoveEducation(index)}
+                          >
+                            <FaTrash />
+                          </button>
+                        )}
+                      </div>
+                      <div className="row g-3">
                         <div className="col-md-6">
-                          <label>Institution</label>
+                          <label className="form-label">Type</label>
                           <input
                             type="text"
+                            className="form-control"
+                            value={edu.type}
+                            readOnly
+                          />
+                        </div>
+                        <div className="col-md-6">
+                          <label className="form-label">Institution</label>
+                          <input
+                            type="text"
+                            className="form-control"
                             value={edu.institution}
                             onChange={(e) => handleChange(setEducation, education, index, 'institution', e.target.value)}
-                            className="form-control"
+                            disabled={!isEditing}
                           />
                         </div>
                         <div className="col-md-6">
-                          <label>Board</label>
+                          <label className="form-label">Board</label>
                           <input
                             type="text"
+                            className="form-control"
                             value={edu.board}
                             onChange={(e) => handleChange(setEducation, education, index, 'board', e.target.value)}
-                            className="form-control"
+                            disabled={!isEditing}
                           />
                         </div>
                         <div className="col-md-6">
-                          <label>Year</label>
+                          <label className="form-label">Year</label>
                           <input
                             type="number"
+                            className="form-control"
                             value={edu.year}
                             onChange={(e) => handleChange(setEducation, education, index, 'year', e.target.value)}
-                            className="form-control"
-                            min={userData.dob ? new Date(userData.dob).getFullYear() + 16 : 2000}
-                            max={new Date().getFullYear()}
+                            disabled={!isEditing}
                           />
                         </div>
                         <div className="col-md-6">
-                          <label>Percentage</label>
+                          <label className="form-label">Grade</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            value={edu.grade}
+                            onChange={(e) => handleChange(setEducation, education, index, 'grade', e.target.value)}
+                            disabled={!isEditing}
+                          />
+                        </div>
+                        <div className="col-md-6">
+                          <label className="form-label">Percentage</label>
                           <input
                             type="number"
+                            className="form-control"
                             value={edu.percentage}
                             onChange={(e) => handleChange(setEducation, education, index, 'percentage', e.target.value)}
-                            className="form-control"
-                            min="0"
-                            max="100"
-                            step="0.01"
+                            disabled={!isEditing}
                           />
                         </div>
                       </div>
@@ -1175,53 +1117,74 @@ const AlumniDashboard = () => {
                 </div>
                 <div className="card-body">
                   {projects.map((project, index) => (
-                    <div key={index} className="project-item mb-4">
-                      <div className="row">
+                    <div key={index} className="mb-4 p-3 border rounded">
+                      <div className="d-flex justify-content-between align-items-center mb-3">
+                        <h6 className="mb-0">Project {index + 1}</h6>
+                        {index > 0 && (
+                          <button
+                            type="button"
+                            className="btn btn-danger btn-sm"
+                            onClick={() => handleRemoveProject(index)}
+                            disabled={!isEditing}
+                          >
+                            <FaTrash />
+                          </button>
+                        )}
+                      </div>
+                      <div className="row g-3">
                         <div className="col-md-6">
-                          <label>Title</label>
+                          <label className="form-label">Title</label>
                           <input
                             type="text"
+                            className="form-control"
                             value={project.title}
                             onChange={(e) => handleProjectChange(index, 'title', e.target.value)}
-                            className="form-control"
+                            placeholder="Project Title"
+                            disabled={!isEditing}
                           />
                         </div>
                         <div className="col-md-6">
-                          <label>Duration (months)</label>
-                          <input
-                            type="number"
-                            value={project.duration}
-                            onChange={(e) => handleProjectChange(index, 'duration', e.target.value)}
-                            className="form-control"
-                            min="1"
-                            max="12"
-                          />
-                        </div>
-                        <div className="col-md-12">
-                          <label>Description</label>
-                          <textarea
-                            value={project.description}
-                            onChange={(e) => handleProjectChange(index, 'description', e.target.value)}
-                            className="form-control"
-                            rows="3"
-                          />
-                        </div>
-                        <div className="col-md-6">
-                          <label>Technologies</label>
+                          <label className="form-label">Technologies</label>
                           <input
                             type="text"
+                            className="form-control"
                             value={project.technologies}
                             onChange={(e) => handleProjectChange(index, 'technologies', e.target.value)}
+                            placeholder="Technologies Used"
+                            disabled={!isEditing}
+                          />
+                        </div>
+                        <div className="col-12">
+                          <label className="form-label">Description</label>
+                          <textarea
                             className="form-control"
+                            value={project.description}
+                            onChange={(e) => handleProjectChange(index, 'description', e.target.value)}
+                            placeholder="Project Description"
+                            rows="3"
+                            disabled={!isEditing}
                           />
                         </div>
                         <div className="col-md-6">
-                          <label>Project Link</label>
+                          <label className="form-label">Duration</label>
                           <input
-                            type="url"
+                            type="text"
+                            className="form-control"
+                            value={project.duration}
+                            onChange={(e) => handleProjectChange(index, 'duration', e.target.value)}
+                            placeholder="Duration"
+                            disabled={!isEditing}
+                          />
+                        </div>
+                        <div className="col-md-6">
+                          <label className="form-label">Project Link</label>
+                          <input
+                            type="text"
+                            className="form-control"
                             value={project.link}
                             onChange={(e) => handleProjectChange(index, 'link', e.target.value)}
-                            className="form-control"
+                            placeholder="Project Link"
+                            disabled={!isEditing}
                           />
                         </div>
                       </div>
@@ -1356,4 +1319,3 @@ const AlumniDashboard = () => {
 };
 
 export default AlumniDashboard;
-
