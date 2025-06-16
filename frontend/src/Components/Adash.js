@@ -5,8 +5,7 @@ import Header from './Header';
 import axios from 'axios';
 import './Adash.css';
 import { toast } from 'react-hot-toast';
-import { profileService } from '../services/api';
-import { uploadService } from '../services/upload';
+import { alumniService, uploadService } from '../services/api';
 
 const AlumniDashboard = () => {
   const navigate = useNavigate();
@@ -330,7 +329,7 @@ const AlumniDashboard = () => {
       console.log('Submitting alumni profile payload:', payload);
 
       // Use the profileService to update the profile
-      const response = await profileService.updateProfile(payload);
+      const response = await alumniService.updateProfile(payload);
       
       if (response) {
         toast.success('Profile updated successfully!');
