@@ -81,8 +81,6 @@ const styles = {
     padding: '2rem',
     borderRadius: '20px',
     boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
-    overflowY: 'auto',
-    maxHeight: '600px',
     position: 'relative',
     zIndex: 1,
     backdropFilter: 'blur(10px)',
