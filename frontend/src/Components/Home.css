@@ -106,7 +106,7 @@
 .vision-mission-section {
   scrollbar-width: thin;
   scrollbar-color: #1a2a6c #f8f9fa;
-  height: calc(100vh); /* Full viewport height minus padding */
+  height: calc(100vh- 4rem); /* Full viewport height minus padding */
   overflow-y: auto;
 }
 
