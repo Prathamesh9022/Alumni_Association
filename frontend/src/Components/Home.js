@@ -356,83 +356,85 @@ export default function Home() {
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <h2 style={styles.sectionTitle}>Vision & Mission</h2>
-      
-      <motion.div
-        initial={{ opacity: 0, x: -50 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 0.2 }}
-      >
-        <h3 style={styles.subsectionTitle}>Institution Vision</h3>
-        <p style={styles.content}>
-          To be a leading Engineering institution developing proficient Engineers with global acceptance in the service of mankind.
-        </p>
-      </motion.div>
+      <div className="vision-mission-content">
+        <h2 style={styles.sectionTitle}>Vision & Mission</h2>
+        
+        <motion.div
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          <h3 style={styles.subsectionTitle}>Institution Vision</h3>
+          <p style={styles.content}>
+            To be a leading Engineering institution developing proficient Engineers with global acceptance in the service of mankind.
+          </p>
+        </motion.div>
 
-      <motion.div
-        initial={{ opacity: 0, x: -50 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 0.3 }}
-      >
-        <h3 style={styles.subsectionTitle}>Institution Mission</h3>
-        <p style={styles.content}>
-          • Quality Engineering education with multidisciplinary approach<br />
-          • Develop globally competent Engineers solving real-life problems<br />
-          • Foster innovation, research, and industry collaboration<br />
-          • Nurture leadership and ethical values
-        </p>
-      </motion.div>
+        <motion.div
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.3 }}
+        >
+          <h3 style={styles.subsectionTitle}>Institution Mission</h3>
+          <p style={styles.content}>
+            • Quality Engineering education with multidisciplinary approach<br />
+            • Develop globally competent Engineers solving real-life problems<br />
+            • Foster innovation, research, and industry collaboration<br />
+            • Nurture leadership and ethical values
+          </p>
+        </motion.div>
 
-      <motion.div
-        initial={{ opacity: 0, x: -50 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 0.4 }}
-      >
-        <h3 style={styles.subsectionTitle}>Department Vision</h3>
-        <p style={styles.content}>
-          To be a leading Department developing proficient IT Engineers with global acceptance in the service of society and IT industry.
-        </p>
-      </motion.div>
+        <motion.div
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.4 }}
+        >
+          <h3 style={styles.subsectionTitle}>Department Vision</h3>
+          <p style={styles.content}>
+            To be a leading Department developing proficient IT Engineers with global acceptance in the service of society and IT industry.
+          </p>
+        </motion.div>
 
-      <motion.div
-        initial={{ opacity: 0, x: -50 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 0.5 }}
-      >
-        <h3 style={styles.subsectionTitle}>Department Mission</h3>
-        <p style={styles.content}>
-          • Develop IT Professionals with strong technical knowledge<br />
-          • Create problem solvers using modern technologies<br />
-          • Foster innovation and industry collaboration<br />
-          • Promote ethics and lifelong learning
-        </p>
-      </motion.div>
+        <motion.div
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.5 }}
+        >
+          <h3 style={styles.subsectionTitle}>Department Mission</h3>
+          <p style={styles.content}>
+            • Develop IT Professionals with strong technical knowledge<br />
+            • Create problem solvers using modern technologies<br />
+            • Foster innovation and industry collaboration<br />
+            • Promote ethics and lifelong learning
+          </p>
+        </motion.div>
 
-      <motion.div
-        initial={{ opacity: 0, x: -50 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 0.6 }}
-      >
-        <h3 style={styles.subsectionTitle}>Program Objectives</h3>
-        <p style={styles.content}>
-          • Technical expertise in Hardware and Software Systems<br />
-          • Analytical and design skills for sustainable solutions<br />
-          • Research in emerging IT areas<br />
-          • Leadership and entrepreneurial skills
-        </p>
-      </motion.div>
+        <motion.div
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.6 }}
+        >
+          <h3 style={styles.subsectionTitle}>Program Objectives</h3>
+          <p style={styles.content}>
+            • Technical expertise in Hardware and Software Systems<br />
+            • Analytical and design skills for sustainable solutions<br />
+            • Research in emerging IT areas<br />
+            • Leadership and entrepreneurial skills
+          </p>
+        </motion.div>
 
-      <motion.div
-        initial={{ opacity: 0, x: -50 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 0.7 }}
-      >
-        <h3 style={styles.subsectionTitle}>Program Outcomes</h3>
-        <p style={styles.content}>
-          • Apply Software Engineering practices<br />
-          • Develop applications in emerging technologies
-        </p>
-      </motion.div>
+        <motion.div
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.7 }}
+        >
+          <h3 style={styles.subsectionTitle}>Program Outcomes</h3>
+          <p style={styles.content}>
+            • Apply Software Engineering practices<br />
+            • Develop applications in emerging technologies
+          </p>
+        </motion.div>
+      </div>
     </motion.div>
   );
 

@@ -104,23 +104,19 @@
 }
 
 .vision-mission-section {
-  scrollbar-width: thin;
-  scrollbar-color: #1a2a6c #f8f9fa;
-  height: calc(110vh- 4rem); /* Full viewport height minus padding */
+  position: relative;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+
+.vision-mission-content {
+  position: relative;
+  z-index: 2;
   overflow-y: auto;
-}
-
-.vision-mission-section::-webkit-scrollbar {
-  width: 8px;
-}
-
-.vision-mission-section::-webkit-scrollbar-track {
-  background: #f8f9fa;
-}
-
-.vision-mission-section::-webkit-scrollbar-thumb {
-  background-color: #1a2a6c;
-  border-radius: 4px;
+  max-height: 600px;
+  padding: 2rem;
 }
 
 /* Success Stories and Vision & Mission Section Styles */
