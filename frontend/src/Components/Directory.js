@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FaFilter, FaUser, FaGraduationCap, FaBriefcase, FaEnvelope, FaPhone, FaMapMarkerAlt, FaCode, FaCheck, FaTimes, FaTrash } from 'react-icons/fa';
+import { FaFilter, FaUser, FaGraduationCap, FaBriefcase, FaEnvelope, FaPhone, FaMapMarkerAlt, FaCode, FaCheck, FaTimes, FaTrash, FaFileExport } from 'react-icons/fa';
 import Header from './Header';
 import '../App.css'
 // import img4 from "../img/mgmalumini4.jpg"
@@ -94,6 +94,66 @@ const Directory = () => {
     }
   };
 
+  const exportToCSV = (data, type) => {
+    // Define headers based on type
+    const headers = type === 'alumni' 
+      ? ['Name', 'Email', 'Phone', 'Department', 'Course', 'Passing Year', 'Current Company', 'Designation', 'Location', 'Skills', 'Projects', 'Achievements', 'Education']
+      : ['Name', 'Email', 'Phone', 'Department', 'Course', 'Current Year', 'Student ID', 'Address', 'Skills', 'Projects', 'Achievements', 'Education'];
+
+    // Format data for CSV
+    const csvData = data.map(item => {
+      if (type === 'alumni') {
+        return [
+          `${item.first_name} ${item.last_name}`,
+          item.email || '',
+          item.phone || '',
+          item.department || '',
+          item.course || '',
+          item.passing_year || '',
+          item.current_company || '',
+          item.designation || '',
+          item.current_location || '',
+          (item.skillset || []).join('; '),
+          (item.projects || []).map(p => p.title).join('; '),
+          (item.achievements || []).map(a => a.title).join('; '),
+          (item.education || []).map(e => e.institution).join('; ')
+        ];
+      } else {
+        return [
+          `${item.first_name} ${item.last_name}`,
+          item.email || '',
+          item.phone || '',
+          item.department || '',
+          item.course || '',
+          item.current_year || '',
+          item.student_id || '',
+          item.current_address || '',
+          (item.skillset || []).join('; '),
+          (item.projects || []).map(p => p.title).join('; '),
+          (item.achievements || []).map(a => a.title).join('; '),
+          (item.education || []).map(e => e.institution).join('; ')
+        ];
+      }
+    });
+
+    // Convert to CSV string
+    const csvContent = [
+      headers.join(','),
+      ...csvData.map(row => row.map(cell => `"${cell}"`).join(','))
+    ].join('\n');
+
+    // Create and download file
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `${type}_directory_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   if (loading) {
     return (
       <>
@@ -124,6 +184,30 @@ const Directory = () => {
     <>
       <Header />
       <div className="container py-5">
+        <div className="d-flex justify-content-between align-items-center mb-4">
+          <div className="d-flex gap-2">
+            <button className={`btn ${activeTab === 'alumni' ? 'btn-primary' : 'btn-outline-primary'}`} onClick={() => setActiveTab('alumni')}>Alumni</button>
+            <button className={`btn ${activeTab === 'students' ? 'btn-primary' : 'btn-outline-primary'}`} onClick={() => setActiveTab('students')}>Students</button>
+          </div>
+          {isAdmin && (
+            <div className="d-flex gap-2">
+              <button 
+                className="btn btn-success" 
+                onClick={() => exportToCSV(alumni, 'alumni')}
+                style={{ display: activeTab === 'alumni' ? 'block' : 'none' }}
+              >
+                <FaFileExport className="me-2" /> Export Alumni to CSV
+              </button>
+              <button 
+                className="btn btn-success" 
+                onClick={() => exportToCSV(students, 'students')}
+                style={{ display: activeTab === 'students' ? 'block' : 'none' }}
+              >
+                <FaFileExport className="me-2" /> Export Students to CSV
+              </button>
+            </div>
+          )}
+        </div>
         <div className="d-flex gap-2 mb-4">
           <button className={`btn ${activeTab === 'alumni' ? 'btn-primary' : 'btn-outline-primary'}`} onClick={() => setActiveTab('alumni')}>Alumni</button>
           <button className={`btn ${activeTab === 'students' ? 'btn-primary' : 'btn-outline-primary'}`} onClick={() => setActiveTab('students')}>Students</button>
