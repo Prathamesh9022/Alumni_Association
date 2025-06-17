@@ -347,6 +347,10 @@ const Event = () => {
                           <button className="btn btn-danger btn-lg" style={{ minWidth: 160, borderRadius: '2em', boxShadow: '0 2px 8px rgba(231,76,60,0.10)', fontWeight: 600, transition: 'all 0.2s' }} onClick={() => handleEventRegistration(event._id, false)}>
                             <FaUserMinus className="me-2" /> Cancel Registration
                           </button>
+                        ) : event.organizer?.userId === JSON.parse(localStorage.getItem('user'))?._id ? (
+                          <Link to={`/event/${event._id}/participants`} className="btn btn-secondary btn-lg" style={{ minWidth: 160, borderRadius: '2em', boxShadow: '0 2px 8px rgba(26,42,108,0.10)', fontWeight: 600, transition: 'all 0.2s', display: 'inline-flex', alignItems: 'center', gap: '0.5em' }}>
+                            <FaUsers className="me-2" /> View Participants ({event.participantCount || 0})
+                          </Link>
                         ) : (
                           <button className="btn btn-primary btn-lg" style={{ minWidth: 160, borderRadius: '2em', boxShadow: '0 4px 15px rgba(26,42,108,0.15)', fontWeight: 600, transition: 'all 0.2s' }} onClick={() => handleEventRegistration(event._id, true)} disabled={event.isFull}>
                             <FaUserPlus className="me-2" /> Register Now{event.isFull && ' (Full)'}
