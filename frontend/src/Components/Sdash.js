@@ -1297,21 +1297,10 @@ const StudentDashboard = () => {
 
             {/* Submit Button */}
             <div className="text-center">
-              {isEditing ? (
-                <button type="submit" className="btn btn-primary btn-lg w-100" style={{ minWidth: 160, borderRadius: '2em', boxShadow: '0 4px 15px rgba(26,42,108,0.15)', fontWeight: 600, transition: 'all 0.2s' }}>
-                  <FaSave className="me-2" />
-                  Save Profile
-                </button>
-              ) : (
-                <button 
-                  type="button" 
-                  className="btn btn-primary btn-lg"
-                  onClick={() => setIsEditing(true)}
-                >
-                  <FaEdit className="me-2" />
-                  Edit Profile
-                </button>
-              )}
+              <button type="submit" className="btn btn-primary btn-lg w-100" style={{ minWidth: 160, borderRadius: '2em', boxShadow: '0 4px 15px rgba(26,42,108,0.15)', fontWeight: 600, transition: 'all 0.2s' }}>
+                <FaSave className="me-2" />
+                Save Profile
+              </button>
             </div>
           </form>
         </div>
