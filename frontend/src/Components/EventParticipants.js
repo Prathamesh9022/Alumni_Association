@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { 
   FaUsers, 
   FaArrowLeft, 
@@ -13,7 +12,9 @@ import {
   FaMapMarkerAlt,
   FaPhone,
   FaBuilding,
-  FaBriefcase
+  FaBriefcase,
+  FaSpinner,
+  FaExclamationTriangle
 } from 'react-icons/fa';
 import api from '../services/api';
 import Header from './Header';
@@ -52,20 +53,15 @@ const EventParticipants = () => {
           switch (err.response.status) {
             case 404:
               errorMessage = 'This event no longer exists or has been removed.';
-              // Immediately navigate back to events page for 404 errors
               navigate('/events');
               break;
             case 403:
               errorMessage = 'You are not authorized to view participants for this event.';
-              setTimeout(() => {
-                navigate('/events');
-              }, 3000);
+              setTimeout(() => navigate('/events'), 3000);
               break;
             case 401:
               errorMessage = 'Please log in to view event participants.';
-              setTimeout(() => {
-                navigate('/login');
-              }, 3000);
+              setTimeout(() => navigate('/login'), 3000);
               break;
             default:
               errorMessage = err.response.data?.error || 'An error occurred while loading participants.';
@@ -85,27 +81,20 @@ const EventParticipants = () => {
     fetchEventAndParticipants();
   }, [eventId, navigate]);
 
-  // Function to format date
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
-  // Function to export participants to CSV
   const exportToCSV = () => {
     if (!participants.length || !event) return;
 
-    // Prepare CSV content
     const headers = ['Name', 'Email', 'Type', 'Registration Date'];
-    
     const csvRows = [
-      // Title row with event information
       [`Participants for: ${event.title}`],
       [`Event Date: ${formatDate(event.date)}`],
-      [''], // Empty row for spacing
-      headers, // Header row
-      
-      // Data rows
+      [''],
+      headers,
       ...participants.map(p => [
         p.name,
         p.email,
@@ -114,10 +103,7 @@ const EventParticipants = () => {
       ])
     ];
     
-    // Convert to CSV format
     const csvContent = csvRows.map(row => row.join(',')).join('\n');
-    
-    // Create blob and download
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -143,6 +129,7 @@ const EventParticipants = () => {
     return (
       <div className="container py-5">
         <div className="alert alert-danger">
+          <FaExclamationTriangle className="me-2" />
           {error}
           {error.includes('authorized') && (
             <p className="mt-2 mb-0">Redirecting back to events page...</p>
@@ -162,6 +149,7 @@ const EventParticipants = () => {
     return (
       <div className="container py-5">
         <div className="alert alert-warning">
+          <FaExclamationTriangle className="me-2" />
           Event not found
         </div>
         <div className="mt-3">
@@ -175,83 +163,119 @@ const EventParticipants = () => {
   }
 
   return (
-    <div className="container">
+    <>
       <Header />
-      <div className="content">
+      <div className="container py-5">
         <div className="d-flex justify-content-between align-items-center mb-4">
           <h2 className="fw-bold mb-0">
             <FaUsers className="me-2" />
             Event Participants
           </h2>
           
-          <Link to="/events" className="btn btn-outline-primary">
-            <FaArrowLeft className="me-2" />
-            Back to Events
-          </Link>
+          <div className="d-flex gap-2">
+            <button 
+              onClick={exportToCSV}
+              className="btn btn-outline-primary"
+              disabled={!participants.length}
+            >
+              <FaDownload className="me-2" />
+              Export to CSV
+            </button>
+            <Link to="/events" className="btn btn-outline-secondary">
+              <FaArrowLeft className="me-2" />
+              Back to Events
+            </Link>
+          </div>
         </div>
         
-        <div className="event-details">
-          <h3>{event.title}</h3>
-          <p>{event.description}</p>
-          <div className="event-meta">
-            <span><FaCalendarAlt /> {new Date(event.date).toLocaleDateString()}</span>
-            <span><FaClock /> {event.time}</span>
-            <span><FaMapMarkerAlt /> {event.location}</span>
+        <div className="card mb-4 shadow-sm">
+          <div className="card-body">
+            <h3 className="card-title mb-3">{event.title}</h3>
+            <p className="card-text text-muted mb-3">{event.description}</p>
+            <div className="d-flex flex-wrap gap-3">
+              <div className="d-flex align-items-center">
+                <FaCalendarAlt className="text-primary me-2" />
+                <span>{formatDate(event.date)}</span>
+              </div>
+              <div className="d-flex align-items-center">
+                <FaClock className="text-primary me-2" />
+                <span>{event.time}</span>
+              </div>
+              {event.venue && (
+                <div className="d-flex align-items-center">
+                  <FaMapMarkerAlt className="text-primary me-2" />
+                  <span>{event.venue}</span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
-        <div className="participants-section">
-          <h3>
-            <FaUsers /> Participants ({participants.length})
-          </h3>
-
-          <div className="participants-grid">
-            {participants.map((participant) => (
-              <div key={participant._id} className="participant-card">
-                <div className="participant-header">
-                  <FaUser className="participant-icon" />
-                  <h4>{`${participant.first_name} ${participant.last_name}`}</h4>
-                </div>
-                
-                <div className="participant-details">
-                  <div className="detail-item">
-                    <FaEnvelope className="detail-icon" />
-                    <span>{participant.email}</span>
-                  </div>
-                  
-                  {participant.phone && (
-                    <div className="detail-item">
-                      <FaPhone className="detail-icon" />
-                      <span>{participant.phone}</span>
-                    </div>
-                  )}
-                  
-                  {participant.current_company && (
-                    <div className="detail-item">
-                      <FaBuilding className="detail-icon" />
-                      <span>{participant.current_company}</span>
-                    </div>
-                  )}
-                  
-                  {participant.designation && (
-                    <div className="detail-item">
-                      <FaBriefcase className="detail-icon" />
-                      <span>{participant.designation}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            ))}
+        <div className="card shadow-sm">
+          <div className="card-header bg-white">
+            <h3 className="mb-0">
+              <FaUsers className="me-2 text-primary" />
+              Participants ({participants.length})
+            </h3>
           </div>
-
-          {participants.length === 0 && (
-            <div className="no-participants">
-              No participants have registered for this event yet.
-            </div>
-          )}
+          <div className="card-body">
+            {participants.length > 0 ? (
+              <div className="row g-4">
+                {participants.map((participant) => (
+                  <div key={participant._id} className="col-md-6 col-lg-4">
+                    <div className="card h-100 border-0 shadow-sm hover-shadow">
+                      <div className="card-body">
+                        <div className="d-flex align-items-center mb-3">
+                          <div className="participant-avatar me-3">
+                            <FaUser className="text-primary" size={24} />
+                          </div>
+                          <h5 className="card-title mb-0">
+                            {`${participant.first_name} ${participant.last_name}`}
+                          </h5>
+                        </div>
+                        
+                        <div className="participant-details">
+                          <div className="detail-item mb-2">
+                            <FaEnvelope className="text-primary me-2" />
+                            <span>{participant.email}</span>
+                          </div>
+                          
+                          {participant.phone && (
+                            <div className="detail-item mb-2">
+                              <FaPhone className="text-primary me-2" />
+                              <span>{participant.phone}</span>
+                            </div>
+                          )}
+                          
+                          {participant.current_company && (
+                            <div className="detail-item mb-2">
+                              <FaBuilding className="text-primary me-2" />
+                              <span>{participant.current_company}</span>
+                            </div>
+                          )}
+                          
+                          {participant.designation && (
+                            <div className="detail-item">
+                              <FaBriefcase className="text-primary me-2" />
+                              <span>{participant.designation}</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-5">
+                <FaUsers className="text-muted mb-3" size={48} />
+                <p className="text-muted mb-0">No participants have registered for this event yet.</p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
