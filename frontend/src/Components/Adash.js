@@ -452,6 +452,7 @@ const AlumniDashboard = () => {
   };
 
   function validateProfile(data) {
+    const errors = [];
     // DOB
     const dob = new Date(data.dob);
     // Education
@@ -459,20 +460,20 @@ const AlumniDashboard = () => {
     const edu12 = data.education?.find(e => e.type === '12th');
     const grad = data.education?.find(e => e.type === 'Graduation');
     if (edu10 && isYear(edu10.year)) {
-      if (dob.getFullYear() + 15 > +edu10.year) return '10th passing year must be at least 15 years after DOB';
+      if (dob.getFullYear() + 15 > +edu10.year) errors.push('10th passing year must be at least 15 years after DOB');
     }
     if (edu12 && edu10 && isYear(edu12.year) && isYear(edu10.year)) {
-      if (+edu10.year + 2 > +edu12.year) return '12th passing year must be at least 2 years after 10th';
+      if (+edu10.year + 2 > +edu12.year) errors.push('12th passing year must be at least 2 years after 10th');
     }
     if (grad && edu12 && isYear(grad.year) && isYear(edu12.year)) {
-      if (+edu12.year + 4 > +grad.year) return 'Graduation passing year must be at least 4 years after 12th';
+      if (+edu12.year + 4 > +grad.year) errors.push('Graduation passing year must be at least 4 years after 12th');
     }
     // Achievements - only validate date if it's provided
     if (Array.isArray(data.achievements)) {
       for (const ach of data.achievements) {
         if (ach.date && ach.date.trim() !== '') {
           if (!isNotFuture(ach.date) || new Date(ach.date) < dob) {
-            return 'Achievement date must not be in the future and after DOB';
+            errors.push('Achievement date must not be in the future and after DOB');
           }
         }
       }
@@ -480,24 +481,26 @@ const AlumniDashboard = () => {
     // Experience/Projects
     if (Array.isArray(data.experience)) {
       for (const exp of data.experience) {
-        if (exp.months && !isMonth(exp.months)) return 'Experience months must be between 1 and 12';
+        if (exp.months && !isMonth(exp.months)) errors.push('Experience months must be between 1 and 12');
       }
     }
     if (Array.isArray(data.projects)) {
       for (const proj of data.projects) {
-        if (proj.months && !isMonth(proj.months)) return 'Project months must be between 1 and 12';
+        if (proj.months && !isMonth(proj.months)) errors.push('Project months must be between 1 and 12');
       }
     }
     // Percentage
     if (Array.isArray(data.education)) {
       for (const edu of data.education) {
-        if (edu.percentage && (!isPercentage(edu.percentage) || +edu.percentage > 100 || +edu.percentage < 0)) return 'Percentage must be between 0 and 100';
+        if (edu.percentage && (!isPercentage(edu.percentage) || +edu.percentage > 100 || +edu.percentage < 0)) {
+          errors.push('Percentage must be between 0 and 100');
+        }
       }
     }
     // Phone
-    if (data.phone && !isPhone(data.phone)) return 'Phone must be 10 digits';
-    if (data.alt_phone && !isPhone(data.alt_phone)) return 'Alternate phone must be 10 digits';
-    return null;
+    if (data.phone && !isPhone(data.phone)) errors.push('Phone must be 10 digits');
+    if (data.alt_phone && !isPhone(data.alt_phone)) errors.push('Alternate phone must be 10 digits');
+    return errors;
   }
 
   // Add function to handle adding education
