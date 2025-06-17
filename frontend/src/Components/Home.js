@@ -519,8 +519,29 @@ export default function Home() {
     arcLabelsTextColor: { from: 'color', modifiers: [['darker', 2]] }
   };
 
+  // Mapping for student year
+  const yearLabelMap = {
+    1: 'FY',
+    2: 'SY',
+    3: 'TY',
+    4: 'BY',
+    '1': 'FY',
+    '2': 'SY',
+    '3': 'TY',
+    '4': 'BY',
+    FY: 'FY',
+    SY: 'SY',
+    TY: 'TY',
+    BY: 'BY',
+  };
+
+  const mappedStudentYearWise = analyticsData.studentYearWise.map(item => ({
+    ...item,
+    year: yearLabelMap[item.year] || item.year
+  }));
+
   const barChartConfig = {
-    data: analyticsData.studentYearWise,
+    data: mappedStudentYearWise,
     keys: ['count'],
     indexBy: 'year',
     margin: { top: 50, right: 130, bottom: 50, left: 60 },
