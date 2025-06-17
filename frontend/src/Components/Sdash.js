@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { FaUser, FaGraduationCap, FaBriefcase, FaSave, FaIdCard, FaTrash, FaPlus, FaTrophy, FaProjectDiagram, FaCode, FaEdit } from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
 import { profileService } from '../services/api';
+import Header from './Header';
 
 // Function to decode JWT token
 const decodeToken = (token) => {
@@ -517,802 +518,805 @@ const StudentDashboard = () => {
   }
 
   return (
-    <div className="container py-5">
-      <div className="card shadow-lg p-4 rounded-4">
-        <div className="text-center mb-4">
-          <h2 className="text-primary fw-bold">
-            <FaUser className="me-2" />
-            Student Dashboard
-          </h2>
-          <p className="text-muted">Complete your profile to get started</p>
-        </div>
-
-        <form onSubmit={handleSubmit}>
-          {/* Profile Photo Section */}
-          <div className="mb-4 text-center">
-            <div className="position-relative d-inline-block">
-              <div
-                className="rounded-circle overflow-hidden"
-                style={{
-                  width: "150px",
-                  height: "150px",
-                  border: "3px solid #0d6efd",
-                  margin: "auto",
-                }}
-              >
-                {profilePic ? (
-                  <img
-                    src={profilePic}
-                    alt="Profile"
-                    className="w-100 h-100 object-fit-cover"
-                  />
-                ) : (
-                  <div className="w-100 h-100 bg-light d-flex align-items-center justify-content-center">
-                    <FaUser size={50} className="text-muted" />
-                  </div>
-                )}
-              </div>
-              <label
-                className="btn btn-primary rounded-circle position-absolute bottom-0 end-0"
-                style={{ width: "40px", height: "40px" }}
-              >
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleProfilePicChange}
-                  className="d-none"
-                />
-                <FaUser className="m-0" />
-              </label>
-            </div>
+    <>
+      <Header />
+      <div className="container py-5">
+        <div className="card shadow-lg p-4 rounded-4">
+          <div className="text-center mb-4">
+            <h2 className="text-primary fw-bold">
+              <FaUser className="me-2" />
+              Student Dashboard
+            </h2>
+            <p className="text-muted">Complete your profile to get started</p>
           </div>
 
-          {/* Personal Information Section */}
-          <div className="card mb-4">
-            <div className="card-header bg-primary text-white">
-              <h5 className="mb-0">Personal Information</h5>
-            </div>
-            <div className="card-body">
-              <div className="row g-3">
-                <div className="col-md-4">
-                  <label className="form-label">First Name *</label>
+          <form onSubmit={handleSubmit}>
+            {/* Profile Photo Section */}
+            <div className="mb-4 text-center">
+              <div className="position-relative d-inline-block">
+                <div
+                  className="rounded-circle overflow-hidden"
+                  style={{
+                    width: "150px",
+                    height: "150px",
+                    border: "3px solid #0d6efd",
+                    margin: "auto",
+                  }}
+                >
+                  {profilePic ? (
+                    <img
+                      src={profilePic}
+                      alt="Profile"
+                      className="w-100 h-100 object-fit-cover"
+                    />
+                  ) : (
+                    <div className="w-100 h-100 bg-light d-flex align-items-center justify-content-center">
+                      <FaUser size={50} className="text-muted" />
+                    </div>
+                  )}
+                </div>
+                <label
+                  className="btn btn-primary rounded-circle position-absolute bottom-0 end-0"
+                  style={{ width: "40px", height: "40px" }}
+                >
                   <input
-                    type="text"
-                    className="form-control"
-                    name="firstName"
-                    value={formData.firstName}
-                    onChange={handleFieldChange}
-                    required
+                    type="file"
+                    accept="image/*"
+                    onChange={handleProfilePicChange}
+                    className="d-none"
                   />
-                </div>
-                <div className="col-md-4">
-                  <label className="form-label">Middle Name</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    name="middleName"
-                    value={formData.middleName}
-                    onChange={handleFieldChange}
-                  />
-                </div>
-                <div className="col-md-4">
-                  <label className="form-label">Last Name *</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    name="lastName"
-                    value={formData.lastName}
-                    onChange={handleFieldChange}
-                    required
-                  />
-                </div>
-
-                <div className="col-md-6">
-                  <label className="form-label">Date of Birth *</label>
-                  <input
-                    type="date"
-                    className="form-control"
-                    name="dob"
-                    value={formData.dob}
-                    onChange={handleFieldChange}
-                    min={minDob}
-                    max={maxDob}
-                    required
-                  />
-                </div>
-                <div className="col-md-6">
-                  <label className="form-label">Gender *</label>
-                  <select
-                    name="gender"
-                    className="form-select"
-                    value={formData.gender}
-                    onChange={handleFieldChange}
-                    required
-                  >
-                    <option value="">Select Gender</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="Other">Other</option>
-                  </select>
-                </div>
+                  <FaUser className="m-0" />
+                </label>
               </div>
             </div>
-          </div>
 
-          {/* Academic Information Section */}
-          <div className="card mb-4">
-            <div className="card-header bg-primary text-white">
-              <h5 className="mb-0">
-                <FaGraduationCap className="me-2" />
-                Academic Information
-              </h5>
-            </div>
-            <div className="card-body">
-              <div className="row g-3">
-                <div className="col-md-6">
-                  <label className="form-label">Department *</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    value="Information Technology"
-                    readOnly
-                  />
-                </div>
-                <div className="col-md-6">
-                  <label className="form-label">Course *</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    value="B. Tech. Information Technology"
-                    readOnly
-                  />
-                </div>
-                <div className="col-md-6">
-                  <label className="form-label">Current Year *</label>
-                  <select
-                    name="currentYear"
-                    className="form-select"
-                    value={formData.currentYear}
-                    onChange={handleFieldChange}
-                    required
-                  >
-                    <option value="">Select Year</option>
-                    <option value="1st Year">1st Year</option>
-                    <option value="2nd Year">2nd Year</option>
-                    <option value="3rd Year">3rd Year</option>
-                    <option value="4th Year">4th Year</option>
-                  </select>
-                </div>
-                <div className="col-md-6">
-                  <label className="form-label">Student ID *</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    name="studentId"
-                    value={formData.studentId || 'S'}
-                    onChange={handleFieldChange}
-                    maxLength={11}
-                    required
-                    pattern="^S\d{10}$"
-                    title="Student ID must start with S and be followed by 10 digits."
-                  />
-                </div>
-                <div className="col-md-6">
-                  <label className="form-label">Email *</label>
-                  <input
-                    type="email"
-                    className="form-control"
-                    value={email}
-                    readOnly
-                  />
-                </div>
+            {/* Personal Information Section */}
+            <div className="card mb-4">
+              <div className="card-header bg-primary text-white">
+                <h5 className="mb-0">Personal Information</h5>
               </div>
-            </div>
-          </div>
-
-          {/* Contact Information Section */}
-          <div className="card mb-4">
-            <div className="card-header bg-primary text-white">
-              <h5 className="mb-0">
-                <FaIdCard className="me-2" />
-                Contact Information
-              </h5>
-            </div>
-            <div className="card-body">
-              <div className="row g-3">
-                <div className="col-md-6">
-                  <label className="form-label">Phone *</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleFieldChange}
-                    maxLength={10}
-                    required
-                    pattern="\d{10}"
-                    title="Phone must be 10 digits."
-                  />
-                </div>
-                <div className="col-md-6">
-                  <label className="form-label">Alternate Phone</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    name="altPhone"
-                    value={formData.altPhone}
-                    onChange={handleFieldChange}
-                    maxLength={10}
-                    pattern="\d{10}"
-                    title="Alternate Phone must be 10 digits."
-                  />
-                </div>
-                <div className="col-md-6">
-                  <label className="form-label">Current Address *</label>
-                  <textarea
-                    className="form-control"
-                    name="currentAddress"
-                    value={formData.currentAddress}
-                    onChange={handleFieldChange}
-                    rows="3"
-                    required
-                  />
-                </div>
-                <div className="col-md-6">
-                  <label className="form-label">Permanent Address *</label>
-                  <textarea
-                    className="form-control"
-                    name="permanentAddress"
-                    value={formData.permanentAddress}
-                    onChange={handleFieldChange}
-                    rows="3"
-                    required
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Experience Section */}
-          <div className="card mb-4">
-            <div className="card-header bg-primary text-white">
-              <h5 className="mb-0">
-                <FaBriefcase className="me-2" />
-                Experience
-              </h5>
-            </div>
-            <div className="card-body">
-              {experience.map((exp, index) => (
-                <div key={index} className="mb-4 p-3 border rounded">
-                  <div className="d-flex justify-content-between align-items-center mb-3">
-                    <h6 className="mb-0">Experience {index + 1}</h6>
-                    {index > 0 && (
-                      <button
-                        type="button"
-                        className="btn btn-danger btn-sm"
-                        onClick={() => handleRemoveField(setExperience, experience, index)}
-                      >
-                        <FaTrash />
-                      </button>
-                    )}
-                  </div>
-                  <div className="row g-3">
-                    <div className="col-md-6">
-                      <label className="form-label">Type</label>
-                      <select
-                        className="form-select"
-                        value={exp.type}
-                        onChange={(e) => handleChange(setExperience, experience, index, 'type', e.target.value)}
-                      >
-                        <option value="">Select Type</option>
-                        <option value="Internship">Internship</option>
-                        <option value="Work Experience">Work Experience</option>
-                      </select>
-                    </div>
-                    <div className="col-md-6">
-                      <label className="form-label">Company</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        value={exp.company}
-                        onChange={(e) => handleChange(setExperience, experience, index, 'company', e.target.value)}
-                      />
-                    </div>
-                    <div className="col-md-6">
-                      <label className="form-label">Position</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        value={exp.position}
-                        onChange={(e) => handleChange(setExperience, experience, index, 'position', e.target.value)}
-                      />
-                    </div>
-                    <div className="col-md-6">
-                      <label className="form-label">Duration</label>
-                      <input
-                        type="number"
-                        className="form-control"
-                        name="years"
-                        value={exp.years || ''}
-                        onChange={e => handleChange(setExperience, experience, index, 'years', e.target.value.replace(/[^\d]/g, ''))}
-                        min={0}
-                        max={50}
-                        placeholder="Years"
-                      />
-                      <span>Year(s)</span>
-                      <input
-                        type="number"
-                        className="form-control"
-                        name="months"
-                        value={exp.months || ''}
-                        onChange={e => handleChange(setExperience, experience, index, 'months', e.target.value.replace(/[^\d]/g, ''))}
-                        min={0}
-                        max={11}
-                        placeholder="Months"
-                      />
-                      <span>Month(s)</span>
-                    </div>
-                    <div className="col-12">
-                      <label className="form-label">Description</label>
-                      <textarea
-                        className="form-control"
-                        value={exp.description}
-                        onChange={(e) => handleChange(setExperience, experience, index, 'description', e.target.value)}
-                        rows="3"
-                      />
-                    </div>
-                  </div>
-                </div>
-              ))}
-              <button
-                type="button"
-                className="btn btn-outline-primary"
-                onClick={() => handleAddField(setExperience, experience, {
-                  type: '',
-                  company: '',
-                  position: '',
-                  duration: '',
-                  description: ''
-                })}
-              >
-                <FaPlus className="me-2" />
-                Add Experience
-              </button>
-            </div>
-          </div>
-
-          {/* Skills Section */}
-          <div className="card mb-4">
-            <div className="card-header bg-primary text-white">
-              <h5 className="mb-0">
-                <FaCode className="me-2" />
-                Skill Set
-              </h5>
-            </div>
-            <div className="card-body">
-              {(Array.isArray(skills) && skills.length > 0 ? skills : ['']).map((skill, index) => (
-                <div key={index} className="mb-3">
-                  <div className="input-group">
+              <div className="card-body">
+                <div className="row g-3">
+                  <div className="col-md-4">
+                    <label className="form-label">First Name *</label>
                     <input
                       type="text"
                       className="form-control"
-                      value={typeof skill === 'string' ? skill : ''}
-                      onChange={e => {
-                        const updatedSkills = [...skills];
-                        updatedSkills[index] = e.target.value;
-                        setSkills(updatedSkills);
-                      }}
-                      placeholder="Enter a skill"
+                      name="firstName"
+                      value={formData.firstName}
+                      onChange={handleFieldChange}
+                      required
                     />
-                    {skills.length > 1 && (
-                      <button
-                        type="button"
-                        className="btn btn-danger"
-                        onClick={() => {
-                          const updatedSkills = skills.filter((_, i) => i !== index);
-                          setSkills(updatedSkills.length > 0 ? updatedSkills : ['']);
-                        }}
-                      >
-                        <FaTrash />
-                      </button>
-                    )}
+                  </div>
+                  <div className="col-md-4">
+                    <label className="form-label">Middle Name</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="middleName"
+                      value={formData.middleName}
+                      onChange={handleFieldChange}
+                    />
+                  </div>
+                  <div className="col-md-4">
+                    <label className="form-label">Last Name *</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="lastName"
+                      value={formData.lastName}
+                      onChange={handleFieldChange}
+                      required
+                    />
+                  </div>
+
+                  <div className="col-md-6">
+                    <label className="form-label">Date of Birth *</label>
+                    <input
+                      type="date"
+                      className="form-control"
+                      name="dob"
+                      value={formData.dob}
+                      onChange={handleFieldChange}
+                      min={minDob}
+                      max={maxDob}
+                      required
+                    />
+                  </div>
+                  <div className="col-md-6">
+                    <label className="form-label">Gender *</label>
+                    <select
+                      name="gender"
+                      className="form-select"
+                      value={formData.gender}
+                      onChange={handleFieldChange}
+                      required
+                    >
+                      <option value="">Select Gender</option>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Other">Other</option>
+                    </select>
                   </div>
                 </div>
-              ))}
-              <button
-                type="button"
-                className="btn btn-outline-primary"
-                onClick={() => handleAddSkill()}
-              >
-                <FaPlus className="me-2" />
-                Add Skill
-              </button>
+              </div>
             </div>
-          </div>
 
-          {/* Education Section */}
-          <div className="card mb-4">
-            <div className="card-header bg-primary text-white">
-              <h5 className="mb-0">
-                <FaGraduationCap className="me-2" />
-                Education Details
-              </h5>
-            </div>
-            <div className="card-body">
-              {education.map((edu, index) => (
-                <div key={index} className="mb-4 p-3 border rounded">
-                  <div className="d-flex justify-content-between align-items-center mb-3">
-                    <h6 className="mb-0">Education {index + 1}</h6>
-                    {index >= 2 && (
-                      <button
-                        type="button"
-                        className="btn btn-danger btn-sm"
-                        onClick={() => handleRemoveField(setEducation, education, index)}
-                      >
-                        <FaTrash />
-                      </button>
-                    )}
+            {/* Academic Information Section */}
+            <div className="card mb-4">
+              <div className="card-header bg-primary text-white">
+                <h5 className="mb-0">
+                  <FaGraduationCap className="me-2" />
+                  Academic Information
+                </h5>
+              </div>
+              <div className="card-body">
+                <div className="row g-3">
+                  <div className="col-md-6">
+                    <label className="form-label">Department *</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value="Information Technology"
+                      readOnly
+                    />
                   </div>
-                  <div className="row g-3">
-                    <div className="col-md-6">
-                      <label className="form-label">Type *</label>
-                      <select
-                        className="form-select"
-                        value={edu.type}
-                        onChange={(e) => handleChange(setEducation, education, index, 'type', e.target.value)}
-                        required
-                      >
-                        <option value="">Select Type</option>
-                        <option value="10th">10th</option>
-                        <option value="12th">12th</option>
-                        <option value="Graduation">Graduation</option>
-                        <option value="Post Graduation">Post Graduation</option>
-                      </select>
-                    </div>
-                    <div className="col-md-6">
-                      <label className="form-label">Institution *</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        value={edu.institution}
-                        onChange={(e) => handleChange(setEducation, education, index, 'institution', e.target.value)}
-                        required
-                      />
-                    </div>
-                    <div className="col-md-6">
-                      <label className="form-label">Board/University *</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        value={edu.board}
-                        onChange={(e) => handleChange(setEducation, education, index, 'board', e.target.value)}
-                        required
-                      />
-                    </div>
-                    <div className="col-md-6">
-                      <label className="form-label">Passing Year *</label>
-                      <input
-                        type="number"
-                        className="form-control"
-                        value={edu.year}
-                        onChange={(e) => handleChange(setEducation, education, index, 'year', e.target.value)}
-                        required
-                        min="2000"
-                        max={new Date().getFullYear()}
-                        placeholder="YYYY"
-                        onKeyDown={e => { if (["e", "E", "+", "-", "."].includes(e.key)) e.preventDefault(); }}
-                      />
-                    </div>
-                    <div className="col-md-6">
-                      <label className="form-label">Grade *</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        value={edu.grade}
-                        onChange={(e) => handleChange(setEducation, education, index, 'grade', e.target.value)}
-                        required
-                      />
-                    </div>
-                    <div className="col-md-6">
-                      <label className="form-label">Percentage *</label>
-                      <input
-                        type="number"
-                        className="form-control"
-                        value={edu.percentage}
-                        onChange={(e) => handleChange(setEducation, education, index, 'percentage', e.target.value)}
-                        required
-                        min="0"
-                        max="100"
-                        step="0.01"
-                      />
-                    </div>
+                  <div className="col-md-6">
+                    <label className="form-label">Course *</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value="B. Tech. Information Technology"
+                      readOnly
+                    />
+                  </div>
+                  <div className="col-md-6">
+                    <label className="form-label">Current Year *</label>
+                    <select
+                      name="currentYear"
+                      className="form-select"
+                      value={formData.currentYear}
+                      onChange={handleFieldChange}
+                      required
+                    >
+                      <option value="">Select Year</option>
+                      <option value="1st Year">1st Year</option>
+                      <option value="2nd Year">2nd Year</option>
+                      <option value="3rd Year">3rd Year</option>
+                      <option value="4th Year">4th Year</option>
+                    </select>
+                  </div>
+                  <div className="col-md-6">
+                    <label className="form-label">Student ID *</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="studentId"
+                      value={formData.studentId || 'S'}
+                      onChange={handleFieldChange}
+                      maxLength={11}
+                      required
+                      pattern="^S\d{10}$"
+                      title="Student ID must start with S and be followed by 10 digits."
+                    />
+                  </div>
+                  <div className="col-md-6">
+                    <label className="form-label">Email *</label>
+                    <input
+                      type="email"
+                      className="form-control"
+                      value={email}
+                      readOnly
+                    />
                   </div>
                 </div>
-              ))}
-              <button
-                type="button"
-                className="btn btn-outline-primary"
-                onClick={() => handleAddField(setEducation, education, {
-                  type: '',
-                  institution: '',
-                  board: '',
-                  year: '',
-                  grade: '',
-                  percentage: ''
-                })}
-              >
-                <FaPlus className="me-2" />
-                Add Education
-              </button>
+              </div>
             </div>
-          </div>
 
-          {/* Projects Section */}
-          <div className="card mb-4">
-            <div className="card-header bg-primary text-white">
-              <h5 className="mb-0">
-                <FaProjectDiagram className="me-2" />
-                Projects
-              </h5>
-            </div>
-            <div className="card-body">
-              {(Array.isArray(projects) && projects.length > 0 ? projects : [{ title: '', description: '', technologies: '', duration: '', link: '' }]).map((project, index) => (
-                <div key={index} className="mb-4 p-3 border rounded">
-                  <div className="d-flex justify-content-between align-items-center mb-3">
-                    <h6 className="mb-0">Project {index + 1}</h6>
-                    {projects.length > 1 && (
-                      <button
-                        type="button"
-                        className="btn btn-danger btn-sm"
-                        onClick={() => {
-                          const newProjects = projects.filter((_, i) => i !== index);
-                          setProjects(newProjects.length > 0 ? newProjects : [{ title: '', description: '', technologies: '', duration: '', link: '' }]);
-                        }}
-                      >
-                        <FaTrash />
-                      </button>
-                    )}
+            {/* Contact Information Section */}
+            <div className="card mb-4">
+              <div className="card-header bg-primary text-white">
+                <h5 className="mb-0">
+                  <FaIdCard className="me-2" />
+                  Contact Information
+                </h5>
+              </div>
+              <div className="card-body">
+                <div className="row g-3">
+                  <div className="col-md-6">
+                    <label className="form-label">Phone *</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleFieldChange}
+                      maxLength={10}
+                      required
+                      pattern="\d{10}"
+                      title="Phone must be 10 digits."
+                    />
                   </div>
-                  <div className="row g-3">
-                    <div className="col-md-6">
-                      <label className="form-label">Title</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        value={project.title || ''}
-                        onChange={e => {
-                          const newProjects = [...projects];
-                          newProjects[index] = { ...newProjects[index], title: e.target.value };
-                          setProjects(newProjects);
-                        }}
-                        placeholder="Project Title"
-                      />
-                    </div>
-                    <div className="col-md-6">
-                      <label className="form-label">Technologies</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        value={project.technologies || ''}
-                        onChange={e => {
-                          const newProjects = [...projects];
-                          newProjects[index] = { ...newProjects[index], technologies: e.target.value };
-                          setProjects(newProjects);
-                        }}
-                        placeholder="Technologies Used"
-                      />
-                    </div>
-                    <div className="col-12">
-                      <label className="form-label">Description</label>
-                      <textarea
-                        className="form-control"
-                        value={project.description || ''}
-                        onChange={e => {
-                          const newProjects = [...projects];
-                          newProjects[index] = { ...newProjects[index], description: e.target.value };
-                          setProjects(newProjects);
-                        }}
-                        placeholder="Project Description"
-                        rows="3"
-                      />
-                    </div>
-                    <div className="col-md-6">
-                      <label className="form-label">Duration</label>
-                      <input
-                        type="number"
-                        className="form-control"
-                        name="years"
-                        value={project.years || ''}
-                        onChange={e => {
-                          const newProjects = [...projects];
-                          newProjects[index] = { ...newProjects[index], years: e.target.value.replace(/[^\d]/g, '') };
-                          setProjects(newProjects);
-                        }}
-                        min={0}
-                        max={50}
-                        placeholder="Years"
-                      />
-                      <span>Year(s)</span>
-                      <input
-                        type="number"
-                        className="form-control"
-                        name="months"
-                        value={project.months || ''}
-                        onChange={e => {
-                          const newProjects = [...projects];
-                          newProjects[index] = { ...newProjects[index], months: e.target.value.replace(/[^\d]/g, '') };
-                          setProjects(newProjects);
-                        }}
-                        min={0}
-                        max={11}
-                        placeholder="Months"
-                      />
-                      <span>Month(s)</span>
-                    </div>
-                    <div className="col-md-6">
-                      <label className="form-label">Project Link</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        value={project.link || ''}
-                        onChange={e => {
-                          const newProjects = [...projects];
-                          newProjects[index] = { ...newProjects[index], link: e.target.value };
-                          setProjects(newProjects);
-                        }}
-                        placeholder="Project Link"
-                      />
-                    </div>
+                  <div className="col-md-6">
+                    <label className="form-label">Alternate Phone</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="altPhone"
+                      value={formData.altPhone}
+                      onChange={handleFieldChange}
+                      maxLength={10}
+                      pattern="\d{10}"
+                      title="Alternate Phone must be 10 digits."
+                    />
+                  </div>
+                  <div className="col-md-6">
+                    <label className="form-label">Current Address *</label>
+                    <textarea
+                      className="form-control"
+                      name="currentAddress"
+                      value={formData.currentAddress}
+                      onChange={handleFieldChange}
+                      rows="3"
+                      required
+                    />
+                  </div>
+                  <div className="col-md-6">
+                    <label className="form-label">Permanent Address *</label>
+                    <textarea
+                      className="form-control"
+                      name="permanentAddress"
+                      value={formData.permanentAddress}
+                      onChange={handleFieldChange}
+                      rows="3"
+                      required
+                    />
                   </div>
                 </div>
-              ))}
-              <button
-                type="button"
-                className="btn btn-outline-primary"
-                onClick={() => setProjects([...projects, { title: '', description: '', technologies: '', duration: '', link: '' }])}
-              >
-                <FaPlus className="me-2" />
-                Add Project
-              </button>
+              </div>
             </div>
-          </div>
 
-          {/* Achievements Section */}
-          <div className="card mb-4">
-            <div className="card-header bg-primary text-white">
-              <h5 className="mb-0">
-                <FaTrophy className="me-2" />
-                Achievements
-              </h5>
-            </div>
-            <div className="card-body">
-              {(Array.isArray(achievements) && achievements.length > 0 ? achievements : [{ type: 'sports', title: '', description: '', date: '', organization: '' }]).map((achievement, index) => (
-                <div key={index} className="mb-4 p-3 border rounded">
-                  <div className="d-flex justify-content-between align-items-center mb-3">
-                    <h6 className="mb-0">Achievement {index + 1}</h6>
-                    {achievements.length > 1 && (
-                      <button
-                        type="button"
-                        className="btn btn-danger btn-sm"
-                        onClick={() => {
-                          const newAchievements = achievements.filter((_, i) => i !== index);
-                          setAchievements(newAchievements.length > 0 ? newAchievements : [{ type: 'sports', title: '', description: '', date: '', organization: '' }]);
-                        }}
-                      >
-                        <FaTrash />
-                      </button>
-                    )}
-                  </div>
-                  <div className="row g-3">
-                    <div className="col-md-6">
-                      <label className="form-label">Type</label>
-                      <select
-                        className="form-select"
-                        value={achievement.type || ''}
-                        onChange={e => {
-                          const newAchievements = [...achievements];
-                          newAchievements[index] = { ...newAchievements[index], type: e.target.value };
-                          setAchievements(newAchievements);
-                        }}
-                      >
-                        <option value="">Select Type</option>
-                        <option value="sports">Sports</option>
-                        <option value="awards">Awards</option>
-                        <option value="academic">Academic</option>
-                        <option value="events">Events</option>
-                      </select>
+            {/* Experience Section */}
+            <div className="card mb-4">
+              <div className="card-header bg-primary text-white">
+                <h5 className="mb-0">
+                  <FaBriefcase className="me-2" />
+                  Experience
+                </h5>
+              </div>
+              <div className="card-body">
+                {experience.map((exp, index) => (
+                  <div key={index} className="mb-4 p-3 border rounded">
+                    <div className="d-flex justify-content-between align-items-center mb-3">
+                      <h6 className="mb-0">Experience {index + 1}</h6>
+                      {index > 0 && (
+                        <button
+                          type="button"
+                          className="btn btn-danger btn-sm"
+                          onClick={() => handleRemoveField(setExperience, experience, index)}
+                        >
+                          <FaTrash />
+                        </button>
+                      )}
                     </div>
-                    <div className="col-md-6">
-                      <label className="form-label">Title</label>
+                    <div className="row g-3">
+                      <div className="col-md-6">
+                        <label className="form-label">Type</label>
+                        <select
+                          className="form-select"
+                          value={exp.type}
+                          onChange={(e) => handleChange(setExperience, experience, index, 'type', e.target.value)}
+                        >
+                          <option value="">Select Type</option>
+                          <option value="Internship">Internship</option>
+                          <option value="Work Experience">Work Experience</option>
+                        </select>
+                      </div>
+                      <div className="col-md-6">
+                        <label className="form-label">Company</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          value={exp.company}
+                          onChange={(e) => handleChange(setExperience, experience, index, 'company', e.target.value)}
+                        />
+                      </div>
+                      <div className="col-md-6">
+                        <label className="form-label">Position</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          value={exp.position}
+                          onChange={(e) => handleChange(setExperience, experience, index, 'position', e.target.value)}
+                        />
+                      </div>
+                      <div className="col-md-6">
+                        <label className="form-label">Duration</label>
+                        <input
+                          type="number"
+                          className="form-control"
+                          name="years"
+                          value={exp.years || ''}
+                          onChange={e => handleChange(setExperience, experience, index, 'years', e.target.value.replace(/[^\d]/g, ''))}
+                          min={0}
+                          max={50}
+                          placeholder="Years"
+                        />
+                        <span>Year(s)</span>
+                        <input
+                          type="number"
+                          className="form-control"
+                          name="months"
+                          value={exp.months || ''}
+                          onChange={e => handleChange(setExperience, experience, index, 'months', e.target.value.replace(/[^\d]/g, ''))}
+                          min={0}
+                          max={11}
+                          placeholder="Months"
+                        />
+                        <span>Month(s)</span>
+                      </div>
+                      <div className="col-12">
+                        <label className="form-label">Description</label>
+                        <textarea
+                          className="form-control"
+                          value={exp.description}
+                          onChange={(e) => handleChange(setExperience, experience, index, 'description', e.target.value)}
+                          rows="3"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  className="btn btn-outline-primary"
+                  onClick={() => handleAddField(setExperience, experience, {
+                    type: '',
+                    company: '',
+                    position: '',
+                    duration: '',
+                    description: ''
+                  })}
+                >
+                  <FaPlus className="me-2" />
+                  Add Experience
+                </button>
+              </div>
+            </div>
+
+            {/* Skills Section */}
+            <div className="card mb-4">
+              <div className="card-header bg-primary text-white">
+                <h5 className="mb-0">
+                  <FaCode className="me-2" />
+                  Skill Set
+                </h5>
+              </div>
+              <div className="card-body">
+                {(Array.isArray(skills) && skills.length > 0 ? skills : ['']).map((skill, index) => (
+                  <div key={index} className="mb-3">
+                    <div className="input-group">
                       <input
                         type="text"
                         className="form-control"
-                        value={achievement.title || ''}
+                        value={typeof skill === 'string' ? skill : ''}
                         onChange={e => {
-                          const newAchievements = [...achievements];
-                          newAchievements[index] = { ...newAchievements[index], title: e.target.value };
-                          setAchievements(newAchievements);
+                          const updatedSkills = [...skills];
+                          updatedSkills[index] = e.target.value;
+                          setSkills(updatedSkills);
                         }}
-                        placeholder="Achievement Title"
+                        placeholder="Enter a skill"
                       />
-                    </div>
-                    <div className="col-12">
-                      <label className="form-label">Description</label>
-                      <textarea
-                        className="form-control"
-                        value={achievement.description || ''}
-                        onChange={e => {
-                          const newAchievements = [...achievements];
-                          newAchievements[index] = { ...newAchievements[index], description: e.target.value };
-                          setAchievements(newAchievements);
-                        }}
-                        placeholder="Description"
-                        rows="3"
-                      />
-                    </div>
-                    <div className="col-md-6">
-                      <label className="form-label">Date</label>
-                      <input
-                        type="date"
-                        className="form-control"
-                        name="date"
-                        value={achievement.date || ''}
-                        onChange={e => {
-                          const newAchievements = [...achievements];
-                          newAchievements[index] = { ...newAchievements[index], date: e.target.value };
-                          setAchievements(newAchievements);
-                        }}
-                      />
-                    </div>
-                    <div className="col-md-6">
-                      <label className="form-label">Organization</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        value={achievement.organization || ''}
-                        onChange={e => {
-                          const newAchievements = [...achievements];
-                          newAchievements[index] = { ...newAchievements[index], organization: e.target.value };
-                          setAchievements(newAchievements);
-                        }}
-                        placeholder="Organization"
-                      />
+                      {skills.length > 1 && (
+                        <button
+                          type="button"
+                          className="btn btn-danger"
+                          onClick={() => {
+                            const updatedSkills = skills.filter((_, i) => i !== index);
+                            setSkills(updatedSkills.length > 0 ? updatedSkills : ['']);
+                          }}
+                        >
+                          <FaTrash />
+                        </button>
+                      )}
                     </div>
                   </div>
-                </div>
-              ))}
-              <button
-                type="button"
-                className="btn btn-outline-primary"
-                onClick={() => setAchievements([...achievements, { type: 'sports', title: '', description: '', date: '', organization: '' }])}
-              >
-                <FaPlus className="me-2" />
-                Add Achievement
-              </button>
+                ))}
+                <button
+                  type="button"
+                  className="btn btn-outline-primary"
+                  onClick={() => handleAddSkill()}
+                >
+                  <FaPlus className="me-2" />
+                  Add Skill
+                </button>
+              </div>
             </div>
-          </div>
 
-          {/* Submit Button */}
-          <div className="text-center">
-            {isEditing ? (
-              <button type="submit" className="btn btn-primary btn-lg w-100" style={{ minWidth: 160, borderRadius: '2em', boxShadow: '0 4px 15px rgba(26,42,108,0.15)', fontWeight: 600, transition: 'all 0.2s' }}>
-                <FaSave className="me-2" />
-                Save Profile
-              </button>
-            ) : (
-              <button 
-                type="button" 
-                className="btn btn-primary btn-lg"
-                onClick={() => setIsEditing(true)}
-              >
-                <FaEdit className="me-2" />
-                Edit Profile
-              </button>
-            )}
-          </div>
-        </form>
+            {/* Education Section */}
+            <div className="card mb-4">
+              <div className="card-header bg-primary text-white">
+                <h5 className="mb-0">
+                  <FaGraduationCap className="me-2" />
+                  Education Details
+                </h5>
+              </div>
+              <div className="card-body">
+                {education.map((edu, index) => (
+                  <div key={index} className="mb-4 p-3 border rounded">
+                    <div className="d-flex justify-content-between align-items-center mb-3">
+                      <h6 className="mb-0">Education {index + 1}</h6>
+                      {index >= 2 && (
+                        <button
+                          type="button"
+                          className="btn btn-danger btn-sm"
+                          onClick={() => handleRemoveField(setEducation, education, index)}
+                        >
+                          <FaTrash />
+                        </button>
+                      )}
+                    </div>
+                    <div className="row g-3">
+                      <div className="col-md-6">
+                        <label className="form-label">Type *</label>
+                        <select
+                          className="form-select"
+                          value={edu.type}
+                          onChange={(e) => handleChange(setEducation, education, index, 'type', e.target.value)}
+                          required
+                        >
+                          <option value="">Select Type</option>
+                          <option value="10th">10th</option>
+                          <option value="12th">12th</option>
+                          <option value="Graduation">Graduation</option>
+                          <option value="Post Graduation">Post Graduation</option>
+                        </select>
+                      </div>
+                      <div className="col-md-6">
+                        <label className="form-label">Institution *</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          value={edu.institution}
+                          onChange={(e) => handleChange(setEducation, education, index, 'institution', e.target.value)}
+                          required
+                        />
+                      </div>
+                      <div className="col-md-6">
+                        <label className="form-label">Board/University *</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          value={edu.board}
+                          onChange={(e) => handleChange(setEducation, education, index, 'board', e.target.value)}
+                          required
+                        />
+                      </div>
+                      <div className="col-md-6">
+                        <label className="form-label">Passing Year *</label>
+                        <input
+                          type="number"
+                          className="form-control"
+                          value={edu.year}
+                          onChange={(e) => handleChange(setEducation, education, index, 'year', e.target.value)}
+                          required
+                          min="2000"
+                          max={new Date().getFullYear()}
+                          placeholder="YYYY"
+                          onKeyDown={e => { if (["e", "E", "+", "-", "."].includes(e.key)) e.preventDefault(); }}
+                        />
+                      </div>
+                      <div className="col-md-6">
+                        <label className="form-label">Grade *</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          value={edu.grade}
+                          onChange={(e) => handleChange(setEducation, education, index, 'grade', e.target.value)}
+                          required
+                        />
+                      </div>
+                      <div className="col-md-6">
+                        <label className="form-label">Percentage *</label>
+                        <input
+                          type="number"
+                          className="form-control"
+                          value={edu.percentage}
+                          onChange={(e) => handleChange(setEducation, education, index, 'percentage', e.target.value)}
+                          required
+                          min="0"
+                          max="100"
+                          step="0.01"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  className="btn btn-outline-primary"
+                  onClick={() => handleAddField(setEducation, education, {
+                    type: '',
+                    institution: '',
+                    board: '',
+                    year: '',
+                    grade: '',
+                    percentage: ''
+                  })}
+                >
+                  <FaPlus className="me-2" />
+                  Add Education
+                </button>
+              </div>
+            </div>
+
+            {/* Projects Section */}
+            <div className="card mb-4">
+              <div className="card-header bg-primary text-white">
+                <h5 className="mb-0">
+                  <FaProjectDiagram className="me-2" />
+                  Projects
+                </h5>
+              </div>
+              <div className="card-body">
+                {(Array.isArray(projects) && projects.length > 0 ? projects : [{ title: '', description: '', technologies: '', duration: '', link: '' }]).map((project, index) => (
+                  <div key={index} className="mb-4 p-3 border rounded">
+                    <div className="d-flex justify-content-between align-items-center mb-3">
+                      <h6 className="mb-0">Project {index + 1}</h6>
+                      {projects.length > 1 && (
+                        <button
+                          type="button"
+                          className="btn btn-danger btn-sm"
+                          onClick={() => {
+                            const newProjects = projects.filter((_, i) => i !== index);
+                            setProjects(newProjects.length > 0 ? newProjects : [{ title: '', description: '', technologies: '', duration: '', link: '' }]);
+                          }}
+                        >
+                          <FaTrash />
+                        </button>
+                      )}
+                    </div>
+                    <div className="row g-3">
+                      <div className="col-md-6">
+                        <label className="form-label">Title</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          value={project.title || ''}
+                          onChange={e => {
+                            const newProjects = [...projects];
+                            newProjects[index] = { ...newProjects[index], title: e.target.value };
+                            setProjects(newProjects);
+                          }}
+                          placeholder="Project Title"
+                        />
+                      </div>
+                      <div className="col-md-6">
+                        <label className="form-label">Technologies</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          value={project.technologies || ''}
+                          onChange={e => {
+                            const newProjects = [...projects];
+                            newProjects[index] = { ...newProjects[index], technologies: e.target.value };
+                            setProjects(newProjects);
+                          }}
+                          placeholder="Technologies Used"
+                        />
+                      </div>
+                      <div className="col-12">
+                        <label className="form-label">Description</label>
+                        <textarea
+                          className="form-control"
+                          value={project.description || ''}
+                          onChange={e => {
+                            const newProjects = [...projects];
+                            newProjects[index] = { ...newProjects[index], description: e.target.value };
+                            setProjects(newProjects);
+                          }}
+                          placeholder="Project Description"
+                          rows="3"
+                        />
+                      </div>
+                      <div className="col-md-6">
+                        <label className="form-label">Duration</label>
+                        <input
+                          type="number"
+                          className="form-control"
+                          name="years"
+                          value={project.years || ''}
+                          onChange={e => {
+                            const newProjects = [...projects];
+                            newProjects[index] = { ...newProjects[index], years: e.target.value.replace(/[^\d]/g, '') };
+                            setProjects(newProjects);
+                          }}
+                          min={0}
+                          max={50}
+                          placeholder="Years"
+                        />
+                        <span>Year(s)</span>
+                        <input
+                          type="number"
+                          className="form-control"
+                          name="months"
+                          value={project.months || ''}
+                          onChange={e => {
+                            const newProjects = [...projects];
+                            newProjects[index] = { ...newProjects[index], months: e.target.value.replace(/[^\d]/g, '') };
+                            setProjects(newProjects);
+                          }}
+                          min={0}
+                          max={11}
+                          placeholder="Months"
+                        />
+                        <span>Month(s)</span>
+                      </div>
+                      <div className="col-md-6">
+                        <label className="form-label">Project Link</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          value={project.link || ''}
+                          onChange={e => {
+                            const newProjects = [...projects];
+                            newProjects[index] = { ...newProjects[index], link: e.target.value };
+                            setProjects(newProjects);
+                          }}
+                          placeholder="Project Link"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  className="btn btn-outline-primary"
+                  onClick={() => setProjects([...projects, { title: '', description: '', technologies: '', duration: '', link: '' }])}
+                >
+                  <FaPlus className="me-2" />
+                  Add Project
+                </button>
+              </div>
+            </div>
+
+            {/* Achievements Section */}
+            <div className="card mb-4">
+              <div className="card-header bg-primary text-white">
+                <h5 className="mb-0">
+                  <FaTrophy className="me-2" />
+                  Achievements
+                </h5>
+              </div>
+              <div className="card-body">
+                {(Array.isArray(achievements) && achievements.length > 0 ? achievements : [{ type: 'sports', title: '', description: '', date: '', organization: '' }]).map((achievement, index) => (
+                  <div key={index} className="mb-4 p-3 border rounded">
+                    <div className="d-flex justify-content-between align-items-center mb-3">
+                      <h6 className="mb-0">Achievement {index + 1}</h6>
+                      {achievements.length > 1 && (
+                        <button
+                          type="button"
+                          className="btn btn-danger btn-sm"
+                          onClick={() => {
+                            const newAchievements = achievements.filter((_, i) => i !== index);
+                            setAchievements(newAchievements.length > 0 ? newAchievements : [{ type: 'sports', title: '', description: '', date: '', organization: '' }]);
+                          }}
+                        >
+                          <FaTrash />
+                        </button>
+                      )}
+                    </div>
+                    <div className="row g-3">
+                      <div className="col-md-6">
+                        <label className="form-label">Type</label>
+                        <select
+                          className="form-select"
+                          value={achievement.type || ''}
+                          onChange={e => {
+                            const newAchievements = [...achievements];
+                            newAchievements[index] = { ...newAchievements[index], type: e.target.value };
+                            setAchievements(newAchievements);
+                          }}
+                        >
+                          <option value="">Select Type</option>
+                          <option value="sports">Sports</option>
+                          <option value="awards">Awards</option>
+                          <option value="academic">Academic</option>
+                          <option value="events">Events</option>
+                        </select>
+                      </div>
+                      <div className="col-md-6">
+                        <label className="form-label">Title</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          value={achievement.title || ''}
+                          onChange={e => {
+                            const newAchievements = [...achievements];
+                            newAchievements[index] = { ...newAchievements[index], title: e.target.value };
+                            setAchievements(newAchievements);
+                          }}
+                          placeholder="Achievement Title"
+                        />
+                      </div>
+                      <div className="col-12">
+                        <label className="form-label">Description</label>
+                        <textarea
+                          className="form-control"
+                          value={achievement.description || ''}
+                          onChange={e => {
+                            const newAchievements = [...achievements];
+                            newAchievements[index] = { ...newAchievements[index], description: e.target.value };
+                            setAchievements(newAchievements);
+                          }}
+                          placeholder="Description"
+                          rows="3"
+                        />
+                      </div>
+                      <div className="col-md-6">
+                        <label className="form-label">Date</label>
+                        <input
+                          type="date"
+                          className="form-control"
+                          name="date"
+                          value={achievement.date || ''}
+                          onChange={e => {
+                            const newAchievements = [...achievements];
+                            newAchievements[index] = { ...newAchievements[index], date: e.target.value };
+                            setAchievements(newAchievements);
+                          }}
+                        />
+                      </div>
+                      <div className="col-md-6">
+                        <label className="form-label">Organization</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          value={achievement.organization || ''}
+                          onChange={e => {
+                            const newAchievements = [...achievements];
+                            newAchievements[index] = { ...newAchievements[index], organization: e.target.value };
+                            setAchievements(newAchievements);
+                          }}
+                          placeholder="Organization"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  className="btn btn-outline-primary"
+                  onClick={() => setAchievements([...achievements, { type: 'sports', title: '', description: '', date: '', organization: '' }])}
+                >
+                  <FaPlus className="me-2" />
+                  Add Achievement
+                </button>
+              </div>
+            </div>
+
+            {/* Submit Button */}
+            <div className="text-center">
+              {isEditing ? (
+                <button type="submit" className="btn btn-primary btn-lg w-100" style={{ minWidth: 160, borderRadius: '2em', boxShadow: '0 4px 15px rgba(26,42,108,0.15)', fontWeight: 600, transition: 'all 0.2s' }}>
+                  <FaSave className="me-2" />
+                  Save Profile
+                </button>
+              ) : (
+                <button 
+                  type="button" 
+                  className="btn btn-primary btn-lg"
+                  onClick={() => setIsEditing(true)}
+                >
+                  <FaEdit className="me-2" />
+                  Edit Profile
+                </button>
+              )}
+            </div>
+          </form>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
