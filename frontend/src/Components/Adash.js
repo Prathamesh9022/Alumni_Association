@@ -229,12 +229,40 @@ const AlumniDashboard = () => {
   const maxDob = new Date(currentYear - 20, 0, 1).toISOString().split("T")[0];
   const minDob = "1997-01-01";
 
-  const handleProfilePicChange = (e) => {
+  const handleProfilePicChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => setProfilePic(reader.result);
-      reader.readAsDataURL(file);
+      try {
+        // Check file size (max 2MB)
+        if (file.size > 2 * 1024 * 1024) {
+          toast.error('Image size should be less than 2MB');
+          return;
+        }
+
+        // Check file type
+        if (!file.type.startsWith('image/')) {
+          toast.error('Please select an image file');
+          return;
+        }
+
+        // Create FormData
+        const formData = new FormData();
+        formData.append('photo', file);
+
+        // Upload file
+        const response = await axiosInstance.post('/api/upload/profile-photo', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+
+        // Update profile pic with the returned URL
+        setProfilePic(response.data.githubUrl);
+        toast.success('Profile photo uploaded successfully!');
+      } catch (error) {
+        console.error('Error uploading profile photo:', error);
+        toast.error('Error uploading profile photo. Please try again.');
+      }
     }
   };
 
