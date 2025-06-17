@@ -237,27 +237,57 @@ const EventParticipants = () => {
                         <div className="participant-details">
                           <div className="detail-item mb-2">
                             <FaEnvelope className="text-primary me-2" />
-                            <span>{participant.email}</span>
+                            <span>
+                              <strong className="text-muted me-2">Email:</strong>
+                              {participant.email}
+                            </span>
                           </div>
                           
                           {participant.phone && (
                             <div className="detail-item mb-2">
                               <FaPhone className="text-primary me-2" />
-                              <span>{participant.phone}</span>
+                              <span>
+                                <strong className="text-muted me-2">Phone:</strong>
+                                {participant.phone}
+                              </span>
                             </div>
                           )}
                           
                           {participant.current_company && (
                             <div className="detail-item mb-2">
                               <FaBuilding className="text-primary me-2" />
-                              <span>{participant.current_company}</span>
+                              <span>
+                                <strong className="text-muted me-2">Company:</strong>
+                                {participant.current_company}
+                              </span>
                             </div>
                           )}
                           
                           {participant.designation && (
                             <div className="detail-item">
                               <FaBriefcase className="text-primary me-2" />
-                              <span>{participant.designation}</span>
+                              <span>
+                                <strong className="text-muted me-2">Position:</strong>
+                                {participant.designation}
+                              </span>
+                            </div>
+                          )}
+
+                          <div className="detail-item mt-2">
+                            <FaUserGraduate className="text-primary me-2" />
+                            <span>
+                              <strong className="text-muted me-2">Type:</strong>
+                              {participant.participantModel === 'Alumni' ? 'Alumni' : 'Student'}
+                            </span>
+                          </div>
+
+                          {participant.registrationDate && (
+                            <div className="detail-item mt-2">
+                              <FaCalendarAlt className="text-primary me-2" />
+                              <span>
+                                <strong className="text-muted me-2">Registered on:</strong>
+                                {formatDate(participant.registrationDate)}
+                              </span>
                             </div>
                           )}
                         </div>
