@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FaFilter, FaUser, FaGraduationCap, FaBriefcase, FaEnvelope, FaPhone, FaMapMarkerAlt, FaCode, FaCheck, FaTimes, FaTrash, FaFileExport } from 'react-icons/fa';
+import { FaFilter, FaUser, FaGraduationCap, FaBriefcase, FaEnvelope, FaPhone, FaMapMarkerAlt, FaCode, FaCheck, FaTimes, FaTrash, FaFileExport, FaSearch } from 'react-icons/fa';
 import Header from './Header';
 import '../App.css'
 // import img4 from "../img/mgmalumini4.jpg"
@@ -12,6 +12,15 @@ const Directory = () => {
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('alumni');
   const [isAdmin, setIsAdmin] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showFilters, setShowFilters] = useState(false);
+  const [filters, setFilters] = useState({
+    department: '',
+    course: '',
+    year: '',
+    skills: '',
+    location: ''
+  });
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user'));
@@ -154,6 +163,68 @@ const Directory = () => {
     document.body.removeChild(link);
   };
 
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const resetFilters = () => {
+    setFilters({
+      department: '',
+      course: '',
+      year: '',
+      skills: '',
+      location: ''
+    });
+    setSearchTerm('');
+  };
+
+  const filterData = (data) => {
+    return data.filter(item => {
+      const searchFields = [
+        item.first_name,
+        item.last_name,
+        item.email,
+        item.phone,
+        item.department,
+        item.course,
+        item.current_company,
+        item.designation,
+        item.current_location,
+        item.student_id,
+        ...(item.skillset || []),
+        ...(item.projects || []).map(p => p.title),
+        ...(item.achievements || []).map(a => a.title),
+        ...(item.education || []).map(e => e.institution)
+      ].map(field => (field || '').toLowerCase());
+
+      const searchMatch = searchTerm === '' || 
+        searchFields.some(field => field.includes(searchTerm.toLowerCase()));
+
+      const filterMatch = 
+        (filters.department === '' || (item.department || '').toLowerCase().includes(filters.department.toLowerCase())) &&
+        (filters.course === '' || (item.course || '').toLowerCase().includes(filters.course.toLowerCase())) &&
+        (filters.year === '' || 
+          (activeTab === 'alumni' ? 
+            (item.passing_year || '').toString().includes(filters.year) :
+            (item.current_year || '').toString().includes(filters.year))) &&
+        (filters.skills === '' || (item.skillset || []).some(skill => 
+          skill.toLowerCase().includes(filters.skills.toLowerCase()))) &&
+        (filters.location === '' || 
+          (activeTab === 'alumni' ? 
+            (item.current_location || '').toLowerCase().includes(filters.location.toLowerCase()) :
+            (item.current_address || '').toLowerCase().includes(filters.location.toLowerCase())));
+
+      return searchMatch && filterMatch;
+    });
+  };
+
+  const filteredAlumni = filterData(alumni);
+  const filteredStudents = filterData(students);
+
   if (loading) {
     return (
       <>
@@ -190,35 +261,112 @@ const Directory = () => {
             <button className={`btn ${activeTab === 'students' ? 'btn-primary' : 'btn-outline-primary'}`} onClick={() => setActiveTab('students')}>Students</button>
           </div>
           {isAdmin && (
-            <div className="d-flex gap-2">
-              <button 
-                className="btn btn-success" 
-                onClick={() => exportToCSV(alumni, 'alumni')}
-                style={{ display: activeTab === 'alumni' ? 'block' : 'none' }}
-              >
-                <FaFileExport className="me-2" /> Export Alumni to CSV
-              </button>
-              <button 
-                className="btn btn-success" 
-                onClick={() => exportToCSV(students, 'students')}
-                style={{ display: activeTab === 'students' ? 'block' : 'none' }}
-              >
-                <FaFileExport className="me-2" /> Export Students to CSV
-              </button>
-            </div>
+            <button 
+              className="btn btn-success" 
+              onClick={() => exportToCSV(activeTab === 'alumni' ? alumni : students, activeTab)}
+            >
+              <FaFileExport className="me-2" /> Export to CSV
+            </button>
           )}
         </div>
-        <div className="d-flex gap-2 mb-4">
-          <button className={`btn ${activeTab === 'alumni' ? 'btn-primary' : 'btn-outline-primary'}`} onClick={() => setActiveTab('alumni')}>Alumni</button>
-          <button className={`btn ${activeTab === 'students' ? 'btn-primary' : 'btn-outline-primary'}`} onClick={() => setActiveTab('students')}>Students</button>
+
+        {/* Search and Filter Section */}
+        <div className="card shadow-sm mb-4">
+          <div className="card-body">
+            <div className="d-flex justify-content-between align-items-center mb-3">
+              <div className="d-flex align-items-center gap-2 flex-grow-1 me-3">
+                <div className="input-group">
+                  <span className="input-group-text">
+                    <FaSearch />
+                  </span>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Search by name, email, department, skills..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </div>
+                <button 
+                  className="btn btn-outline-primary"
+                  onClick={() => setShowFilters(!showFilters)}
+                >
+                  <FaFilter className="me-2" />
+                  {showFilters ? 'Hide Filters' : 'Show Filters'}
+                </button>
+                <button 
+                  className="btn btn-outline-secondary"
+                  onClick={resetFilters}
+                >
+                  Reset
+                </button>
+              </div>
+            </div>
+
+            {showFilters && (
+              <div className="row g-3">
+                <div className="col-md-4">
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Department"
+                    name="department"
+                    value={filters.department}
+                    onChange={handleFilterChange}
+                  />
+                </div>
+                <div className="col-md-4">
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Course"
+                    name="course"
+                    value={filters.course}
+                    onChange={handleFilterChange}
+                  />
+                </div>
+                <div className="col-md-4">
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder={activeTab === 'alumni' ? 'Passing Year' : 'Current Year'}
+                    name="year"
+                    value={filters.year}
+                    onChange={handleFilterChange}
+                  />
+                </div>
+                <div className="col-md-4">
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Skills"
+                    name="skills"
+                    value={filters.skills}
+                    onChange={handleFilterChange}
+                  />
+                </div>
+                <div className="col-md-4">
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Location"
+                    name="location"
+                    value={filters.location}
+                    onChange={handleFilterChange}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
         </div>
+
         {/* Alumni Section */}
         <div style={{ display: activeTab === 'alumni' ? 'block' : 'none' }}>
           <div className="card shadow-sm mb-4">
             <div className="card-body">
               <h2 className="text-primary mb-4">Alumni Directory</h2>
               <div className="row">
-                {alumni.map(alum => (
+                {filteredAlumni.map(alum => (
                   <div className="col-md-6 col-lg-4 mb-4" key={alum._id}>
                     <div className="card h-100">
                       <div className="card-body">
@@ -280,7 +428,7 @@ const Directory = () => {
             <div className="card-body">
               <h2 className="text-primary mb-4">Student Directory</h2>
               <div className="row">
-                {students.map(student => (
+                {filteredStudents.map(student => (
                   <div className="col-md-6 col-lg-4 mb-4" key={student._id}>
                     <div className="card h-100">
                       <div className="card-body">
