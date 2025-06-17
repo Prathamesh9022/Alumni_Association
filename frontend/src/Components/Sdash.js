@@ -1262,7 +1262,6 @@ const StudentDashboard = () => {
                           newAchievements[index] = { ...newAchievements[index], date: e.target.value };
                           setAchievements(newAchievements);
                         }}
-                        required
                       />
                     </div>
                     <div className="col-md-6">
