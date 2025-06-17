@@ -68,14 +68,42 @@ const Event = () => {
         }
       } catch (err) {
         console.error('Error fetching events:', err);
-        setError(err.message || 'Failed to load events');
+        let errorMessage = 'Failed to load events';
+        
+        if (err.code === 'ERR_NETWORK' || err.message === 'Network Error') {
+          errorMessage = 'Unable to connect to the server. Please check your internet connection and try again.';
+        } else if (err.response) {
+          switch (err.response.status) {
+            case 401:
+              errorMessage = 'Please log in to view events.';
+              break;
+            case 403:
+              errorMessage = 'You are not authorized to view events.';
+              break;
+            default:
+              errorMessage = err.response.data?.error || 'An error occurred while loading events.';
+          }
+        } else if (err.request) {
+          errorMessage = 'No response from server. Please try again later.';
+        } else {
+          errorMessage = err.message || 'An unexpected error occurred.';
+        }
+        
+        setError(errorMessage);
+        
+        // If unauthorized, redirect to login
+        if (err.response?.status === 401) {
+          setTimeout(() => {
+            navigate('/login');
+          }, 3000);
+        }
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [selectedTab, filter]);
+  }, [selectedTab, filter, navigate]);
 
   // Apply filter to events
   const applyFilter = (eventList, filterValue) => {

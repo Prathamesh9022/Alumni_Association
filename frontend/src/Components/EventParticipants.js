@@ -46,7 +46,9 @@ const EventParticipants = () => {
         console.error('Error fetching event participants:', err);
         let errorMessage = 'Failed to load participants';
         
-        if (err.response) {
+        if (err.code === 'ERR_NETWORK' || err.message === 'Network Error') {
+          errorMessage = 'Unable to connect to the server. Please check your internet connection and try again.';
+        } else if (err.response) {
           switch (err.response.status) {
             case 404:
               errorMessage = 'Event not found. The event may have been deleted or the URL is incorrect.';
@@ -61,7 +63,7 @@ const EventParticipants = () => {
               errorMessage = err.response.data?.error || 'An error occurred while loading participants.';
           }
         } else if (err.request) {
-          errorMessage = 'Unable to connect to the server. Please check your internet connection.';
+          errorMessage = 'No response from server. Please try again later.';
         } else {
           errorMessage = err.message || 'An unexpected error occurred.';
         }
@@ -72,6 +74,10 @@ const EventParticipants = () => {
         if (err.response?.status === 403 || err.response?.status === 404) {
           setTimeout(() => {
             navigate('/events');
+          }, 3000);
+        } else if (err.response?.status === 401) {
+          setTimeout(() => {
+            navigate('/login');
           }, 3000);
         }
       } finally {
