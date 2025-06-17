@@ -282,80 +282,83 @@ const AlumniDashboard = () => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
+    setError(null);
+
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        toast.error('Invalid authentication token. Please try logging in again.');
+      // Validate the profile data
+      const validationErrors = validateProfile(userData);
+      if (validationErrors.length > 0) {
+        setError(validationErrors.join('\n'));
+        setIsSubmitting(false);
         return;
       }
 
-      // Get user from localStorage
-      const user = JSON.parse(localStorage.getItem('user'));
-      if (!user) {
-        toast.error('User not found. Please log in again.');
-        return;
-      }
-
-      // Validation
-      if (!userData.first_name || !userData.last_name || !userData.dob || !userData.phone || !userData.current_address) {
-        toast.error('Please fill all required fields.');
-        return;
-      }
-
-      const payload = {
-        email: user.email, // Use email from user object
-        department: userData.department,
-        course: userData.course,
-        first_name: userData.first_name,
-        middle_name: userData.middle_name || '',
-        last_name: userData.last_name,
-        dob: userData.dob,
-        gender: userData.gender,
-        passing_year: userData.passing_year,
-        phone: userData.phone,
-        alt_phone: userData.alt_phone || '',
-        alumni_id: userData.alumni_id || '',
-        current_address: userData.current_address,
-        permanent_address: userData.permanent_address,
-        profile: profilePic || null,
-        experience: experience.filter(exp => exp.company && exp.position && exp.duration),
-        skillset: skills.filter(s => typeof s === 'string' && s.trim() !== ''),
-        education: education.filter(edu => edu.institution && edu.board && edu.year && edu.grade && edu.percentage),
-        projects: projects.filter(p => p.title || p.description).map(proj => ({
-          title: proj.title,
-          description: proj.description,
-          technologies: proj.technologies || '',
-          duration: proj.duration || '',
-          link: proj.link || ''
-        })),
-        achievements: achievements.filter(a => a.title || a.description).map(ach => ({
-          type: ach.type || 'sports',
-          title: ach.title,
-          description: ach.description,
-          date: ach.date || '',
-          organization: ach.organization || ''
-        })),
+      // Prepare the profile data
+      const profileData = {
+        ...userData,
+        email,
+        profile: profilePic,
+        experience,
+        skillset: skills,
+        education,
+        projects,
+        achievements,
         profileCompleted: true
       };
 
-      console.log('Submitting alumni profile payload:', payload);
-      
-      // Use axiosInstance for the API call
-      const response = await axiosInstance.put('/api/alumni/profile', payload);
+      console.log('Submitting alumni profile payload:', profileData);
 
-      if (response.data) {
-        toast.success('Profile updated successfully!');
-        setProfileCompleted(true);
-        setIsEditing(false);
-        // Update local storage with new profile data
-        const updatedUser = { ...user, profileCompleted: true };
-        localStorage.setItem('user', JSON.stringify(updatedUser));
+      // Try to update the profile with retries
+      let retryCount = 0;
+      const maxRetries = 3;
+      let success = false;
+
+      while (retryCount < maxRetries && !success) {
+        try {
+          const response = await axiosInstance.put('/api/alumni/profile', profileData);
+          console.log('Profile update response:', response.data);
+          
+          // Update local storage with new profile data
+          const updatedUser = {
+            ...JSON.parse(localStorage.getItem('user')),
+            profileCompleted: true
+          };
+          localStorage.setItem('user', JSON.stringify(updatedUser));
+          
+          setProfileCompleted(true);
+          setIsEditing(false);
+          toast.success('Profile updated successfully!');
+          success = true;
+        } catch (error) {
+          retryCount++;
+          console.error(`Attempt ${retryCount} failed:`, error);
+          
+          if (retryCount === maxRetries) {
+            throw error; // Throw error after all retries are exhausted
+          }
+          
+          // Wait before retrying (exponential backoff)
+          await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, retryCount)));
+        }
       }
     } catch (error) {
       console.error('Error updating profile:', error);
-      const errorMessage = error.response?.data?.error || 'Failed to update profile. Please try again.';
-      toast.error(errorMessage);
       console.error('Full error details:', error.response?.data);
+      
+      let errorMessage = 'Failed to update profile. ';
+      if (error.message === 'Network Error') {
+        errorMessage += 'Please check your internet connection and try again.';
+      } else if (error.response?.data?.error) {
+        errorMessage += error.response.data.error;
+      } else {
+        errorMessage += 'Please try again later.';
+      }
+      
+      setError(errorMessage);
+      toast.error(errorMessage);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
