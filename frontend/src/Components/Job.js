@@ -13,8 +13,7 @@ const Job = () => {
     name: '',
     location: '',
     type: '',
-    salary: '',
-    expireDate: ''
+    salary: ''
   });
   const [filteredJobs, setFilteredJobs] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
@@ -30,8 +29,7 @@ const Job = () => {
         (!filters.name || job.name?.toLowerCase().includes(filters.name.toLowerCase())) &&
         (!filters.location || job.location?.toLowerCase().includes(filters.location.toLowerCase())) &&
         (!filters.type || job.type?.toLowerCase() === filters.type.toLowerCase()) &&
-        (!filters.salary || job.salary?.toLowerCase().includes(filters.salary.toLowerCase())) &&
-        (!filters.expireDate || new Date(job.expireDate).toLocaleDateString().includes(filters.expireDate))
+        (!filters.salary || job.salary?.toLowerCase().includes(filters.salary.toLowerCase()))
       );
     });
     setFilteredJobs(filtered);
@@ -51,8 +49,7 @@ const Job = () => {
       name: '',
       location: '',
       type: '',
-      salary: '',
-      expireDate: ''
+      salary: ''
     });
   };
 
@@ -145,7 +142,7 @@ const Job = () => {
                   placeholder="Search by location"
                 />
               </div>
-              <div className="col-md-4">
+              <div className="col-md-6">
                 <select
                   name="type"
                   value={filters.type}
@@ -159,7 +156,7 @@ const Job = () => {
                   <option value="Internship">Internship</option>
                 </select>
               </div>
-              <div className="col-md-4">
+              <div className="col-md-6">
                 <input
                   type="text"
                   name="salary"
@@ -167,15 +164,6 @@ const Job = () => {
                   onChange={handleFilterChange}
                   className="form-control"
                   placeholder="Search by salary"
-                />
-              </div>
-              <div className="col-md-4">
-                <input
-                  type="date"
-                  name="expireDate"
-                  value={filters.expireDate}
-                  onChange={handleFilterChange}
-                  className="form-control"
                 />
               </div>
               <div className="col-12">
