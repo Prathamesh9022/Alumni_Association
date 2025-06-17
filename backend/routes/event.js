@@ -340,7 +340,7 @@ router.get('/:id/participants', auth, async (req, res) => {
     }
     
     // Check if user is the organizer or an admin
-    const isOrganizer = event.organizer.userId.toString() === req.user.id;
+    const isOrganizer = event.organizer.email === req.user.email;
     const isAdmin = req.user.role === 'admin';
     
     if (!isOrganizer && !isAdmin) {
