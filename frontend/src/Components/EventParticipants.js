@@ -230,7 +230,7 @@ const EventParticipants = () => {
                             <FaUser className="text-primary" size={24} />
                           </div>
                           <h5 className="card-title mb-0">
-                            {`${participant.first_name} ${participant.last_name}`}
+                            {participant.name || 'Unknown Participant'}
                           </h5>
                         </div>
                         
