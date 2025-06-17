@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaBriefcase, FaBuilding, FaMapMarkerAlt, FaMoneyBillWave, FaCalendarAlt, FaUser } from 'react-icons/fa';
+import { FaBriefcase, FaBuilding, FaMapMarkerAlt, FaMoneyBillWave, FaCalendarAlt, FaUser, FaFilter } from 'react-icons/fa';
 import { jobService } from '../services/api';
 import Header from './Header';
 import './CommonStyles.css';
@@ -8,26 +8,53 @@ const Job = () => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [searchTerm, setSearchTerm] = useState('');
+  const [filters, setFilters] = useState({
+    title: '',
+    name: '',
+    location: '',
+    type: '',
+    salary: '',
+    expireDate: ''
+  });
   const [filteredJobs, setFilteredJobs] = useState([]);
+  const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
     fetchJobs();
   }, []);
 
   useEffect(() => {
-    if (searchTerm.trim() === '') {
-      setFilteredJobs(jobs);
-    } else {
-      const filtered = jobs.filter(job => 
-        job.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        job.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        job.location?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        job.description?.toLowerCase().includes(searchTerm.toLowerCase())
+    const filtered = jobs.filter(job => {
+      return (
+        (!filters.title || job.title?.toLowerCase().includes(filters.title.toLowerCase())) &&
+        (!filters.name || job.name?.toLowerCase().includes(filters.name.toLowerCase())) &&
+        (!filters.location || job.location?.toLowerCase().includes(filters.location.toLowerCase())) &&
+        (!filters.type || job.type?.toLowerCase() === filters.type.toLowerCase()) &&
+        (!filters.salary || job.salary?.toLowerCase().includes(filters.salary.toLowerCase())) &&
+        (!filters.expireDate || new Date(job.expireDate).toLocaleDateString().includes(filters.expireDate))
       );
-      setFilteredJobs(filtered);
-    }
-  }, [searchTerm, jobs]);
+    });
+    setFilteredJobs(filtered);
+  }, [filters, jobs]);
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const clearFilters = () => {
+    setFilters({
+      title: '',
+      name: '',
+      location: '',
+      type: '',
+      salary: '',
+      expireDate: ''
+    });
+  };
 
   const fetchJobs = async () => {
     try {
@@ -74,16 +101,94 @@ const Job = () => {
             Available Jobs
           </h2>
           
-          <div className="search-box">
-            <input
-              type="text"
-              placeholder="Search jobs..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="form-control"
-            />
+          <div className="d-flex gap-2">
+            <button 
+              className="btn btn-outline-primary"
+              onClick={() => setShowFilters(!showFilters)}
+            >
+              <FaFilter className="me-2" />
+              {showFilters ? 'Hide Filters' : 'Show Filters'}
+            </button>
           </div>
         </div>
+
+        {showFilters && (
+          <div className="filters-section mb-4">
+            <div className="row g-3">
+              <div className="col-md-4">
+                <input
+                  type="text"
+                  name="title"
+                  value={filters.title}
+                  onChange={handleFilterChange}
+                  className="form-control"
+                  placeholder="Search by job title"
+                />
+              </div>
+              <div className="col-md-4">
+                <input
+                  type="text"
+                  name="name"
+                  value={filters.name}
+                  onChange={handleFilterChange}
+                  className="form-control"
+                  placeholder="Search by company name"
+                />
+              </div>
+              <div className="col-md-4">
+                <input
+                  type="text"
+                  name="location"
+                  value={filters.location}
+                  onChange={handleFilterChange}
+                  className="form-control"
+                  placeholder="Search by location"
+                />
+              </div>
+              <div className="col-md-4">
+                <select
+                  name="type"
+                  value={filters.type}
+                  onChange={handleFilterChange}
+                  className="form-control"
+                >
+                  <option value="">All Job Types</option>
+                  <option value="Full-time">Full-time</option>
+                  <option value="Part-time">Part-time</option>
+                  <option value="Contract">Contract</option>
+                  <option value="Internship">Internship</option>
+                </select>
+              </div>
+              <div className="col-md-4">
+                <input
+                  type="text"
+                  name="salary"
+                  value={filters.salary}
+                  onChange={handleFilterChange}
+                  className="form-control"
+                  placeholder="Search by salary"
+                />
+              </div>
+              <div className="col-md-4">
+                <input
+                  type="date"
+                  name="expireDate"
+                  value={filters.expireDate}
+                  onChange={handleFilterChange}
+                  className="form-control"
+                />
+              </div>
+              <div className="col-12">
+                <button 
+                  className="btn btn-secondary"
+                  onClick={clearFilters}
+                >
+                  Clear Filters
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="jobs-grid">
           {filteredJobs.map((job) => (
