@@ -15,6 +15,7 @@ const jobRoutes = require('./routes/job');
 const mentorshipRoutes = require('./routes/mentorship');
 const donationRoutes = require('./routes/donation');
 const analyticsRoutes = require('./routes/analytics');
+const uploadRoutes = require('./routes/upload');
 
 dotenv.config();
 
@@ -75,6 +76,7 @@ app.use('/api/job', jobRoutes);
 app.use('/api/mentorship', mentorshipRoutes);
 app.use('/api/donation', donationRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/upload', uploadRoutes);
 
 // Root route
 app.get('/', (req, res) => {
