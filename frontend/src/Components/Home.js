@@ -753,16 +753,8 @@ export default function Home() {
         </section>
 
         {/* Stats Counter Section */}
-        <section className="stats-section">
-          <div className="stats-container">
-            {stats.map((stat, index) => (
-              <div className="stat-card" key={index}>
-                <div className="stat-icon">{stat.icon}</div>
-                <div className="stat-value">{stat.value}+</div>
-                <div className="stat-label">{stat.label}</div>
-              </div>
-            ))}
-          </div>
+        <section className="analytics-section">
+          {renderAnalyticsSection()}
         </section>
 
         {/* About College Section */}
@@ -820,8 +812,6 @@ export default function Home() {
             {renderSuccessStoryCard(successStories[rightIndex])}
           </div>
         </section>
-
-        {renderAnalyticsSection()}
       </div>
     </>
   );
