@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaUser, FaComment, FaPaperPlane, FaTrash, FaFile, FaSmile, FaEnvelope, FaPhone, FaBuilding, FaBriefcase, FaGraduationCap, FaCalendarAlt, FaBell, FaBellSlash } from 'react-icons/fa';
+import { FaUser, FaComment, FaPaperPlane, FaTrash, FaFile, FaSmile, FaEnvelope, FaPhone, FaBuilding, FaBriefcase, FaGraduationCap, FaCalendarAlt, FaBell, FaBellSlash, FaDownload } from 'react-icons/fa';
 import axios from 'axios';
 import Header from './Header';
 import api from '../services/api';
@@ -514,6 +514,41 @@ const Mentorship1 = () => {
     }
   };
 
+  // CSV download handler
+  const handleDownloadLogs = async () => {
+    if (!selectedMentee) return;
+    try {
+      const response = await api.get(`/api/mentorship/messages?studentId=${selectedMentee._id}`);
+      const logs = response.data;
+      if (!logs || logs.length === 0) {
+        setError('No messages to download.');
+        return;
+      }
+      // Prepare CSV
+      const csvRows = [
+        'Timestamp,Sender Name,Sender Role,Message'
+      ];
+      logs.forEach(msg => {
+        // Escape quotes and commas in message
+        const message = (msg.message || '').replace(/"/g, '""').replace(/,/g, ';');
+        const senderName = (msg.senderName || '').replace(/"/g, '""').replace(/,/g, ';');
+        csvRows.push(`"${new Date(msg.timestamp).toLocaleString()}","${senderName}","${msg.senderRole}","${message}"`);
+      });
+      const csvContent = csvRows.join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `mentorship_logs_${selectedMentee.first_name}_${selectedMentee.last_name}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error('Error downloading logs:', error);
+      setError('Failed to download logs. Please try again.');
+    }
+  };
+
   if (loading) {
     return (
       <>
@@ -727,6 +762,12 @@ const Mentorship1 = () => {
                     Select a mentee to view their details and start chatting.
                   </div>
                 )}
+                {/* Download Logs Button */}
+                <div className="d-flex justify-content-end mb-2">
+                  <button className="btn btn-outline-secondary" onClick={handleDownloadLogs}>
+                    <FaDownload className="me-2" /> Download Logs (CSV)
+                  </button>
+                </div>
                 {/* Chat area only if mentee is selected */}
                 {selectedMentee && (
                   <>
