@@ -18,151 +18,122 @@ const seedData = async () => {
     console.log('Cleared existing data');
 
     // Create test students
-    const students = [
-      {
-        email: 'john.doe.cs2023@mgmcen.ac.in',
+    const students = Array.from({ length: 20 }).map((_, i) => {
+      const yearOptions = ['1st Year', '2nd Year', '3rd Year', '4th Year'];
+      const genderOptions = ['Male', 'Female', 'Other'];
+      const expType = i % 2 === 0 ? 'Internship' : 'Work Experience';
+      return {
+        email: `student${i + 1}@mgmcen.ac.in`,
         password: 'password123',
-        department: 'Computer Science',
-        course: 'B.Tech',
-        first_name: 'John',
-        last_name: 'Doe',
-        dob: new Date('2000-01-01'),
-        gender: 'Male',
-        current_year: '3rd Year',
-        phone: '1234567890',
-        student_id: 'STU-2023-12345',
-        current_address: '123 Main St',
-        permanent_address: '123 Main St',
-        skills: ['JavaScript', 'React', 'Node.js'],
+        profile: '',
+        department: 'Information Technology',
+        course: 'B. Tech. Information Technology',
+        first_name: `Student${i + 1}`,
+        middle_name: `M${i + 1}`,
+        last_name: `L${i + 1}`,
+        dob: new Date(2002, i % 12, (i % 28) + 1),
+        gender: genderOptions[i % 3],
+        current_year: yearOptions[i % 4],
+        phone: `9${String(100000000 + i).slice(0, 9)}`,
+        alt_phone: `8${String(100000000 + i).slice(0, 9)}`,
+        student_id: `S${String(1000000000 + i)}`,
+        current_address: `${i + 1} Student Lane`,
+        permanent_address: `${i + 1} Student Lane`,
         experience: [{
-          type: 'Internship',
-          company: 'Tech Corp',
-          position: 'Frontend Developer',
-          duration: '3 months',
-          description: 'Worked on React applications'
+          type: expType,
+          company: `Company${i + 1}`,
+          position: `Position${i + 1}`,
+          years: i % 4,
+          months: (i % 12) + 1,
+          description: `Worked as ${expType} at Company${i + 1}`
         }],
-        education: [{
-          type: '10th',
-          institution: 'High School',
-          board: 'CBSE',
-          year: 2018,
-          grade: 'A',
-          percentage: 85
+        skillset: [`Skill${i + 1}A`, `Skill${i + 1}B`],
+        projects: [{
+          title: `Project${i + 1}`,
+          description: `Description for Project${i + 1}`,
+          technologies: `Tech${i + 1}`,
+          years: 1,
+          months: (i % 12) + 1,
+          link: `https://project${i + 1}.com`
         }],
+        achievements: [{
+          type: ['sports', 'awards', 'academic', 'events'][i % 4],
+          title: `Achievement${i + 1}`,
+          description: `Description for Achievement${i + 1}`,
+          date: new Date(2020, i % 12, (i % 28) + 1),
+          organization: `Org${i + 1}`
+        }],
+        education: [
+          {
+            type: '10th',
+            institution: `School${i + 1}`,
+            board: 'CBSE',
+            year: 2018,
+            grade: 'A',
+            percentage: 85 + (i % 10)
+          },
+          {
+            type: '12th',
+            institution: `College${i + 1}`,
+            board: 'State',
+            year: 2020,
+            grade: 'A',
+            percentage: 80 + (i % 10)
+          }
+        ],
         mentorship_status: 'Available',
         profileCompleted: true
-      },
-      {
-        email: 'jane.smith.cs2023@mgmcen.ac.in',
-        password: 'password123',
-        department: 'Computer Science',
-        course: 'B.Tech',
-        first_name: 'Jane',
-        last_name: 'Smith',
-        dob: new Date('2000-02-02'),
-        gender: 'Female',
-        current_year: '3rd Year',
-        phone: '2345678901',
-        student_id: 'STU-2023-12346',
-        current_address: '456 Oak St',
-        permanent_address: '456 Oak St',
-        skills: ['Python', 'Django', 'Machine Learning'],
-        experience: [{
-          type: 'Internship',
-          company: 'AI Solutions',
-          position: 'ML Intern',
-          duration: '2 months',
-          description: 'Worked on machine learning models'
-        }],
-        education: [{
-          type: '10th',
-          institution: 'High School',
-          board: 'CBSE',
-          year: 2018,
-          grade: 'A+',
-          percentage: 90
-        }],
-        mentorship_status: 'Available',
-        profileCompleted: true
-      },
-      {
-        email: 'alex.wilson.cs2023@mgmcen.ac.in',
-        password: 'password123',
-        department: 'Computer Science',
-        course: 'B.Tech',
-        first_name: 'Alex',
-        last_name: 'Wilson',
-        dob: new Date('2000-03-03'),
-        gender: 'Male',
-        current_year: '3rd Year',
-        phone: '3456789012',
-        student_id: 'STU-2023-12347',
-        current_address: '789 Pine St',
-        permanent_address: '789 Pine St',
-        skills: ['Java', 'Spring Boot', 'AWS'],
-        experience: [{
-          type: 'Internship',
-          company: 'Cloud Solutions',
-          position: 'Backend Developer',
-          duration: '4 months',
-          description: 'Worked on Spring Boot applications'
-        }],
-        education: [{
-          type: '10th',
-          institution: 'High School',
-          board: 'CBSE',
-          year: 2018,
-          grade: 'A',
-          percentage: 88
-        }],
-        mentorship_status: 'Available',
-        profileCompleted: true
-      }
-    ];
+      };
+    });
 
     // Create test alumni
-    const alumni = [
-      {
-        email: 'mike.johnson@techcorp.com',
+    const alumni = Array.from({ length: 20 }).map((_, i) => {
+      const genderOptions = ['Male', 'Female', 'Other'];
+      return {
+        email: `alumni${i + 1}@alumni.com`,
         password: 'password123',
-        first_name: 'Mike',
-        last_name: 'Johnson',
-        dob: new Date('1995-01-01'),
-        gender: 'Male',
-        phone: '3456789012',
-        current_address: '789 Pine St',
-        permanent_address: '789 Pine St',
-        department: 'Computer Science',
-        course: 'B.Tech',
-        graduation_year: 2018,
-        current_company: 'Tech Corp',
-        designation: 'Senior Developer',
-        skills: ['JavaScript', 'React', 'Node.js', 'MongoDB'],
-        mentorship_status: 'Available',
-        max_students: 3,
+        profile: '',
+        first_name: `Alumni${i + 1}`,
+        middle_name: `M${i + 1}`,
+        last_name: `L${i + 1}`,
+        dob: new Date(1990 + (i % 10), i % 12, (i % 28) + 1),
+        gender: genderOptions[i % 3],
+        phone: `7${String(100000000 + i).slice(0, 9)}`,
+        alt_phone: `6${String(100000000 + i).slice(0, 9)}`,
+        current_address: `${i + 1} Alumni Lane`,
+        permanent_address: `${i + 1} Alumni Lane`,
+        department: 'Information Technology',
+        course: 'B. Tech. Information Technology',
+        passing_year: 2010 + (i % 10),
+        current_company: `Company${i + 1}`,
+        designation: `Designation${i + 1}`,
+        current_location: `City${i + 1}`,
+        joined_date: new Date(2010 + (i % 10), (i % 12), (i % 28) + 1),
+        experience: [{
+          company: `Company${i + 1}`,
+          position: `Position${i + 1}`,
+          years: 2 + (i % 5),
+          months: (i % 12) + 1,
+          description: `Worked as Position${i + 1} at Company${i + 1}`
+        }],
+        skillset: [`Skill${i + 1}A`, `Skill${i + 1}B`],
+        projects: [{
+          title: `Project${i + 1}`,
+          description: `Description for Project${i + 1}`,
+          technologies: `Tech${i + 1}`,
+          duration: (i % 12) + 1,
+          link: `https://alumniproject${i + 1}.com`
+        }],
+        achievements: [{
+          type: ['sports', 'awards', 'academic', 'events'][i % 4],
+          title: `Achievement${i + 1}`,
+          description: `Description for Achievement${i + 1}`,
+          date: new Date(2015 + (i % 10), i % 12, (i % 28) + 1),
+          organization: `Org${i + 1}`
+        }],
         profileCompleted: true
-      },
-      {
-        email: 'sarah.chen@innovatech.com',
-        password: 'password123',
-        first_name: 'Sarah',
-        last_name: 'Chen',
-        dob: new Date('1994-05-15'),
-        gender: 'Female',
-        phone: '4567890123',
-        current_address: '321 Tech Park',
-        permanent_address: '321 Tech Park',
-        department: 'Computer Science',
-        course: 'B.Tech',
-        graduation_year: 2017,
-        current_company: 'InnovaTech',
-        designation: 'Tech Lead',
-        skills: ['Python', 'Django', 'Machine Learning', 'AWS'],
-        mentorship_status: 'Available',
-        max_students: 3,
-        profileCompleted: true
-      }
-    ];
+      };
+    });
 
     // Insert data
     await Student.insertMany(students);
