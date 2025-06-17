@@ -36,12 +36,12 @@ const EventParticipants = () => {
         }
 
         // Fetch event details
-        const eventResponse = await api.get(`/event/${eventId}`);
+        const eventResponse = await api.get(`/api/event/${eventId}`);
         setEvent(eventResponse.data);
 
         // Fetch participants
-        const participantsResponse = await api.get(`/event/${eventId}/participants`);
-        setParticipants(participantsResponse.data);
+        const participantsResponse = await api.get(`/api/event/${eventId}/participants`);
+        setParticipants(participantsResponse.data.participants || []);
       } catch (err) {
         console.error('Error fetching event participants:', err);
         let errorMessage = 'Failed to load participants';
