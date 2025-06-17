@@ -44,10 +44,32 @@ const EventParticipants = () => {
         setParticipants(participantsResponse.data);
       } catch (err) {
         console.error('Error fetching event participants:', err);
-        setError(err.response?.data?.error || err.message || 'Failed to load participants');
+        let errorMessage = 'Failed to load participants';
         
-        // If unauthorized, navigate back to events page
-        if (err.response?.status === 403) {
+        if (err.response) {
+          switch (err.response.status) {
+            case 404:
+              errorMessage = 'Event not found. The event may have been deleted or the URL is incorrect.';
+              break;
+            case 403:
+              errorMessage = 'You are not authorized to view participants for this event.';
+              break;
+            case 401:
+              errorMessage = 'Please log in to view event participants.';
+              break;
+            default:
+              errorMessage = err.response.data?.error || 'An error occurred while loading participants.';
+          }
+        } else if (err.request) {
+          errorMessage = 'Unable to connect to the server. Please check your internet connection.';
+        } else {
+          errorMessage = err.message || 'An unexpected error occurred.';
+        }
+        
+        setError(errorMessage);
+        
+        // If unauthorized or not found, navigate back to events page after a delay
+        if (err.response?.status === 403 || err.response?.status === 404) {
           setTimeout(() => {
             navigate('/events');
           }, 3000);
