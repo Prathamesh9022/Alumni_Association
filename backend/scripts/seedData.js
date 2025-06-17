@@ -2,11 +2,13 @@ const mongoose = require('mongoose');
 const Student = require('../models/Student');
 const Alumni = require('../models/Alumni');
 const Admin = require('../models/Admin');
+require('dotenv').config();
 
 const seedData = async () => {
   try {
     // Connect to MongoDB
-    await mongoose.connect('mongodb://127.0.0.1:27017/alumni_association', {
+    const uri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/alumni_association';
+    await mongoose.connect(uri, {
       useNewUrlParser: true,
       useUnifiedTopology: true
     });
@@ -18,6 +20,9 @@ const seedData = async () => {
     console.log('Cleared existing data');
 
     // Create test students
+    const firstNames = ['John', 'Jane', 'Alex', 'Emily', 'Chris', 'Sara', 'David', 'Anna', 'Mike', 'Linda', 'Tom', 'Nina', 'Sam', 'Olivia', 'Max', 'Sophia', 'Leo', 'Emma', 'Ben', 'Ava'];
+    const middleNames = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T'];
+    const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Martinez', 'Hernandez', 'Lopez', 'Gonzalez', 'Wilson', 'Anderson', 'Thomas', 'Taylor', 'Moore', 'Jackson', 'Martin', 'Lee'];
     const students = Array.from({ length: 20 }).map((_, i) => {
       const yearOptions = ['1st Year', '2nd Year', '3rd Year', '4th Year'];
       const genderOptions = ['Male', 'Female', 'Other'];
@@ -28,9 +33,9 @@ const seedData = async () => {
         profile: '',
         department: 'Information Technology',
         course: 'B. Tech. Information Technology',
-        first_name: `Student${i + 1}`,
-        middle_name: `M${i + 1}`,
-        last_name: `L${i + 1}`,
+        first_name: firstNames[i % firstNames.length],
+        middle_name: middleNames[i % middleNames.length],
+        last_name: lastNames[i % lastNames.length],
         dob: new Date(2002, i % 12, (i % 28) + 1),
         gender: genderOptions[i % 3],
         current_year: yearOptions[i % 4],
@@ -89,13 +94,16 @@ const seedData = async () => {
     // Create test alumni
     const alumni = Array.from({ length: 20 }).map((_, i) => {
       const genderOptions = ['Male', 'Female', 'Other'];
+      const firstNames = ['John', 'Jane', 'Alex', 'Emily', 'Chris', 'Sara', 'David', 'Anna', 'Mike', 'Linda', 'Tom', 'Nina', 'Sam', 'Olivia', 'Max', 'Sophia', 'Leo', 'Emma', 'Ben', 'Ava'];
+      const middleNames = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T'];
+      const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Martinez', 'Hernandez', 'Lopez', 'Gonzalez', 'Wilson', 'Anderson', 'Thomas', 'Taylor', 'Moore', 'Jackson', 'Martin', 'Lee'];
       return {
         email: `alumni${i + 1}@alumni.com`,
         password: 'password123',
         profile: '',
-        first_name: `Alumni${i + 1}`,
-        middle_name: `M${i + 1}`,
-        last_name: `L${i + 1}`,
+        first_name: firstNames[i % firstNames.length],
+        middle_name: middleNames[i % middleNames.length],
+        last_name: lastNames[i % lastNames.length],
         dob: new Date(1990 + (i % 10), i % 12, (i % 28) + 1),
         gender: genderOptions[i % 3],
         phone: `7${String(100000000 + i).slice(0, 9)}`,
