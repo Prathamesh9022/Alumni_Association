@@ -242,7 +242,7 @@ router.post('/alumni/:id/approve', auth, checkRole(['admin']), async (req, res) 
         from: process.env.EMAIL_USER,
         to: alumni.email,
         subject: 'Alumni Registration Approved',
-        text: `Dear Alumni,\n\nYour registration has been approved! You can now log in to the MGM Alumni Portal and complete your profile.\n\nBest regards,\nMGM Alumni Association`
+        text: `Dear ${alumni.first_name || 'Alumni'},\n\nCongratulations! Your alumni registration has been approved by the admin.\n\nYou can now log in to the MGM Alumni Portal and complete your profile, connect with other alumni, and access exclusive features.\n\nLogin here: https://mgm-alumni-association.netlify.app/\n\nIf you have any questions, feel free to reply to this email.\n\nBest regards,\nMGM Alumni Association Team`
       });
     } catch (err) {
       emailError = err.message || String(err);

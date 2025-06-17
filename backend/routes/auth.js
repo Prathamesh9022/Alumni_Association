@@ -230,6 +230,14 @@ router.post('/login', async (req, res) => {
       });
     }
 
+    // Block alumni login if not approved
+    if (role === 'alumni' && user.isApproved === false) {
+      return res.status(403).json({
+        error: 'Account not approved',
+        details: 'Your alumni account is pending admin approval. You will receive an email once approved.'
+      });
+    }
+
     // Check password
     try {
       const isMatch = await user.comparePassword(password);
