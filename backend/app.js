@@ -5,6 +5,7 @@ const studentRoutes = require('./routes/student');
 const alumniRoutes = require('./routes/alumni');
 const mentorshipRoutes = require('./routes/mentorship');
 const uploadRoutes = require('./routes/upload');
+const analyticsRoutes = require('./routes/analytics');
 
 // Serve static files from uploads directory
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -15,4 +16,5 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/student', studentRoutes);
 app.use('/api/alumni', alumniRoutes);
 app.use('/api/mentorship', mentorshipRoutes);
-app.use('/api/upload', uploadRoutes); 
+app.use('/api/upload', uploadRoutes);
+app.use('/api/analytics', analyticsRoutes); 

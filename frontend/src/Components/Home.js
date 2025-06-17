@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { FaCalendarAlt, FaGraduationCap, FaLightbulb, FaUsers, FaChevronRight, FaArrowRight, FaBullseye, FaFlag } from "react-icons/fa";
+import { FaCalendarAlt, FaGraduationCap, FaLightbulb, FaUsers, FaChevronRight, FaArrowRight, FaBullseye, FaFlag, FaChartBar, FaChartPie, FaChartLine } from "react-icons/fa";
+import { ResponsivePie } from '@nivo/pie';
+import { ResponsiveBar } from '@nivo/bar';
+import { ResponsiveLine } from '@nivo/line';
 import "./Article.css";
 import "../App.css";
 import Header from "./Header";
@@ -242,6 +245,15 @@ export default function Home() {
     { label: "Companies", value: 85, icon: <FaUsers /> }
   ];
 
+  // Analytics data state
+  const [analyticsData, setAnalyticsData] = useState({
+    studentAlumniCount: { students: 0, alumni: 0 },
+    studentYearWise: [],
+    alumniBatchWise: [],
+    alumniCompanyWise: [],
+    alumniSkillWise: []
+  });
+
   // Check user role on component mount
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user'));
@@ -314,6 +326,23 @@ export default function Home() {
       setLeftIndex((prev) => (prev + 1) % successStories.length);
       setRightIndex((prev) => (prev - 1 + successStories.length) % successStories.length);
     }, 2000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Fetch analytics data
+  useEffect(() => {
+    const fetchAnalyticsData = async () => {
+      try {
+        const response = await axiosInstance.get('/api/analytics');
+        setAnalyticsData(response.data);
+      } catch (error) {
+        console.error('Error fetching analytics data:', error);
+      }
+    };
+
+    fetchAnalyticsData();
+    // Set up polling to update data every 5 minutes
+    const interval = setInterval(fetchAnalyticsData, 300000);
     return () => clearInterval(interval);
   }, []);
 
@@ -467,6 +496,180 @@ export default function Home() {
     return null;
   };
 
+  // Chart configurations
+  const pieChartConfig = {
+    data: [
+      { id: 'Students', value: analyticsData.studentAlumniCount.students, color: '#4e54c8' },
+      { id: 'Alumni', value: analyticsData.studentAlumniCount.alumni, color: '#8f94fb' }
+    ],
+    margin: { top: 40, right: 80, bottom: 80, left: 80 },
+    innerRadius: 0.5,
+    padAngle: 0.7,
+    cornerRadius: 3,
+    activeOuterRadiusOffset: 8,
+    colors: { scheme: 'nivo' },
+    borderWidth: 1,
+    borderColor: { from: 'color', modifiers: [['darker', 0.2]] },
+    enableArcLinkLabels: true,
+    arcLinkLabelsSkipAngle: 10,
+    arcLinkLabelsTextColor: '#333333',
+    arcLinkLabelsThickness: 2,
+    arcLinkLabelsColor: { from: 'color' },
+    arcLabelsSkipAngle: 10,
+    arcLabelsTextColor: { from: 'color', modifiers: [['darker', 2]] }
+  };
+
+  const barChartConfig = {
+    data: analyticsData.studentYearWise,
+    keys: ['count'],
+    indexBy: 'year',
+    margin: { top: 50, right: 130, bottom: 50, left: 60 },
+    padding: 0.3,
+    valueScale: { type: 'linear' },
+    colors: { scheme: 'nivo' },
+    borderColor: { from: 'color', modifiers: [['darker', 1.6]] },
+    axisTop: null,
+    axisRight: null,
+    axisBottom: {
+      tickSize: 5,
+      tickPadding: 5,
+      tickRotation: 0,
+      legend: 'Year',
+      legendPosition: 'middle',
+      legendOffset: 32
+    },
+    axisLeft: {
+      tickSize: 5,
+      tickPadding: 5,
+      tickRotation: 0,
+      legend: 'Count',
+      legendPosition: 'middle',
+      legendOffset: -40
+    }
+  };
+
+  const lineChartConfig = {
+    data: [
+      {
+        id: 'Alumni Distribution',
+        data: analyticsData.alumniBatchWise.map(item => ({
+          x: item.batch,
+          y: item.count
+        }))
+      }
+    ],
+    margin: { top: 50, right: 110, bottom: 50, left: 60 },
+    xScale: { type: 'point' },
+    yScale: { type: 'linear', min: 'auto', max: 'auto', stacked: true, reverse: false },
+    axisTop: null,
+    axisRight: null,
+    axisBottom: {
+      tickSize: 5,
+      tickPadding: 5,
+      tickRotation: 0,
+      legend: 'Batch',
+      legendOffset: 36,
+      legendPosition: 'middle'
+    },
+    axisLeft: {
+      tickSize: 5,
+      tickPadding: 5,
+      tickRotation: 0,
+      legend: 'Count',
+      legendOffset: -40,
+      legendPosition: 'middle'
+    },
+    pointSize: 10,
+    pointColor: { theme: 'background' },
+    pointBorderWidth: 2,
+    pointBorderColor: { from: 'serieColor' },
+    pointLabelYOffset: -12,
+    useMesh: true,
+    legends: [
+      {
+        anchor: 'bottom-right',
+        direction: 'column',
+        justify: false,
+        translateX: 100,
+        translateY: 0,
+        itemsSpacing: 0,
+        itemDirection: 'left-to-right',
+        itemWidth: 80,
+        itemHeight: 20,
+        itemOpacity: 0.75,
+        symbolSize: 12,
+        symbolShape: 'circle',
+        symbolBorderColor: 'rgba(0, 0, 0, .5)',
+        effects: [
+          {
+            on: 'hover',
+            style: {
+              itemBackground: 'rgba(0, 0, 0, .03)',
+              itemOpacity: 1
+            }
+          }
+        ]
+      }
+    ]
+  };
+
+  // Render analytics section
+  const renderAnalyticsSection = () => (
+    <div className="analytics-section">
+      <h2 className="section-title">
+        <FaChartBar className="me-2" />
+        Alumni Analytics
+      </h2>
+      
+      <div className="analytics-grid">
+        <div className="analytics-card">
+          <h3><FaChartPie className="me-2" />Student vs Alumni Distribution</h3>
+          <div className="chart-container">
+            <ResponsivePie {...pieChartConfig} />
+          </div>
+        </div>
+
+        <div className="analytics-card">
+          <h3><FaChartBar className="me-2" />Student Year-wise Distribution</h3>
+          <div className="chart-container">
+            <ResponsiveBar {...barChartConfig} />
+          </div>
+        </div>
+
+        <div className="analytics-card">
+          <h3><FaChartLine className="me-2" />Alumni Batch Distribution</h3>
+          <div className="chart-container">
+            <ResponsiveLine {...lineChartConfig} />
+          </div>
+        </div>
+
+        <div className="analytics-card">
+          <h3><FaUsers className="me-2" />Top Companies</h3>
+          <div className="company-list">
+            {analyticsData.alumniCompanyWise.slice(0, 5).map((company, index) => (
+              <div key={index} className="company-item">
+                <span className="company-name">{company.name}</span>
+                <span className="company-count">{company.count} alumni</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="analytics-card">
+          <h3><FaGraduationCap className="me-2" />Top Skills</h3>
+          <div className="skills-list">
+            {analyticsData.alumniSkillWise.slice(0, 5).map((skill, index) => (
+              <div key={index} className="skill-item">
+                <span className="skill-name">{skill.name}</span>
+                <span className="skill-count">{skill.count} alumni</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <>
       <Header />
@@ -618,8 +821,7 @@ export default function Home() {
           </div>
         </section>
 
-
-        
+        {renderAnalyticsSection()}
       </div>
     </>
   );

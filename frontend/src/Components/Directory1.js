@@ -77,7 +77,7 @@ const Directory1 = () => {
         
         // Education
         (alum.education?.some(edu => edu.institution.toLowerCase().includes(searchTermLower)))
-      );
+    );
     });
     setFilteredAlumni(filtered);
   };
@@ -134,7 +134,7 @@ const Directory1 = () => {
           <div className="alert alert-danger" role="alert">
             {error}
           </div>
-        </div>
+      </div>
       </>
     );
   }
@@ -148,33 +148,33 @@ const Directory1 = () => {
             <h2 className="text-primary mb-4">Alumni Directory</h2>
             
             {/* Search Bar */}
-            <div className="search-container mb-4">
-              <div className="search-box">
-                <FaSearch className="search-icon" />
-                <input
-                  type="text"
+                <div className="search-container mb-4">
+                  <div className="search-box">
+                    <FaSearch className="search-icon" />
+                    <input
+                      type="text"
                   className="form-control"
                   placeholder="Search by name, email, department, company, skills..."
-                  value={searchTerm}
+                      value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
-            </div>
+                    />
+                  </div>
+                </div>
 
             <div className="row">
               {filteredAlumni.map(alum => (
                 <div className="col-md-6 col-lg-4 mb-4" key={alum._id}>
                   <div className="card h-100">
-                    <div className="card-body">
+                        <div className="card-body">
                       <div className="text-center mb-3">
                         {alum.profile ? (
                           <img src={alum.profile} alt={alum.fullName} className="rounded-circle mb-3" style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
                         ) : (
                           <div className="rounded-circle bg-light mb-3 mx-auto d-flex align-items-center justify-content-center" style={{ width: '100px', height: '100px' }}>
                             <FaUser size={40} className="text-muted" />
-                          </div>
-                        )}
-                      </div>
+                              </div>
+                            )}
+                              </div>
                       <h5 className="card-title">{alum.fullName}</h5>
                       <p className="card-text mb-1"><FaEnvelope className="me-2" />{alum.email}</p>
                       <p className="card-text mb-1"><FaBriefcase className="me-2" />{alum.currentCompany}</p>
@@ -208,22 +208,22 @@ const Directory1 = () => {
                           <button className="btn btn-outline-danger btn-lg" style={{ minWidth: 120, borderRadius: '2em', fontWeight: 600, transition: 'all 0.2s' }} onClick={() => handleDeleteAlumni(alum._id)}>
                             <FaTrash className="me-2" /> Delete
                           </button>
+                              </div>
+                            )}
                         </div>
-                      )}
+                      </div>
                     </div>
-                  </div>
+                  ))}
                 </div>
-              ))}
-            </div>
 
-            {filteredAlumni.length === 0 && (
-              <div className="alert alert-info text-center mt-4">
-                No alumni found matching your search criteria.
+                {filteredAlumni.length === 0 && (
+                  <div className="alert alert-info text-center mt-4">
+                    No alumni found matching your search criteria.
+                  </div>
+                )}
               </div>
-            )}
+            </div>
           </div>
-        </div>
-      </div>
     </>
   );
 };
