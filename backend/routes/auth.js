@@ -164,7 +164,7 @@ router.post('/register', async (req, res) => {
     console.error('Unexpected registration error:', error);
     res.status(500).json({ 
       error: 'Registration failed',
-      details: 'An unexpected error occurred'
+      details: error.message
     });
   }
 });
@@ -286,7 +286,7 @@ router.post('/login', async (req, res) => {
     console.error('Unexpected login error:', error);
     return res.status(500).json({ 
       error: 'Login failed',
-      details: 'An unexpected error occurred'
+      details: error.message
     });
   }
 });

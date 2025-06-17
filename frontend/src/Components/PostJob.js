@@ -4,6 +4,7 @@ import { FaBriefcase, FaMapMarkerAlt, FaMoneyBillWave, FaCalendarAlt, FaLink, Fa
 import { jobService } from '../services/api';
 import Header from './Header';
 import './CommonStyles.css';
+import { toast } from 'react-hot-toast';
 
 const PostJob = () => {
   const navigate = useNavigate();
@@ -112,7 +113,9 @@ const PostJob = () => {
 
     } catch (error) {
       console.error('Error posting job:', error);
-      setError(error.response?.data?.error || 'Failed to post job. Please try again.');
+      let errorMessage = error.response?.data?.error || error.response?.data?.details || error.message || 'An unexpected error occurred.';
+      toast.error(errorMessage);
+      setError(errorMessage);
     } finally {
       setIsSubmitting(false);
     }

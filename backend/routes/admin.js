@@ -19,7 +19,7 @@ router.get('/profile', auth, checkRole(['admin']), async (req, res) => {
     res.json(admin);
   } catch (error) {
     console.error('Error fetching admin profile:', error);
-    res.status(500).json({ error: 'Failed to fetch profile' });
+    res.status(500).json({ error: 'Failed to fetch profile', details: error.message });
   }
 });
 
@@ -33,7 +33,7 @@ router.get('/students', auth, checkRole(['admin']), async (req, res) => {
     res.json(students);
   } catch (error) {
     console.error('Error fetching students:', error);
-    res.status(500).json({ error: 'Failed to fetch students' });
+    res.status(500).json({ error: 'Failed to fetch students', details: error.message });
   }
 });
 
@@ -47,7 +47,7 @@ router.get('/alumni', auth, checkRole(['admin']), async (req, res) => {
     res.json(alumni);
   } catch (error) {
     console.error('Error fetching alumni:', error);
-    res.status(500).json({ error: 'Failed to fetch alumni' });
+    res.status(500).json({ error: 'Failed to fetch alumni', details: error.message });
   }
 });
 
@@ -84,7 +84,7 @@ router.get('/dashboard', auth, checkRole(['admin']), async (req, res) => {
     });
   } catch (error) {
     console.error('Error fetching dashboard data:', error);
-    res.status(500).json({ error: 'Failed to fetch dashboard data' });
+    res.status(500).json({ error: 'Failed to fetch dashboard data', details: error.message });
   }
 });
 
@@ -117,21 +117,21 @@ router.put('/profile', auth, checkRole(['admin']), async (req, res) => {
       // Check if it's a valid base64 image
       if (!profile.startsWith('data:image/')) {
         console.log('Invalid profile image format');
-        return res.status(400).json({ error: 'Invalid profile image format' });
+        return res.status(400).json({ error: 'Invalid profile image format', details: { field: 'profile' } });
       }
       
       // Check if base64 string is too large (max 2MB)
       const base64Data = profile.split(',')[1];
       if (base64Data && base64Data.length > 2 * 1024 * 1024) {
         console.log('Profile image too large');
-        return res.status(400).json({ error: 'Profile image too large (max 2MB)' });
+        return res.status(400).json({ error: 'Profile image too large (max 2MB)', details: { field: 'profile' } });
       }
       
       // Validate image format
       const imageFormat = profile.split(';')[0].split('/')[1];
       if (!['jpeg', 'jpg', 'png', 'gif'].includes(imageFormat.toLowerCase())) {
         console.log('Invalid image format:', imageFormat);
-        return res.status(400).json({ error: 'Invalid image format. Supported formats: JPEG, PNG, GIF' });
+        return res.status(400).json({ error: 'Invalid image format. Supported formats: JPEG, PNG, GIF', details: { field: 'profile' } });
       }
       
       console.log('Profile image validation passed, updating...');
@@ -184,7 +184,7 @@ router.get('/mentorship-stats', auth, checkRole(['admin']), async (req, res) => 
     });
   } catch (error) {
     console.error('Error fetching mentorship statistics:', error);
-    res.status(500).json({ error: 'Failed to fetch mentorship statistics' });
+    res.status(500).json({ error: 'Failed to fetch mentorship statistics', details: error.message });
   }
 });
 
@@ -219,7 +219,7 @@ router.post('/alumni/:id/approve', auth, checkRole(['admin']), async (req, res) 
     if (!alumni) return res.status(404).json({ error: 'Alumni not found' });
     if (alumni.isApproved) return res.status(400).json({ error: 'Alumni already approved' });
     if (!alumni.email) {
-      return res.status(400).json({ error: 'Alumni must have an email before approval.' });
+      return res.status(400).json({ error: 'Alumni must have an email before approval.', details: { field: 'email' } });
     }
     alumni.isApproved = true;
     alumni.approvalDate = new Date();
@@ -309,7 +309,7 @@ router.post('/alumni/:id/reject', auth, checkRole(['admin']), async (req, res) =
     res.json({ message: 'Alumni rejected and notified by email.' });
   } catch (error) {
     console.error('Error rejecting alumni:', error);
-    res.status(500).json({ error: 'Failed to reject alumni' });
+    res.status(500).json({ error: 'Failed to reject alumni', details: error.message });
   }
 });
 
@@ -321,7 +321,7 @@ router.delete('/alumni/:id', auth, checkRole(['admin']), async (req, res) => {
     res.json({ message: 'Alumni deleted successfully.' });
   } catch (error) {
     console.error('Error deleting alumni:', error);
-    res.status(500).json({ error: 'Failed to delete alumni' });
+    res.status(500).json({ error: 'Failed to delete alumni', details: error.message });
   }
 });
 
@@ -333,7 +333,7 @@ router.delete('/students/:id', auth, checkRole(['admin']), async (req, res) => {
     res.json({ message: 'Student deleted successfully.' });
   } catch (error) {
     console.error('Error deleting student:', error);
-    res.status(500).json({ error: 'Failed to delete student' });
+    res.status(500).json({ error: 'Failed to delete student', details: error.message });
   }
 });
 

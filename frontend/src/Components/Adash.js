@@ -215,7 +215,9 @@ const AlumniDashboard = () => {
         setProfileCompleted(false);
         setIsEditing(true); // Automatically enable editing for new users
       } else {
-        setError(error.response?.data?.error || "Failed to fetch profile");
+        let errorMessage = error.response?.data?.error || error.response?.data?.details || error.message || 'An unexpected error occurred.';
+        toast.error(errorMessage);
+        setError(errorMessage);
       }
     } finally {
       setIsLoading(false);
@@ -368,8 +370,8 @@ const AlumniDashboard = () => {
         errorMessage += 'Please try again later.';
       }
       
-      setError(errorMessage);
       toast.error(errorMessage);
+      setError(errorMessage);
     } finally {
       setIsSubmitting(false);
     }

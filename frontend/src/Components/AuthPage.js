@@ -61,6 +61,11 @@ export default function AuthPage() {
         setLoading(false);
         return;
       }
+      if (!isValidPassword(registerForm.password)) {
+        setError("Password must be at least 6 characters and include 1 uppercase, 1 lowercase, 1 number, and 1 special character.");
+        setLoading(false);
+        return;
+      }
     }
 
     try {
@@ -136,7 +141,7 @@ export default function AuthPage() {
       } else if (err.response?.status === 500) {
         errorMessage = err.response?.data?.message || 'Server error. Please try again later.';
       } else {
-        errorMessage = err.response?.data?.message || err.message || errorMessage;
+        errorMessage = err.response?.data?.error || err.response?.data?.details || err.message || 'An unexpected error occurred.';
       }
       
       // Store error in localStorage for debugging
@@ -147,18 +152,8 @@ export default function AuthPage() {
         timestamp: new Date().toISOString()
       }));
       
+      toast.error(errorMessage);
       setError(errorMessage);
-      toast.error(errorMessage, { 
-        duration: 10000,
-        position: 'top-center',
-        style: {
-          background: '#ff4444',
-          color: '#fff',
-          padding: '16px',
-          borderRadius: '8px',
-          fontSize: '16px'
-        }
-      });
     } finally {
       setLoading(false);
     }
@@ -174,17 +169,7 @@ export default function AuthPage() {
         // Show error if it's less than 5 minutes old
         if (errorAge < 5 * 60 * 1000) {
           setError(errorData.message);
-          toast.error(errorData.message, { 
-            duration: 10000,
-            position: 'top-center',
-            style: {
-              background: '#ff4444',
-              color: '#fff',
-              padding: '16px',
-              borderRadius: '8px',
-              fontSize: '16px'
-            }
-          });
+          toast.error(errorData.message);
         }
         // Clear old errors
         localStorage.removeItem('lastAuthError');
@@ -238,6 +223,16 @@ export default function AuthPage() {
       }
     }
   };
+
+  // Add password validation function
+  function isValidPassword(password) {
+    // At least 1 special char, 1 uppercase, 1 lowercase, 1 number, min 6 chars
+    return /[!@#$%^&*(),.?":{}|<>]/.test(password) &&
+           /[A-Z]/.test(password) &&
+           /[a-z]/.test(password) &&
+           /[0-9]/.test(password) &&
+           password.length >= 6;
+  }
 
   return (
     <div className="page-container">

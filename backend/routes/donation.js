@@ -91,7 +91,7 @@ router.post('/submit', auth, checkRole(['alumni']), async (req, res) => {
           html: `<div style='font-family: Arial, sans-serif; color: #222;'>
             <h2 style='color: #1a2a6c;'>Thank You for Your Donation!</h2>
             <p>Dear <b>${alumniName}</b>,</p>
-            <p>Thank you for your generous donation of <b>₹${amount}</b> to the <b>“${campaign.title}”</b> campaign.</p>
+            <p>Thank you for your generous donation of <b>₹${amount}</b> to the <b>"${campaign.title}"</b> campaign.</p>
             <p>Your support helps us achieve our goals and make a real difference. Please find your official donation receipt attached to this email.</p>
             <h4>Donation Details:</h4>
             <ul>
@@ -149,7 +149,7 @@ router.post('/submit', auth, checkRole(['alumni']), async (req, res) => {
       raised: updatedRaised
     });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: 'Error submitting donation', details: error.message });
   }
 });
 
@@ -170,7 +170,7 @@ router.get('/transactions', auth, checkRole(['admin']), async (req, res) => {
     const transactions = await DonationTransaction.find().populate('campaign').populate('alumni').sort({ createdAt: -1 });
     res.json(transactions);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: 'Error fetching transactions', details: error.message });
   }
 });
 
@@ -180,7 +180,7 @@ router.get('/my', auth, checkRole(['alumni']), async (req, res) => {
     const transactions = await DonationTransaction.find({ alumni: req.user.userId }).populate('campaign').sort({ createdAt: -1 });
     res.json(transactions);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: 'Error fetching donations', details: error.message });
   }
 });
 
@@ -210,7 +210,7 @@ router.post('/email-admin', auth, checkRole(['alumni']), async (req, res) => {
     });
     res.json({ message: 'Email sent to admin for manual verification.' });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: 'Error sending email to admin', details: error.message });
   }
 });
 
@@ -240,7 +240,7 @@ router.post('/notify-admin', async (req, res) => {
     });
     res.json({ message: 'Notification email sent to admin.' });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: 'Error sending notification email', details: error.message });
   }
 });
 

@@ -263,7 +263,7 @@ const StudentDashboard = () => {
       }
     } catch (error) {
       console.error('Error updating profile:', error);
-      toast.error(error.response?.data?.message || 'Failed to update profile');
+      toast.error(error.response?.data?.error || error.response?.data?.details || error.message || 'An unexpected error occurred.');
     }
   };
 
@@ -466,7 +466,7 @@ const StudentDashboard = () => {
       setIsEditing(false);
     } catch (error) {
       console.error('Error fetching profile:', error);
-      toast.error(error.response?.data?.message || 'Failed to fetch profile data');
+      toast.error(error.response?.data?.error || error.response?.data?.details || error.message || 'An unexpected error occurred.');
     }
   };
 

@@ -4,6 +4,7 @@ import { FaUser, FaEnvelope, FaLock, FaIdCard } from 'react-icons/fa';
 import api from '../services/api';
 import Header from './Header';
 import './CommonStyles.css';
+import { toast } from 'react-hot-toast';
 
 const AlumniRegister = () => {
   const navigate = useNavigate();

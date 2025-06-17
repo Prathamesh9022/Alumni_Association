@@ -112,7 +112,7 @@ router.get('/', auth, async (req, res) => {
     });
   } catch (error) {
     console.error('Error fetching analytics data:', error);
-    res.status(500).json({ error: 'Failed to fetch analytics data' });
+    res.status(500).json({ error: 'Failed to fetch analytics data', details: error.message });
   }
 });
 

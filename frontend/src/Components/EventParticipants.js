@@ -19,6 +19,7 @@ import {
 import api from '../services/api';
 import Header from './Header';
 import './CommonStyles.css';
+import { toast } from 'react-hot-toast';
 
 const EventParticipants = () => {
   const { eventId } = useParams();
@@ -64,7 +65,7 @@ const EventParticipants = () => {
               setTimeout(() => navigate('/login'), 3000);
               break;
             default:
-              errorMessage = err.response.data?.error || 'An error occurred while loading participants.';
+              errorMessage = err.response.data?.error || err.response.data?.details || 'An error occurred while loading participants.';
           }
         } else if (err.request) {
           errorMessage = 'No response from server. Please try again later.';
@@ -72,6 +73,7 @@ const EventParticipants = () => {
           errorMessage = err.message || 'An unexpected error occurred.';
         }
         
+        toast.error(errorMessage);
         setError(errorMessage);
       } finally {
         setLoading(false);

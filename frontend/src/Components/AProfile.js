@@ -39,7 +39,9 @@ const AlumniProfile = () => {
       if (profile) setFormData(profile);
     } catch (error) {
       console.error('Error fetching profile:', error);
-      setError('Failed to fetch profile data');
+      let errorMessage = error.response?.data?.error || error.response?.data?.details || error.message || 'An unexpected error occurred.';
+      toast.error(errorMessage);
+      setError(errorMessage);
       setLoading(false);
     }
   };
@@ -113,8 +115,9 @@ const AlumniProfile = () => {
       }
     } catch (error) {
       console.error('Error updating profile:', error);
-      setError(error.response?.data?.error || 'Failed to update profile. Please try again.');
-      toast.error(error.response?.data?.error || 'Failed to update profile. Please try again.');
+      let errorMessage = error.response?.data?.error || error.response?.data?.details || error.message || 'An unexpected error occurred.';
+      toast.error(errorMessage);
+      setError(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -175,8 +178,9 @@ const AlumniProfile = () => {
       }
     } catch (error) {
       console.error('Error updating profile:', error);
-      setError(error.response?.data?.error || 'Failed to update profile');
-      toast.error(error.response?.data?.error || 'Failed to update profile');
+      let errorMessage = error.response?.data?.error || error.response?.data?.details || error.message || 'An unexpected error occurred.';
+      toast.error(errorMessage);
+      setError(errorMessage);
     }
   };
   const handleGlobalCancel = () => {

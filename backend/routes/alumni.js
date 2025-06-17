@@ -16,7 +16,7 @@ router.get('/profile', auth, checkRole(['alumni']), async (req, res) => {
     res.json(alumni);
   } catch (error) {
     console.error('Error fetching alumni profile:', error);
-    res.status(500).json({ error: 'Failed to fetch profile' });
+    res.status(500).json({ error: 'Failed to fetch profile', details: error.message });
   }
 });
 
@@ -256,7 +256,7 @@ router.get('/all', async (req, res) => {
     res.json(alumni);
   } catch (error) {
     console.error('Error fetching alumni:', error);
-    res.status(500).json({ error: 'Failed to fetch alumni data' });
+    res.status(500).json({ error: 'Failed to fetch alumni data', details: error.message });
   }
 });
 
@@ -299,7 +299,7 @@ router.post('/register', async (req, res) => {
       }));
       return res.status(400).json({ error: 'Validation failed', details: validationErrors });
     }
-    res.status(500).json({ error: 'Registration failed. Please try again.' });
+    res.status(500).json({ error: 'Registration failed. Please try again.', details: error.message });
   }
 });
 
@@ -311,7 +311,7 @@ router.get('/passing-years', auth, async (req, res) => {
     res.json(sortedYears);
   } catch (error) {
     console.error('Error fetching passing years:', error);
-    res.status(500).json({ error: 'Failed to fetch passing years' });
+    res.status(500).json({ error: 'Failed to fetch passing years', details: error.message });
   }
 });
 
@@ -322,7 +322,7 @@ router.get('/api/alumni/passing-years', auth, async (req, res) => {
     res.json(passingYears);
   } catch (error) {
     console.error('Error fetching passing years:', error);
-    res.status(500).json({ error: 'Failed to fetch passing years' });
+    res.status(500).json({ error: 'Failed to fetch passing years', details: error.message });
   }
 });
 

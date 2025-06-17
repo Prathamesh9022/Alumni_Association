@@ -142,7 +142,7 @@ router.post('/add', auth, checkRole(['admin', 'alumni']), async (req, res) => {
     res.status(201).json({ message: `Event created${(type === 'reunion' || type === 'webinar') ? ` and invitations sent to ${emailsSent} alumni` : ''}`, event, emailsSent });
   } catch (error) {
     console.error('Error creating event:', error);
-    res.status(500).json({ success: false, error: error.message });
+    res.status(500).json({ error: 'Error creating event', details: error.message });
   }
 });
 
@@ -177,7 +177,7 @@ router.get('/', auth, async (req, res) => {
     res.json(eventsWithRegistrationStatus);
   } catch (error) {
     console.error('Error fetching events:', error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: 'Error fetching events', details: error.message });
   }
 });
 
@@ -190,7 +190,7 @@ router.get('/past', auth, async (req, res) => {
     res.json(events);
   } catch (error) {
     console.error('Error fetching past events:', error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: 'Error fetching past events', details: error.message });
   }
 });
 
@@ -222,7 +222,7 @@ router.get('/:id', auth, async (req, res) => {
     res.json(eventObj);
   } catch (error) {
     console.error('Error fetching event:', error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: 'Error fetching event', details: error.message });
   }
 });
 
@@ -290,7 +290,7 @@ router.post('/:id/register', auth, async (req, res) => {
     });
   } catch (error) {
     console.error('Error registering for event:', error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: 'Error registering for event', details: error.message });
   }
 });
 
@@ -327,7 +327,7 @@ router.post('/:id/cancel', auth, async (req, res) => {
     });
   } catch (error) {
     console.error('Error cancelling registration:', error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: 'Error cancelling registration', details: error.message });
   }
 });
 
@@ -354,7 +354,7 @@ router.get('/:id/participants', auth, async (req, res) => {
     });
   } catch (error) {
     console.error('Error fetching participants:', error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: 'Error fetching participants', details: error.message });
   }
 });
 
@@ -368,7 +368,7 @@ router.get('/my/organized', auth, checkRole(['admin', 'alumni']), async (req, re
     res.json(events);
   } catch (error) {
     console.error('Error fetching organized events:', error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: 'Error fetching organized events', details: error.message });
   }
 });
 
@@ -382,7 +382,7 @@ router.get('/my/registered', auth, async (req, res) => {
     res.json(events);
   } catch (error) {
     console.error('Error fetching registered events:', error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: 'Error fetching registered events', details: error.message });
   }
 });
 
@@ -432,7 +432,7 @@ router.put('/:id', auth, async (req, res) => {
     });
   } catch (error) {
     console.error('Error updating event:', error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: 'Error updating event', details: error.message });
   }
 });
 
@@ -453,7 +453,7 @@ router.delete('/:id', auth, async (req, res) => {
     res.json({ success: true, message: 'Event deleted successfully' });
   } catch (error) {
     console.error('Error deleting event:', error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: 'Error deleting event', details: error.message });
   }
 });
 
@@ -468,7 +468,7 @@ router.delete('/admin/:id', auth, checkRole(['admin']), async (req, res) => {
     res.json({ success: true, message: 'Event deleted successfully (admin)' });
   } catch (error) {
     console.error('Error deleting event (admin):', error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: 'Error deleting event (admin)', details: error.message });
   }
 });
 

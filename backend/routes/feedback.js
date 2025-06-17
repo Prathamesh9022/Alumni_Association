@@ -15,7 +15,7 @@ router.post('/', auth, async (req, res) => {
     await newFeedback.save();
     res.status(201).json({ message: 'Feedback submitted successfully' });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: 'Error submitting feedback', details: error.message });
   }
 });
 
@@ -25,7 +25,7 @@ router.get('/', auth, checkRole(['admin']), async (req, res) => {
     const feedbacks = await Feedback.find().sort({ createdAt: -1 });
     res.json(feedbacks);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: 'Error retrieving feedback', details: error.message });
   }
 });
 
@@ -38,7 +38,7 @@ router.delete('/:id', auth, checkRole(['admin']), async (req, res) => {
     }
     res.json({ message: 'Feedback deleted successfully' });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: 'Error deleting feedback', details: error.message });
   }
 });
 

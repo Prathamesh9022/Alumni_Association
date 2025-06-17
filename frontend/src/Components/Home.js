@@ -175,6 +175,12 @@ const styles = {
   },
 };
 
+// Add a utility function to safely render SVG paths
+function SafePath({ d, ...props }) {
+  if (!d || typeof d !== 'string' || !d.match(/[mM]/)) return null;
+  return <path d={d} {...props} />;
+}
+
 export default function Home() {
   // Add user role state
   const [userRole, setUserRole] = useState(null);
@@ -639,9 +645,8 @@ export default function Home() {
     <div className="analytics-section">
       <h2 className="section-title">
         <FaChartBar className="me-2" />
-        Alumni Analytics
+        User Analytics
       </h2>
-      
       <div className="analytics-grid">
         <div className="analytics-card">
           <h3><FaChartPie className="me-2" />Student vs Alumni Distribution</h3>
@@ -661,30 +666,6 @@ export default function Home() {
           <h3><FaChartLine className="me-2" />Alumni Batch Distribution</h3>
           <div className="chart-container">
             <ResponsiveLine {...lineChartConfig} />
-          </div>
-        </div>
-
-        <div className="analytics-card">
-          <h3><FaUsers className="me-2" />Top Companies</h3>
-          <div className="company-list">
-            {analyticsData.alumniCompanyWise.slice(0, 5).map((company, index) => (
-              <div key={index} className="company-item">
-                <span className="company-name">{company.name}</span>
-                <span className="company-count">{company.count} alumni</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="analytics-card">
-          <h3><FaGraduationCap className="me-2" />Top Skills</h3>
-          <div className="skills-list">
-            {analyticsData.alumniSkillWise.slice(0, 5).map((skill, index) => (
-              <div key={index} className="skill-item">
-                <span className="skill-name">{skill.name}</span>
-                <span className="skill-count">{skill.count} alumni</span>
-              </div>
-            ))}
           </div>
         </div>
       </div>

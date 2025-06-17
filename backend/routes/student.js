@@ -15,7 +15,7 @@ router.get('/profile', auth, checkRole(['student']), async (req, res) => {
     res.json(student);
   } catch (error) {
     console.error('Error fetching student profile:', error);
-    res.status(500).json({ error: 'Failed to fetch profile' });
+    res.status(500).json({ error: 'Failed to fetch profile', details: error.message });
   }
 });
 
@@ -139,7 +139,7 @@ router.put('/profile', auth, checkRole(['student']), async (req, res) => {
         }, {})
       });
     }
-    res.status(500).json({ error: 'Failed to update profile' });
+    res.status(500).json({ error: 'Failed to update profile', details: error.message });
   }
 });
 
@@ -181,7 +181,7 @@ router.get('/mentor', auth, checkRole(['student']), async (req, res) => {
     });
   } catch (error) {
     console.error('Error fetching mentor details:', error);
-    res.status(500).json({ error: 'Failed to fetch mentor details' });
+    res.status(500).json({ error: 'Failed to fetch mentor details', details: error.message });
   }
 });
 
@@ -203,7 +203,7 @@ router.get('/mentorship-history', auth, checkRole(['student']), async (req, res)
     });
   } catch (error) {
     console.error('Error fetching mentorship history:', error);
-    res.status(500).json({ error: 'Failed to fetch mentorship history' });
+    res.status(500).json({ error: 'Failed to fetch mentorship history', details: error.message });
   }
 });
 
@@ -244,7 +244,7 @@ router.get('/all', auth, checkRole(['alumni']), async (req, res) => {
     res.json(transformedStudents);
   } catch (error) {
     console.error('Error in /all students route:', error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error.message, details: error.message });
   }
 });
 
