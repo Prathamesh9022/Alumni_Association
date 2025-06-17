@@ -341,6 +341,7 @@ const AlumniDashboard = () => {
           setProfileCompleted(true);
           setIsEditing(false);
           toast.success('Profile updated successfully!');
+          navigate('/home');
           success = true;
         } catch (error) {
           retryCount++;
