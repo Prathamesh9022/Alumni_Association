@@ -12,24 +12,31 @@ router.get('/', auth, async (req, res) => {
     const alumniCount = await Alumni.countDocuments();
 
     // Get student year-wise distribution
-    const studentYearWise = await Student.aggregate([
+    const yearMap = {
+      "1st Year": 1,
+      "2nd Year": 2,
+      "3rd Year": 3,
+      "4th Year": 4
+    };
+
+    const studentYearWiseRaw = await Student.aggregate([
       {
         $group: {
-          _id: '$year',
+          _id: '$current_year',
           count: { $sum: 1 }
         }
-      },
-      {
-        $project: {
-          year: '$_id',
-          count: 1,
-          _id: 0
-        }
-      },
-      {
-        $sort: { year: 1 }
       }
     ]);
+
+    // Ensure all years are present, even if count is 0
+    const allYears = ["1st Year", "2nd Year", "3rd Year", "4th Year"];
+    const studentYearWise = allYears.map(label => {
+      const found = studentYearWiseRaw.find(y => y._id === label);
+      return {
+        year: yearMap[label],
+        count: found ? found.count : 0
+      };
+    });
 
     // Get alumni batch-wise distribution
     const alumniBatchWise = await Alumni.aggregate([
