@@ -294,16 +294,28 @@ const AlumniDashboard = () => {
         return;
       }
 
-      // Prepare the profile data
+      // Prepare the profile data with null checks
       const profileData = {
         ...userData,
         email,
-        profile: profilePic,
-        experience,
-        skillset: skills,
-        education,
-        projects,
-        achievements,
+        profile: profilePic || null,
+        experience: Array.isArray(experience) ? experience.filter(exp => exp && exp.company && exp.position) : [],
+        skillset: Array.isArray(skills) ? skills.filter(s => s && typeof s === 'string' && s.trim() !== '') : [],
+        education: Array.isArray(education) ? education.filter(edu => edu && edu.institution && edu.board) : [],
+        projects: Array.isArray(projects) ? projects.filter(p => p && (p.title || p.description)).map(proj => ({
+          title: proj.title || '',
+          description: proj.description || '',
+          technologies: proj.technologies || '',
+          duration: proj.duration || '',
+          link: proj.link || ''
+        })) : [],
+        achievements: Array.isArray(achievements) ? achievements.filter(a => a && (a.title || a.description)).map(ach => ({
+          type: ach.type || 'sports',
+          title: ach.title || '',
+          description: ach.description || '',
+          date: ach.date || '',
+          organization: ach.organization || ''
+        })) : [],
         profileCompleted: true
       };
 
@@ -321,7 +333,7 @@ const AlumniDashboard = () => {
           
           // Update local storage with new profile data
           const updatedUser = {
-            ...JSON.parse(localStorage.getItem('user')),
+            ...JSON.parse(localStorage.getItem('user') || '{}'),
             profileCompleted: true
           };
           localStorage.setItem('user', JSON.stringify(updatedUser));
