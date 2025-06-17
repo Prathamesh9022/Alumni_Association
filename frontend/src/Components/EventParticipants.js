@@ -51,13 +51,21 @@ const EventParticipants = () => {
         } else if (err.response) {
           switch (err.response.status) {
             case 404:
-              errorMessage = 'Event not found. The event may have been deleted or the URL is incorrect.';
+              errorMessage = 'This event no longer exists or has been removed.';
+              // Immediately navigate back to events page for 404 errors
+              navigate('/events');
               break;
             case 403:
               errorMessage = 'You are not authorized to view participants for this event.';
+              setTimeout(() => {
+                navigate('/events');
+              }, 3000);
               break;
             case 401:
               errorMessage = 'Please log in to view event participants.';
+              setTimeout(() => {
+                navigate('/login');
+              }, 3000);
               break;
             default:
               errorMessage = err.response.data?.error || 'An error occurred while loading participants.';
@@ -69,17 +77,6 @@ const EventParticipants = () => {
         }
         
         setError(errorMessage);
-        
-        // If unauthorized or not found, navigate back to events page after a delay
-        if (err.response?.status === 403 || err.response?.status === 404) {
-          setTimeout(() => {
-            navigate('/events');
-          }, 3000);
-        } else if (err.response?.status === 401) {
-          setTimeout(() => {
-            navigate('/login');
-          }, 3000);
-        }
       } finally {
         setLoading(false);
       }
