@@ -19,7 +19,6 @@ import img8 from "../img/mgm8.jpg";
 import img9 from "../img/mgm9.jpg";
 import img10 from "../img/mgm10.jpg";
 import timg from "../img/timg.jpg";
-import pimg from "../img/photo.jpg";
 import success1 from "../img/success1.png";
 import success2 from "../img/success2.jpg";
 import success3 from "../img/success3.jpg";
