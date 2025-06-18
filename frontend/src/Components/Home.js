@@ -681,9 +681,10 @@ export default function Home() {
 
   // Replace the Bootstrap carousel section with:
   const heroImages = [
-    img1, img2, img3, img4, img5, img6,
-    [img7, img8], // merged frame: mgm7.jpg and mgm8.jpg
-    [img9, img10] // merged frame: mgm9.jpg and mgm10.jpg
+    img1, img2, img3,
+    [img4, img5], // merged frame: mgm4.jpg + mgm5.jpg
+    [img6, img7, img8], // merged frame: mgm6.jpg + mgm7.jpg + mgm8.jpg
+    [img9, img10] // merged frame: mgm9.jpg + mgm10.jpg
   ];
   const heroCaptions = [
     {
@@ -691,7 +692,7 @@ export default function Home() {
       subtitle: userRole === 'student' ? 'Connect with alumni mentors and explore opportunities' : 'Connect with fellow alumni and grow your network',
       cta: renderCtaButtons()
     },
-    ...Array(5).fill({
+    ...Array(2).fill({
       title: 'Discover Opportunities',
       subtitle: userRole === 'student' ? 'Find internships, jobs, and mentorship programs' : 'Find job postings, mentorship programs and more',
       cta: <Link to="/jobs" className="hero-button">Explore Jobs <FaArrowRight /></Link>
@@ -725,37 +726,27 @@ export default function Home() {
         <section className="hero-section">
           <div className="hero-carousel-container">
             {Array.isArray(heroImages[currentHeroIndex]) ? (
-              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '2vw', width: '100%' }}>
-                <img
-                  src={heroImages[currentHeroIndex][0]}
-                  alt={`MGM Campus merged 1`}
-                  className="hero-carousel-img"
-                  style={{
-                    width: '48%',
-                    height: '50vw',
-                    maxHeight: '500px',
-                    objectFit: 'contain',
-                    objectPosition: 'center',
-                    background: '#f8f9fa',
-                    transition: 'opacity 0.5s',
-                    display: 'block',
-                  }}
-                />
-                <img
-                  src={heroImages[currentHeroIndex][1]}
-                  alt={`MGM Campus merged 2`}
-                  className="hero-carousel-img"
-                  style={{
-                    width: '48%',
-                    height: '50vw',
-                    maxHeight: '500px',
-                    objectFit: 'contain',
-                    objectPosition: 'center',
-                    background: '#f8f9fa',
-                    transition: 'opacity 0.5s',
-                    display: 'block',
-                  }}
-                />
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '50vw', maxHeight: '500px', background: '#f8f9fa', overflow: 'hidden' }}>
+                {heroImages[currentHeroIndex].map((img, idx) => (
+                  <img
+                    key={idx}
+                    src={img}
+                    alt={`MGM Campus merged ${idx + 1}`}
+                    className="hero-carousel-img"
+                    style={{
+                      width: `${100 / heroImages[currentHeroIndex].length}%`,
+                      height: '100%',
+                      objectFit: 'cover',
+                      objectPosition: 'center',
+                      background: '#f8f9fa',
+                      transition: 'opacity 0.5s',
+                      display: 'block',
+                      margin: 0,
+                      border: 'none',
+                      padding: 0
+                    }}
+                  />
+                ))}
               </div>
             ) : (
               <img
@@ -774,7 +765,7 @@ export default function Home() {
                 }}
               />
             )}
-            <div className="carousel-caption">
+            <div className="carousel-caption full-cover">
               <h1 className="hero-title">{heroCaptions[currentHeroIndex].title}</h1>
               <p className="hero-subtitle">{heroCaptions[currentHeroIndex].subtitle}</p>
               {heroCaptions[currentHeroIndex].cta}
