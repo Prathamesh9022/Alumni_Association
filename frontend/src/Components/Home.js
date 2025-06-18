@@ -776,7 +776,7 @@ export default function Home() {
                 }}
               />
             )}
-            <div className="carousel-caption full-cover">
+            <div className="carousel-caption cover">
               <h1 className="hero-title">{heroCaptions[currentHeroIndex].title}</h1>
               <p className="hero-subtitle">{heroCaptions[currentHeroIndex].subtitle}</p>
               {heroCaptions[currentHeroIndex].cta}
