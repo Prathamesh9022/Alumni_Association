@@ -332,4 +332,38 @@
   .chart-container {
     height: 250px;
   }
+}
+
+.hero-carousel-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: #f8f9fa;
+}
+
+.hero-carousel-img {
+  width: 100%;
+  height: 50vw;
+  max-height: 500px;
+  object-fit: contain;
+  object-position: center;
+  background: #f8f9fa;
+  transition: opacity 0.5s;
+  display: block;
+}
+
+@media (max-width: 600px) {
+  .hero-carousel-img {
+    height: 40vw;
+    max-height: 250px;
+  }
+}
+
+.carousel-caption {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.3);
+  color: #fff;
+  padding: 1.5rem;
+  text-align: center;
 } 
