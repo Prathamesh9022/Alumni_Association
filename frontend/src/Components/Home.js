@@ -680,18 +680,27 @@ export default function Home() {
   );
 
   // Replace the Bootstrap carousel section with:
-  const heroImages = [img1, img2, img3, img4, img5, img6, img7, img8, img9, img10];
+  const heroImages = [
+    img1, img2, img3, img4, img5, img6,
+    [img7, img8], // merged frame: mgm7.jpg and mgm8.jpg
+    [img9, img10] // merged frame: mgm9.jpg and mgm10.jpg
+  ];
   const heroCaptions = [
     {
       title: userRole === 'student' ? 'Welcome to MGM Student Portal' : 'Welcome to MGM Alumni Association',
       subtitle: userRole === 'student' ? 'Connect with alumni mentors and explore opportunities' : 'Connect with fellow alumni and grow your network',
       cta: renderCtaButtons()
     },
-    ...heroImages.slice(1, 9).map(() => ({
+    ...Array(5).fill({
       title: 'Discover Opportunities',
       subtitle: userRole === 'student' ? 'Find internships, jobs, and mentorship programs' : 'Find job postings, mentorship programs and more',
       cta: <Link to="/jobs" className="hero-button">Explore Jobs <FaArrowRight /></Link>
-    })),
+    }),
+    {
+      title: 'Discover Opportunities',
+      subtitle: userRole === 'student' ? 'Find internships, jobs, and mentorship programs' : 'Find job postings, mentorship programs and more',
+      cta: <Link to="/jobs" className="hero-button">Explore Jobs <FaArrowRight /></Link>
+    },
     {
       title: userRole === 'student' ? 'Join Alumni Events' : 'Attend Alumni Events',
       subtitle: userRole === 'student' ? 'Learn from industry experts and build connections' : 'Stay connected with reunions and knowledge sharing sessions',
@@ -715,20 +724,56 @@ export default function Home() {
         {/* Hero Banner with CAROUSEL */}
         <section className="hero-section">
           <div className="hero-carousel-container">
-            <img
-              src={heroImages[currentHeroIndex]}
-              alt={`MGM Campus ${currentHeroIndex + 1}`}
-              className="hero-carousel-img"
-              style={{
-                width: '100%',
-                height: '50vw',
-                maxHeight: '500px',
-                objectFit: 'contain',
-                objectPosition: 'center',
-                background: '#f8f9fa',
-                transition: 'opacity 0.5s'
-              }}
-            />
+            {Array.isArray(heroImages[currentHeroIndex]) ? (
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '2vw', width: '100%' }}>
+                <img
+                  src={heroImages[currentHeroIndex][0]}
+                  alt={`MGM Campus merged 1`}
+                  className="hero-carousel-img"
+                  style={{
+                    width: '48%',
+                    height: '50vw',
+                    maxHeight: '500px',
+                    objectFit: 'contain',
+                    objectPosition: 'center',
+                    background: '#f8f9fa',
+                    transition: 'opacity 0.5s',
+                    display: 'block',
+                  }}
+                />
+                <img
+                  src={heroImages[currentHeroIndex][1]}
+                  alt={`MGM Campus merged 2`}
+                  className="hero-carousel-img"
+                  style={{
+                    width: '48%',
+                    height: '50vw',
+                    maxHeight: '500px',
+                    objectFit: 'contain',
+                    objectPosition: 'center',
+                    background: '#f8f9fa',
+                    transition: 'opacity 0.5s',
+                    display: 'block',
+                  }}
+                />
+              </div>
+            ) : (
+              <img
+                src={heroImages[currentHeroIndex]}
+                alt={`MGM Campus ${currentHeroIndex + 1}`}
+                className="hero-carousel-img"
+                style={{
+                  width: '100%',
+                  height: '50vw',
+                  maxHeight: '500px',
+                  objectFit: 'contain',
+                  objectPosition: 'center',
+                  background: '#f8f9fa',
+                  transition: 'opacity 0.5s',
+                  display: 'block',
+                }}
+              />
+            )}
             <div className="carousel-caption">
               <h1 className="hero-title">{heroCaptions[currentHeroIndex].title}</h1>
               <p className="hero-subtitle">{heroCaptions[currentHeroIndex].subtitle}</p>
