@@ -24,6 +24,8 @@ const Donation = () => {
   const [updatingRaised, setUpdatingRaised] = useState(false);
   const [selectedPayCampaign, setSelectedPayCampaign] = useState(null);
   const [receiptUrl, setReceiptUrl] = useState(null);
+  const [filterCampaign, setFilterCampaign] = useState('');
+  const [adminCampaignFilter, setAdminCampaignFilter] = useState('active');
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user'));
@@ -138,16 +140,59 @@ const Donation = () => {
 
   // Admin view: show all campaigns and all transactions
   if (userRole === 'admin') {
+    // Filter campaigns by status
+    const activeCampaigns = campaigns.filter(camp => camp.raised < camp.amount);
+    const achievedCampaigns = campaigns.filter(camp => camp.raised >= camp.amount);
+    const campaignsToShow = adminCampaignFilter === 'active' ? activeCampaigns : achievedCampaigns;
+    // Filtered transactions for selected campaigns
+    const filteredTransactions = filterCampaign
+      ? transactions.filter(tx => tx.campaign?._id === filterCampaign)
+      : transactions.filter(tx =>
+          adminCampaignFilter === 'active'
+            ? tx.campaign && tx.campaign.raised < tx.campaign.amount
+            : tx.campaign && tx.campaign.raised >= tx.campaign.amount
+        );
+
+    // CSV Export
+    const exportCSV = () => {
+      const headers = ['Donor Name', 'Email', 'Amount', 'Campaign', 'UPI Reference', 'Date'];
+      const rows = filteredTransactions.map(tx => [
+        tx.alumni ? `${tx.alumni.first_name || ''} ${tx.alumni.last_name || ''}`.trim() : 'N/A',
+        tx.alumni?.email || 'N/A',
+        tx.amount,
+        tx.campaign?.title || 'N/A',
+        tx.upiRef || 'N/A',
+        new Date(tx.createdAt).toLocaleString()
+      ]);
+      let csvContent = headers.join(',') + '\n' + rows.map(r => r.map(x => `"${x}"`).join(',')).join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'donation_transactions.csv');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    };
+
     return (
       <div className="container">
         <Header />
         <div className="content">
           <h2 className="mb-4 text-primary fw-bold" style={{ letterSpacing: 1 }}>Donation Campaigns</h2>
-          {(!campaigns || campaigns.length === 0) && (
+          {/* Admin filter for active/achieved campaigns */}
+          <div className="mb-3">
+            <label className="me-2 fw-semibold">Show:</label>
+            <select className="form-select d-inline-block w-auto" value={adminCampaignFilter} onChange={e => setAdminCampaignFilter(e.target.value)}>
+              <option value="active">Active Campaigns</option>
+              <option value="achieved">Achieved / Past Campaigns</option>
+            </select>
+          </div>
+          {(!campaignsToShow || campaignsToShow.length === 0) && (
             <div className="no-campaigns">No campaigns found.</div>
           )}
-          <div className="row g-4">
-            {campaigns && campaigns.map(camp => {
+          <div className="row g-4 mb-5">
+            {campaignsToShow && campaignsToShow.map(camp => {
               const myContribution = myDonations.filter(tx => tx.campaign?._id === camp._id && tx.status === 'confirmed').reduce((sum, tx) => sum + Number(tx.amount), 0);
               const percent = camp.amount ? Math.min(100, Math.round((camp.raised / camp.amount) * 100)) : 0;
               const goalAchieved = camp.raised >= camp.amount;
@@ -183,6 +228,52 @@ const Donation = () => {
               );
             })}
           </div>
+          {/* Filter and Export Controls */}
+          <div className="d-flex justify-content-between align-items-center mb-3">
+            <div>
+              <label htmlFor="filter-campaign" className="me-2 fw-semibold">Filter by Campaign:</label>
+              <select id="filter-campaign" className="form-select d-inline-block w-auto" value={filterCampaign} onChange={e => setFilterCampaign(e.target.value)}>
+                <option value="">All Campaigns</option>
+                {campaignsToShow.map(camp => (
+                  <option key={camp._id} value={camp._id}>{camp.title}</option>
+                ))}
+              </select>
+            </div>
+            <button className="btn btn-success" onClick={exportCSV}><i className="fa fa-download me-2" />Export CSV</button>
+          </div>
+          {/* Transactions Table */}
+          <div className="table-responsive">
+            <table className="table table-bordered table-striped">
+              <thead className="table-primary">
+                <tr>
+                  <th>#</th>
+                  <th>Donor Name</th>
+                  <th>Email</th>
+                  <th>Amount</th>
+                  <th>Campaign</th>
+                  <th>UPI Reference</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredTransactions.length === 0 ? (
+                  <tr><td colSpan="7" className="text-center">No transactions found.</td></tr>
+                ) : (
+                  filteredTransactions.map((tx, idx) => (
+                    <tr key={tx._id}>
+                      <td>{idx + 1}</td>
+                      <td>{tx.alumni ? `${tx.alumni.first_name || ''} ${tx.alumni.last_name || ''}`.trim() : 'N/A'}</td>
+                      <td>{tx.alumni?.email || 'N/A'}</td>
+                      <td>₹{tx.amount}</td>
+                      <td>{tx.campaign?.title || 'N/A'}</td>
+                      <td>{tx.upiRef || 'N/A'}</td>
+                      <td>{new Date(tx.createdAt).toLocaleString()}</td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     );
@@ -190,17 +281,19 @@ const Donation = () => {
 
   // Alumni view: show campaigns, donate, see own donations
   if (userRole === 'alumni') {
+    // Only show active campaigns (goal not achieved)
+    const activeCampaigns = campaigns.filter(camp => camp.raised < camp.amount);
     return (
       <div className="container">
         <Header />
         <div className="content">
           <h2 className="mb-4 text-primary fw-bold text-center" style={{ letterSpacing: 1, fontSize: '2.2rem' }}>Support Our Mission</h2>
           {!selectedPayCampaign ? (
-            (!campaigns || campaigns.length === 0) ? (
+            (!activeCampaigns || activeCampaigns.length === 0) ? (
               <div className="text-center text-muted mb-5">No campaigns available.</div>
             ) : (
               <div className="row g-4 mb-5">
-                {campaigns.map(camp => {
+                {activeCampaigns.map(camp => {
                   const myContribution = myDonations.filter(tx => tx.campaign?._id === camp._id && tx.status === 'confirmed').reduce((sum, tx) => sum + Number(tx.amount), 0);
                   const percent = camp.amount ? Math.min(100, Math.round((camp.raised / camp.amount) * 100)) : 0;
                   const goalAchieved = camp.raised >= camp.amount;
