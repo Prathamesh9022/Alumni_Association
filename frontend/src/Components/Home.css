@@ -115,7 +115,7 @@
   position: relative;
   z-index: 2;
   overflow-y: auto;
-  max-height: 700px;
+  max-height: 800px;
   padding: 2rem;
 }
 
@@ -250,6 +250,29 @@
 
   .success-story-card {
     padding: 1rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .successVisionContainer {
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1rem;
+    min-height: unset;
+  }
+  .vision-mission-section,
+  .success-stories-slider {
+    width: 100% !important;
+    min-width: 0;
+    max-width: 100vw;
+    border-radius: 1rem;
+    margin: 0 auto 1.5rem auto;
+    box-sizing: border-box;
+    padding: 1rem;
+    min-height: unset;
+  }
+  .success-stories-slider {
+    margin-bottom: 0;
   }
 }
 
