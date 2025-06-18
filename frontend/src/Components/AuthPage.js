@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaEnvelope, FaLock, FaUserGraduate, FaUserTie, FaSignInAlt, FaUserPlus, FaExclamationTriangle } from 'react-icons/fa';
+import { FaEnvelope, FaLock, FaUserGraduate, FaUserTie, FaSignInAlt, FaUserPlus, FaExclamationTriangle, FaEye, FaEyeSlash } from 'react-icons/fa';
 import mgmImg from "../img/mgm1.jpg";
 import './CommonStyles.css';
 import { toast } from 'react-hot-toast';
@@ -17,6 +17,10 @@ export default function AuthPage() {
   const [forgotOTP, setForgotOTP] = useState("");
   const [forgotNewPassword, setForgotNewPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
+  const [showRegisterPassword, setShowRegisterPassword] = useState(false);
+  const [showRegisterConfirmPassword, setShowRegisterConfirmPassword] = useState(false);
+  const [showForgotNewPassword, setShowForgotNewPassword] = useState(false);
 
   const [loginForm, setLoginForm] = useState({
     email: "",
@@ -355,7 +359,18 @@ export default function AuthPage() {
                 {forgotStep === 3 && (
                   <>
                     <label className="form-label">Enter your new password</label>
-                    <input type="password" className="form-control mb-3" value={forgotNewPassword} onChange={e => setForgotNewPassword(e.target.value)} required />
+                    <div className="input-group mb-3">
+                      <input
+                        type={showForgotNewPassword ? 'text' : 'password'}
+                        className="form-control"
+                        value={forgotNewPassword}
+                        onChange={e => setForgotNewPassword(e.target.value)}
+                        required
+                      />
+                      <span className="input-group-text" style={{ cursor: 'pointer' }} onClick={() => setShowForgotNewPassword(v => !v)}>
+                        {showForgotNewPassword ? <FaEyeSlash /> : <FaEye />}
+                      </span>
+                    </div>
                     <button className="btn btn-success w-100 mb-2" type="submit">Reset Password</button>
                   </>
                 )}
@@ -376,14 +391,19 @@ export default function AuthPage() {
                         required
                       />
                       <label className="form-label">Password</label>
-                      <input
-                        type="password"
-                        className="form-control mb-3"
-                        name="password"
-                        value={loginForm.password}
-                        onChange={handleLoginChange}
-                        required
-                      />
+                      <div className="input-group mb-3">
+                        <input
+                          type={showLoginPassword ? 'text' : 'password'}
+                          className="form-control"
+                          name="password"
+                          value={loginForm.password}
+                          onChange={handleLoginChange}
+                          required
+                        />
+                        <span className="input-group-text" style={{ cursor: 'pointer' }} onClick={() => setShowLoginPassword(v => !v)}>
+                          {showLoginPassword ? <FaEyeSlash /> : <FaEye />}
+                        </span>
+                      </div>
                       <button className="btn btn-primary w-100" type="submit">
                         <FaSignInAlt className="me-2" />Login
                       </button>
@@ -418,12 +438,12 @@ export default function AuthPage() {
 
                     <div className="form-group">
                       <label className="form-label">Password</label>
-                      <div className="d-flex align-center">
+                      <div className="input-group">
                         <span className="input-group-text bg-primary" style={{ color: 'var(--background-white)' }}>
                           <FaLock />
                         </span>
                         <input
-                          type="password"
+                          type={showRegisterPassword ? 'text' : 'password'}
                           name="password"
                           value={registerForm.password}
                           onChange={handleRegisterChange}
@@ -431,17 +451,20 @@ export default function AuthPage() {
                           placeholder="Create a password"
                           required
                         />
+                        <span className="input-group-text" style={{ cursor: 'pointer' }} onClick={() => setShowRegisterPassword(v => !v)}>
+                          {showRegisterPassword ? <FaEyeSlash /> : <FaEye />}
+                        </span>
                       </div>
                     </div>
 
                     <div className="form-group">
                       <label className="form-label">Confirm Password</label>
-                      <div className="d-flex align-center">
+                      <div className="input-group">
                         <span className="input-group-text bg-primary" style={{ color: 'var(--background-white)' }}>
                           <FaLock />
                         </span>
                         <input
-                          type="password"
+                          type={showRegisterConfirmPassword ? 'text' : 'password'}
                           name="confirmPassword"
                           value={registerForm.confirmPassword}
                           onChange={handleRegisterChange}
@@ -449,6 +472,9 @@ export default function AuthPage() {
                           placeholder="Confirm your password"
                           required
                         />
+                        <span className="input-group-text" style={{ cursor: 'pointer' }} onClick={() => setShowRegisterConfirmPassword(v => !v)}>
+                          {showRegisterConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+                        </span>
                       </div>
                     </div>
 
