@@ -33,13 +33,8 @@ router.post('/submit', auth, checkRole(['alumni']), async (req, res) => {
     campaign.amount = Number(campaign.amount);
     let campaignDeleted = false;
     let updatedRaised = campaign.raised;
-    if (campaign.raised >= campaign.amount) {
-      await Fund.findByIdAndDelete(campaignId);
-      console.log(`[DEBUG] Deleted campaign ${campaignId} after reaching goal: raised=${campaign.raised}, amount=${campaign.amount}`);
-      campaignDeleted = true;
-    } else {
-      await campaign.save();
-    }
+    // Do not delete the campaign when the goal is achieved; just keep it and update the raised amount
+    await campaign.save();
     // Generate PDF receipt with logo and improved format
     const doc = new PDFDocument();
     const receiptPath = path.join(__dirname, `../receipts/receipt_${transaction._id}.pdf`);

@@ -47,19 +47,6 @@ router.put('/:id', auth, checkRole(['admin']), async (req, res) => {
   }
 });
 
-// Delete fund (admin only)
-router.delete('/:id', auth, checkRole(['admin']), async (req, res) => {
-  try {
-    const fund = await Fund.findByIdAndDelete(req.params.id);
-    if (!fund) {
-      return res.status(404).json({ error: 'Fund not found' });
-    }
-    res.json({ message: 'Fund deleted successfully' });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
 // Update the 'raised' amount for a fund (admin only)
 router.patch('/:id/raised', auth, checkRole(['admin']), async (req, res) => {
   try {
