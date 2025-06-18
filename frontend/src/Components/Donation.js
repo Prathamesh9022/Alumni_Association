@@ -193,7 +193,6 @@ const Donation = () => {
           )}
           <div className="row g-4 mb-5">
             {campaignsToShow && campaignsToShow.map(camp => {
-              const myContribution = myDonations.filter(tx => tx.campaign?._id === camp._id && tx.status === 'confirmed').reduce((sum, tx) => sum + Number(tx.amount), 0);
               const percent = camp.amount ? Math.min(100, Math.round((camp.raised / camp.amount) * 100)) : 0;
               const goalAchieved = camp.raised >= camp.amount;
               return (
@@ -221,7 +220,6 @@ const Donation = () => {
                       <div className="progress modern-progress mb-2" style={{ height: 22, background: '#e9ecef', borderRadius: 12, overflow: 'hidden' }}>
                         <div className="progress-bar bg-success progress-bar-animated" role="progressbar" style={{ width: `${percent}%`, fontWeight: 600, fontSize: 16, transition: 'width 0.7s cubic-bezier(.4,2,.6,1)' }} aria-valuenow={percent} aria-valuemin={0} aria-valuemax={100}>{percent}%</div>
                       </div>
-                      <div className="text-muted" style={{ fontSize: '0.95rem' }}>Your Contribution: ₹{myContribution}</div>
                     </div>
                   </div>
                 </div>
