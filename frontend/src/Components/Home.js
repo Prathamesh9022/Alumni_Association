@@ -681,10 +681,12 @@ export default function Home() {
 
   // Replace the Bootstrap carousel section with:
   const heroImages = [
-    img1, img2, img3,
-    [img4, img5], // merged frame: mgm4.jpg + mgm5.jpg
-    [img6, img7, img8], // merged frame: mgm6.jpg + mgm7.jpg + mgm8.jpg
-    [img9, img10] // merged frame: mgm9.jpg + mgm10.jpg
+    img1, // 0
+    img2, // 1
+    img3, // 2
+    [img4, img5], // 3
+    [img6, img7, img8], // 4
+    [img9, img10] // 5
   ];
   const heroCaptions = [
     {
@@ -692,11 +694,21 @@ export default function Home() {
       subtitle: userRole === 'student' ? 'Connect with alumni mentors and explore opportunities' : 'Connect with fellow alumni and grow your network',
       cta: renderCtaButtons()
     },
-    ...Array(2).fill({
+    {
       title: 'Discover Opportunities',
       subtitle: userRole === 'student' ? 'Find internships, jobs, and mentorship programs' : 'Find job postings, mentorship programs and more',
       cta: <Link to="/jobs" className="hero-button">Explore Jobs <FaArrowRight /></Link>
-    }),
+    },
+    {
+      title: 'Discover Opportunities',
+      subtitle: userRole === 'student' ? 'Find internships, jobs, and mentorship programs' : 'Find job postings, mentorship programs and more',
+      cta: <Link to="/jobs" className="hero-button">Explore Jobs <FaArrowRight /></Link>
+    },
+    {
+      title: 'Discover Opportunities',
+      subtitle: userRole === 'student' ? 'Find internships, jobs, and mentorship programs' : 'Find job postings, mentorship programs and more',
+      cta: <Link to="/jobs" className="hero-button">Explore Jobs <FaArrowRight /></Link>
+    },
     {
       title: 'Discover Opportunities',
       subtitle: userRole === 'student' ? 'Find internships, jobs, and mentorship programs' : 'Find job postings, mentorship programs and more',
