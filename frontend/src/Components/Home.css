@@ -339,6 +339,11 @@
   width: 100%;
   overflow: hidden;
   background: #f8f9fa;
+  min-height: 50vw;
+  max-height: 500px;
+  height: 50vw;
+  display: flex;
+  align-items: stretch;
 }
 
 .hero-carousel-img {
@@ -353,6 +358,11 @@
 }
 
 @media (max-width: 600px) {
+  .hero-carousel-container {
+    min-height: 40vw;
+    max-height: 250px;
+    height: 40vw;
+  }
   .hero-carousel-img {
     height: 40vw;
     max-height: 250px;
