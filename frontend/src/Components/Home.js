@@ -11,6 +11,13 @@ import './Header.css';
 import img1 from "../img/mgm1.jpg";
 import img2 from "../img/mgm2.jpg";
 import img3 from "../img/mgm3.jpg";
+import img4 from "../img/mgm4.jpg";
+import img5 from "../img/mgm5.jpg";
+import img6 from "../img/mgm6.jpg";
+import img7 from "../img/mgm7.jpg";
+import img8 from "../img/mgm8.jpg";
+import img9 from "../img/mgm9.jpg";
+import img10 from "../img/mgm10.jpg";
 import timg from "../img/timg.jpg";
 import pimg from "../img/photo.jpg";
 import success1 from "../img/success1.png";
@@ -715,6 +722,90 @@ export default function Home() {
               </div>
               <div className="carousel-item">
                 <img src={img3} className="d-block w-100 carousel-img" alt="MGM Campus" />
+                <div className="carousel-caption">
+                  <h1 className="hero-title">Discover Opportunities</h1>
+                  <p className="hero-subtitle">
+                    {userRole === 'student'
+                      ? 'Find internships, jobs, and mentorship programs'
+                      : 'Find job postings, mentorship programs and more'}
+                  </p>
+                  <Link to="/jobs" className="hero-button">Explore Jobs <FaArrowRight /></Link>
+                </div>
+              </div>
+              <div className="carousel-item">
+                <img src={img4} className="d-block w-100 carousel-img" alt="MGM Campus" />
+                <div className="carousel-caption">
+                  <h1 className="hero-title">Discover Opportunities</h1>
+                  <p className="hero-subtitle">
+                    {userRole === 'student'
+                      ? 'Find internships, jobs, and mentorship programs'
+                      : 'Find job postings, mentorship programs and more'}
+                  </p>
+                  <Link to="/jobs" className="hero-button">Explore Jobs <FaArrowRight /></Link>
+                </div>
+              </div>
+              <div className="carousel-item">
+                <img src={img5} className="d-block w-100 carousel-img" alt="MGM Campus" />
+                <div className="carousel-caption">
+                  <h1 className="hero-title">Discover Opportunities</h1>
+                  <p className="hero-subtitle">
+                    {userRole === 'student'
+                      ? 'Find internships, jobs, and mentorship programs'
+                      : 'Find job postings, mentorship programs and more'}
+                  </p>
+                  <Link to="/jobs" className="hero-button">Explore Jobs <FaArrowRight /></Link>
+                </div>
+              </div>
+              <div className="carousel-item">
+                <img src={img6} className="d-block w-100 carousel-img" alt="MGM Campus" />
+                <div className="carousel-caption">
+                  <h1 className="hero-title">Discover Opportunities</h1>
+                  <p className="hero-subtitle">
+                    {userRole === 'student'
+                      ? 'Find internships, jobs, and mentorship programs'
+                      : 'Find job postings, mentorship programs and more'}
+                  </p>
+                  <Link to="/jobs" className="hero-button">Explore Jobs <FaArrowRight /></Link>
+                </div>
+              </div>
+              <div className="carousel-item">
+                <img src={img7} className="d-block w-100 carousel-img" alt="MGM Campus" />
+                <div className="carousel-caption">
+                  <h1 className="hero-title">Discover Opportunities</h1>
+                  <p className="hero-subtitle">
+                    {userRole === 'student'
+                      ? 'Find internships, jobs, and mentorship programs'
+                      : 'Find job postings, mentorship programs and more'}
+                  </p>
+                  <Link to="/jobs" className="hero-button">Explore Jobs <FaArrowRight /></Link>
+                </div>
+              </div>
+              <div className="carousel-item">
+                <img src={img8} className="d-block w-100 carousel-img" alt="MGM Campus" />
+                <div className="carousel-caption">
+                  <h1 className="hero-title">Discover Opportunities</h1>
+                  <p className="hero-subtitle">
+                    {userRole === 'student'
+                      ? 'Find internships, jobs, and mentorship programs'
+                      : 'Find job postings, mentorship programs and more'}
+                  </p>
+                  <Link to="/jobs" className="hero-button">Explore Jobs <FaArrowRight /></Link>
+                </div>
+              </div>
+              <div className="carousel-item">
+                <img src={img9} className="d-block w-100 carousel-img" alt="MGM Campus" />
+                <div className="carousel-caption">
+                  <h1 className="hero-title">Discover Opportunities</h1>
+                  <p className="hero-subtitle">
+                    {userRole === 'student'
+                      ? 'Find internships, jobs, and mentorship programs'
+                      : 'Find job postings, mentorship programs and more'}
+                  </p>
+                  <Link to="/jobs" className="hero-button">Explore Jobs <FaArrowRight /></Link>
+                </div>
+              </div>
+              <div className="carousel-item">
+                <img src={img10} className="d-block w-100 carousel-img" alt="MGM Campus" />
                 <div className="carousel-caption">
                   <h1 className="hero-title">
                     {userRole === 'student'
