@@ -133,8 +133,19 @@ const AdminProfile = () => {
         }
       }
 
+      // Create a clean update object without createdAt and updatedAt
+      const updateData = {
+        username: form.username,
+        email: form.email
+      };
+      
+      // Only include profile if it exists
+      if (form.profile) {
+        updateData.profile = form.profile;
+      }
+
       console.log('Sending update request...');
-      const res = await adminService.updateProfile(form);
+      const res = await adminService.updateProfile(updateData);
       console.log('Profile update successful:', res);
       
       setProfile(res);

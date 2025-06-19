@@ -98,6 +98,10 @@ router.put('/profile', auth, checkRole(['admin']), async (req, res) => {
 
     const { username, profile } = req.body;
 
+    // Remove createdAt and updatedAt if present (safety check)
+    delete req.body.createdAt;
+    delete req.body.updatedAt;
+
     const admin = await Admin.findOne({ email: req.user.email });
     if (!admin) {
       console.log('Admin not found:', req.user.email);

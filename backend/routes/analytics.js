@@ -2,10 +2,9 @@ const express = require('express');
 const router = express.Router();
 const Student = require('../models/Student');
 const Alumni = require('../models/Alumni');
-const { auth } = require('../middleware/auth');
 
-// Get all analytics data
-router.get('/', auth, async (req, res) => {
+// Get all analytics data (public access)
+router.get('/', async (req, res) => {
   try {
     // Get student and alumni counts
     const studentCount = await Student.countDocuments();
