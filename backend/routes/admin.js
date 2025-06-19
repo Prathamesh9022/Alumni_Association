@@ -96,11 +96,8 @@ router.put('/profile', auth, checkRole(['admin']), async (req, res) => {
       body: { ...req.body, profile: req.body.profile ? 'base64 image data' : 'no image' }
     });
 
+    // Only extract allowed fields
     const { username, profile } = req.body;
-
-    // Remove createdAt and updatedAt if present (safety check)
-    delete req.body.createdAt;
-    delete req.body.updatedAt;
 
     const admin = await Admin.findOne({ email: req.user.email });
     if (!admin) {
@@ -108,25 +105,22 @@ router.put('/profile', auth, checkRole(['admin']), async (req, res) => {
       return res.status(404).json({ error: 'Admin profile not found' });
     }
 
-    // Update fields
-    if (username) {
+    // Update only allowed fields
+    if (typeof username === 'string') {
       console.log('Updating username:', username);
       admin.username = username;
     }
     
     // Validate profile image if present
-    if (profile) {
+    if (typeof profile === 'string' && profile) {
       console.log('Processing profile image...');
-      
       // Check if it's a valid base64 image or HTTP/HTTPS URL
       const isValidBase64 = profile.startsWith('data:image/');
       const isValidUrl = profile.startsWith('http://') || profile.startsWith('https://');
-      
       if (!isValidBase64 && !isValidUrl) {
         console.log('Invalid profile image format');
         return res.status(400).json({ error: 'Invalid profile image format', details: { field: 'profile' } });
       }
-      
       // Additional validation for base64 images
       if (isValidBase64) {
         // Check if base64 string is too large (max 2MB)
@@ -135,7 +129,6 @@ router.put('/profile', auth, checkRole(['admin']), async (req, res) => {
           console.log('Profile image too large');
           return res.status(400).json({ error: 'Profile image too large (max 2MB)', details: { field: 'profile' } });
         }
-        
         // Validate image format
         const imageFormat = profile.split(';')[0].split('/')[1];
         if (!['jpeg', 'jpg', 'png', 'gif'].includes(imageFormat.toLowerCase())) {
@@ -143,7 +136,6 @@ router.put('/profile', auth, checkRole(['admin']), async (req, res) => {
           return res.status(400).json({ error: 'Invalid image format. Supported formats: JPEG, PNG, GIF', details: { field: 'profile' } });
         }
       }
-      
       console.log('Profile image validation passed, updating...');
       admin.profile = profile;
     }
@@ -155,11 +147,9 @@ router.put('/profile', auth, checkRole(['admin']), async (req, res) => {
     // Return updated profile without password
     const updatedAdmin = admin.toObject();
     delete updatedAdmin.password;
-    
     res.json(updatedAdmin);
   } catch (error) {
     console.error('Error updating admin profile:', error);
-    // Send more detailed error response
     res.status(500).json({ 
       error: 'Failed to update profile',
       details: error.message,
