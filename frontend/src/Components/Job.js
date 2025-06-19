@@ -1,8 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { FaBriefcase, FaBuilding, FaMapMarkerAlt, FaMoneyBillWave, FaCalendarAlt, FaUser, FaFilter } from 'react-icons/fa';
+import { 
+  FaBriefcase, 
+  FaBuilding, 
+  FaMapMarkerAlt, 
+  FaMoneyBillWave, 
+  FaCalendarAlt, 
+  FaUser, 
+  FaFilter, 
+  FaSearch,
+  FaTimes,
+  FaExternalLinkAlt,
+  FaClock,
+  FaStar
+} from 'react-icons/fa';
 import { jobService } from '../services/api';
 import Header from './Header';
-import './CommonStyles.css';
+import './Job.css';
 
 const Job = () => {
   const [jobs, setJobs] = useState([]);
@@ -17,6 +30,7 @@ const Job = () => {
   });
   const [filteredJobs, setFilteredJobs] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     fetchJobs();
@@ -24,16 +38,23 @@ const Job = () => {
 
   useEffect(() => {
     const filtered = jobs.filter(job => {
-      return (
+      const matchesSearch = !searchQuery || 
+        job.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        job.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        job.location?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        job.description?.toLowerCase().includes(searchQuery.toLowerCase());
+
+      const matchesFilters = 
         (!filters.title || job.title?.toLowerCase().includes(filters.title.toLowerCase())) &&
         (!filters.name || job.name?.toLowerCase().includes(filters.name.toLowerCase())) &&
         (!filters.location || job.location?.toLowerCase().includes(filters.location.toLowerCase())) &&
         (!filters.type || job.type?.toLowerCase() === filters.type.toLowerCase()) &&
-        (!filters.salary || job.salary?.toLowerCase().includes(filters.salary.toLowerCase()))
-      );
+        (!filters.salary || job.salary?.toLowerCase().includes(filters.salary.toLowerCase()));
+
+      return matchesSearch && matchesFilters;
     });
     setFilteredJobs(filtered);
-  }, [filters, jobs]);
+  }, [filters, jobs, searchQuery]);
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
@@ -51,6 +72,7 @@ const Job = () => {
       type: '',
       salary: ''
     });
+    setSearchQuery('');
   };
 
   const fetchJobs = async () => {
@@ -66,12 +88,36 @@ const Job = () => {
     }
   };
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  };
+
+  const getTimeAgo = (dateString) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
+    
+    if (diffInDays === 0) return 'Today';
+    if (diffInDays === 1) return 'Yesterday';
+    if (diffInDays < 7) return `${diffInDays} days ago`;
+    if (diffInDays < 30) return `${Math.floor(diffInDays / 7)} weeks ago`;
+    return `${Math.floor(diffInDays / 30)} months ago`;
+  };
+
   if (loading) {
     return (
       <div className="container">
         <Header />
         <div className="content">
-          <div className="loading">Loading jobs...</div>
+          <div className="loading-container">
+            <div className="loading-spinner"></div>
+            <p>Loading amazing opportunities...</p>
+          </div>
         </div>
       </div>
     );
@@ -82,7 +128,14 @@ const Job = () => {
       <div className="container">
         <Header />
         <div className="content">
-          <div className="alert alert-danger">{error}</div>
+          <div className="error-container">
+            <div className="error-icon">⚠️</div>
+            <h3>Oops! Something went wrong</h3>
+            <p>{error}</p>
+            <button className="btn btn-primary" onClick={fetchJobs}>
+              Try Again
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -92,134 +145,197 @@ const Job = () => {
     <div className="container">
       <Header />
       <div className="content">
-        <div className="jobs-header">
-          <h2>
-            <FaBriefcase className="me-2" />
-            Available Jobs
-          </h2>
+        {/* Hero Section */}
+        <div className="jobs-hero">
+          <div className="hero-content">
+            <h1 className="hero-title">
+              <FaBriefcase className="hero-icon" />
+              Discover Your Next Career Move
+            </h1>
+            <p className="hero-subtitle">
+              Explore exciting opportunities from our alumni network and find the perfect role for your skills and aspirations
+            </p>
+          </div>
           
-          <div className="d-flex gap-2">
+          {/* Search Bar */}
+          <div className="search-section">
+            <div className="search-container">
+              <FaSearch className="search-icon" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="search-input"
+                placeholder="Search jobs, companies, or locations..."
+              />
+              {searchQuery && (
+                <button 
+                  className="clear-search"
+                  onClick={() => setSearchQuery('')}
+                >
+                  <FaTimes />
+                </button>
+              )}
+            </div>
+            
             <button 
-              className="btn btn-outline-primary"
+              className="filter-toggle-btn"
               onClick={() => setShowFilters(!showFilters)}
             >
-              <FaFilter className="me-2" />
-              {showFilters ? 'Hide Filters' : 'Show Filters'}
+              <FaFilter className="filter-icon" />
+              {showFilters ? 'Hide Filters' : 'Advanced Filters'}
             </button>
           </div>
         </div>
 
+        {/* Stats Section */}
+        <div className="jobs-stats">
+          <div className="stat-card">
+            <div className="stat-number">{filteredJobs.length}</div>
+            <div className="stat-label">Available Jobs</div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-number">{jobs.length - filteredJobs.length}</div>
+            <div className="stat-label">Filtered Out</div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-number">{jobs.filter(job => new Date(job.expireDate) > new Date()).length}</div>
+            <div className="stat-label">Active Listings</div>
+          </div>
+        </div>
+
+        {/* Filters Section */}
         {showFilters && (
-          <div className="filters-section mb-4">
-            <div className="row g-3">
-              <div className="col-md-4">
+          <div className="filters-section">
+            <div className="filters-header">
+              <h3>Refine Your Search</h3>
+              <button className="clear-filters-btn" onClick={clearFilters}>
+                <FaTimes />
+                Clear All
+              </button>
+            </div>
+            
+            <div className="filters-grid">
+              <div className="filter-group">
+                <label>Job Title</label>
                 <input
                   type="text"
                   name="title"
                   value={filters.title}
                   onChange={handleFilterChange}
-                  className="form-control"
-                  placeholder="Search by job title"
+                  className="filter-input"
+                  placeholder="e.g., Software Engineer"
                 />
               </div>
-              <div className="col-md-4">
+              
+              <div className="filter-group">
+                <label>Company Name</label>
                 <input
                   type="text"
                   name="name"
                   value={filters.name}
                   onChange={handleFilterChange}
-                  className="form-control"
-                  placeholder="Search by company name"
+                  className="filter-input"
+                  placeholder="e.g., Google, Microsoft"
                 />
               </div>
-              <div className="col-md-4">
+              
+              <div className="filter-group">
+                <label>Location</label>
                 <input
                   type="text"
                   name="location"
                   value={filters.location}
                   onChange={handleFilterChange}
-                  className="form-control"
-                  placeholder="Search by location"
+                  className="filter-input"
+                  placeholder="e.g., New York, Remote"
                 />
               </div>
-              <div className="col-md-6">
+              
+              <div className="filter-group">
+                <label>Job Type</label>
                 <select
                   name="type"
                   value={filters.type}
                   onChange={handleFilterChange}
-                  className="form-control"
+                  className="filter-select"
                 >
-                  <option value="">All Job Types</option>
+                  <option value="">All Types</option>
                   <option value="Full-time">Full-time</option>
                   <option value="Part-time">Part-time</option>
                   <option value="Contract">Contract</option>
                   <option value="Internship">Internship</option>
+                  <option value="Freelance">Freelance</option>
                 </select>
               </div>
-              <div className="col-md-6">
+              
+              <div className="filter-group">
+                <label>Salary Range</label>
                 <input
                   type="text"
                   name="salary"
                   value={filters.salary}
                   onChange={handleFilterChange}
-                  className="form-control"
-                  placeholder="Search by salary"
+                  className="filter-input"
+                  placeholder="e.g., $50k-$100k"
                 />
-              </div>
-              <div className="col-12">
-                <button 
-                  className="btn btn-secondary"
-                  onClick={clearFilters}
-                >
-                  Clear Filters
-                </button>
               </div>
             </div>
           </div>
         )}
 
+        {/* Jobs Grid */}
         <div className="jobs-grid">
           {filteredJobs.map((job) => (
             <div key={job._id} className="job-card">
-              <div className="job-header">
-                <h3>{job.title}</h3>
-                <div className="company">
-                  <FaBuilding className="me-2" />
-                  {job.name}
+              <div className="job-card-header">
+                <div className="job-title-section">
+                  <h3 className="job-title">{job.title}</h3>
+                  <div className="job-type-badge">
+                    {job.type || 'Full-time'}
+                  </div>
+                </div>
+                
+                <div className="company-info">
+                  <FaBuilding className="company-icon" />
+                  <span className="company-name">{job.name}</span>
                 </div>
               </div>
 
               <div className="job-details">
-                <div className="detail-item">
-                  <FaMapMarkerAlt className="detail-icon" />
-                  <span><strong>Location:</strong> {job.location}</span>
+                <div className="detail-row">
+                  <div className="detail-item">
+                    <FaMapMarkerAlt className="detail-icon" />
+                    <span>{job.location}</span>
+                  </div>
+                  
+                  <div className="detail-item">
+                    <FaMoneyBillWave className="detail-icon" />
+                    <span>{job.salary}</span>
+                  </div>
                 </div>
-
-                <div className="detail-item">
-                  <FaMoneyBillWave className="detail-icon" />
-                  <span><strong>Salary:</strong> {job.salary}</span>
-                </div>
-
-                <div className="detail-item">
-                  <FaCalendarAlt className="detail-icon" />
-                  <span><strong>Application Deadline:</strong> {new Date(job.expireDate).toLocaleDateString()}</span>
-                </div>
-
-                <div className="detail-item">
-                  <FaUser className="detail-icon" />
-                  <span><strong>Posted by:</strong> {job.postedBy}</span>
+                
+                <div className="detail-row">
+                  <div className="detail-item">
+                    <FaCalendarAlt className="detail-icon" />
+                    <span>Deadline: {formatDate(job.expireDate)}</span>
+                  </div>
+                  
+                  <div className="detail-item">
+                    <FaClock className="detail-icon" />
+                    <span>Posted {getTimeAgo(job.createdAt || job.expireDate)}</span>
+                  </div>
                 </div>
               </div>
 
               <div className="job-description">
-                <h4>Description</h4>
                 <p>{job.description}</p>
               </div>
 
               {job.requirements && job.requirements.length > 0 && (
                 <div className="job-requirements">
                   <h4>Requirements</h4>
-                  <ul>
+                  <ul className="requirements-list">
                     {job.requirements.map((req, index) => (
                       <li key={index}>{req}</li>
                     ))}
@@ -227,13 +343,19 @@ const Job = () => {
                 </div>
               )}
 
-              <div className="job-actions">
+              <div className="job-footer">
+                <div className="posted-by">
+                  <FaUser className="user-icon" />
+                  <span>Posted by {job.postedBy}</span>
+                </div>
+                
                 <a 
                   href={job.link} 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className="btn btn-primary"
+                  className="apply-btn"
                 >
+                  <FaExternalLinkAlt />
                   Apply Now
                 </a>
               </div>
@@ -241,9 +363,24 @@ const Job = () => {
           ))}
         </div>
 
+        {/* No Jobs Found */}
         {filteredJobs.length === 0 && (
-          <div className="no-jobs">
-            No jobs found matching your search criteria.
+          <div className="no-jobs-container">
+            <div className="no-jobs-content">
+              <div className="no-jobs-icon">🔍</div>
+              <h3>No jobs found</h3>
+              <p>
+                {searchQuery || Object.values(filters).some(f => f) 
+                  ? "Try adjusting your search criteria or filters"
+                  : "Check back later for new opportunities"
+                }
+              </p>
+              {(searchQuery || Object.values(filters).some(f => f)) && (
+                <button className="btn btn-primary" onClick={clearFilters}>
+                  Clear Search
+                </button>
+              )}
+            </div>
           </div>
         )}
       </div>
