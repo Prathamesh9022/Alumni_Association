@@ -265,6 +265,7 @@ export default function Home() {
     alumniCompanyWise: [],
     alumniSkillWise: []
   });
+  const [analyticsLoading, setAnalyticsLoading] = useState(true);
 
   // Check user role on component mount
   useEffect(() => {
@@ -345,10 +346,13 @@ export default function Home() {
   useEffect(() => {
     const fetchAnalyticsData = async () => {
       try {
+        setAnalyticsLoading(true);
         const response = await axiosInstance.get('/api/analytics');
         setAnalyticsData(response.data);
       } catch (error) {
         console.error('Error fetching analytics data:', error);
+      } finally {
+        setAnalyticsLoading(false);
       }
     };
 
@@ -511,8 +515,8 @@ export default function Home() {
   // Chart configurations
   const pieChartConfig = {
     data: [
-      { id: 'Students', value: analyticsData.studentAlumniCount.students, color: '#4e54c8' },
-      { id: 'Alumni', value: analyticsData.studentAlumniCount.alumni, color: '#8f94fb' }
+      { id: 'Students', value: analyticsData.studentAlumniCount?.students || 0, color: '#4e54c8' },
+      { id: 'Alumni', value: analyticsData.studentAlumniCount?.alumni || 0, color: '#8f94fb' }
     ],
     margin: { top: 40, right: 80, bottom: 80, left: 80 },
     innerRadius: 0.5,
@@ -547,7 +551,7 @@ export default function Home() {
     BY: 'BY',
   };
 
-  const mappedStudentYearWise = analyticsData.studentYearWise.map(item => ({
+  const mappedStudentYearWise = (analyticsData.studentYearWise || []).map(item => ({
     ...item,
     year: yearLabelMap[item.year] || item.year
   }));
@@ -585,7 +589,7 @@ export default function Home() {
     data: [
       {
         id: 'Alumni Distribution',
-        data: analyticsData.alumniBatchWise.map(item => ({
+        data: (analyticsData.alumniBatchWise || []).map(item => ({
           x: item.batch,
           y: item.count
         }))
@@ -831,12 +835,20 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Stats Counter Section - Only for authenticated users */}
-        {isLoggedIn && (
-          <section className="analytics-section">
-            {renderAnalyticsSection()}
-          </section>
-        )}
+        {/* Stats Counter Section - Public access */}
+        <section className="analytics-section">
+          {analyticsLoading ? (
+            <div style={{ textAlign: 'center', padding: '2rem', color: '#666' }}>
+              <h2 className="section-title">
+                <FaChartBar className="me-2" />
+                User Analytics
+              </h2>
+              <p>Loading statistics...</p>
+            </div>
+          ) : (
+            renderAnalyticsSection()
+          )}
+        </section>
 
         {/* About College Section */}
         <section className="about-section">

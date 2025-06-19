@@ -19,6 +19,7 @@ const AdminProfile = () => {
       try {
         const res = await adminService.getProfile();
         setProfile(res);
+        // Only set the fields we want to edit, exclude createdAt and updatedAt
         setForm({
           username: res.username || '',
           email: res.email || '',
