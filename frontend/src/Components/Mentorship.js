@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaUser, FaGraduationCap, FaCode, FaSearch, FaComment, FaPaperPlane, FaPaperclip, FaTrash, FaFile, FaSmile, FaBell, FaBellSlash } from 'react-icons/fa';
+import { FaUser, FaGraduationCap, FaCode, FaSearch, FaComment, FaPaperPlane, FaPaperclip, FaTrash, FaFile, FaSmile, FaBell, FaBellSlash, FaEnvelope, FaBriefcase } from 'react-icons/fa';
 import api from '../services/api';
 import { mentorshipService } from '../services/api';
 import Header from './Header';
@@ -456,50 +456,50 @@ const MentorConnect = () => {
                 </div>
               </div>
             </div>
-            <div className="row g-4">
+            <div className="row g-4 available-mentors-row">
               {(searchTerm.trim() === '' ? availableMentors : filteredMentors).length > 0 ? (
                 (searchTerm.trim() === '' ? availableMentors : filteredMentors).map((mentor) => (
-                  <div key={mentor._id} className="col-md-4">
-                    <div className="card shadow-lg student-card" style={{ borderRadius: '16px', boxShadow: '0 5px 20px rgba(26,42,108,0.08)', background: 'var(--background-white)', marginBottom: '2rem', transition: 'box-shadow 0.3s, transform 0.3s' }}>
-                      <div className="card-body">
-                        <div className="profile-photo-container" style={{ marginBottom: '1rem' }}>
+                  <div key={mentor._id} className="col-12 col-md-6 col-lg-4 d-flex">
+                    <div className="card shadow-lg mentor-card flex-fill" style={{ borderRadius: '18px', boxShadow: '0 5px 20px rgba(26,42,108,0.08)', background: 'var(--background-white)', marginBottom: '2rem', transition: 'box-shadow 0.3s, transform 0.3s', display: 'flex', flexDirection: 'column', height: '100%' }}>
+                      <div className="card-body d-flex flex-column align-items-center text-center">
+                        <div className="profile-photo-container mb-3">
                           {mentor.profile ? (
-                            <img src={mentor.profile} alt={mentor.first_name} className="profile-photo" style={{ width: 70, height: 70, borderRadius: '50%', objectFit: 'cover', boxShadow: '0 2px 8px rgba(26,42,108,0.10)' }} />
+                            <img src={mentor.profile} alt={mentor.first_name} className="profile-photo" style={{ width: 80, height: 80, borderRadius: '50%', objectFit: 'cover', boxShadow: '0 2px 8px rgba(26,42,108,0.10)' }} />
                           ) : (
-                            <div className="profile-photo-placeholder" style={{ width: 70, height: 70, borderRadius: '50%', background: 'var(--background-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(26,42,108,0.10)' }}><FaUser size={40} /></div>
+                            <div className="profile-photo-placeholder" style={{ width: 80, height: 80, borderRadius: '50%', background: 'var(--background-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(26,42,108,0.10)' }}><FaUser size={40} /></div>
                           )}
                         </div>
-                        <div className="student-info">
-                          <h5 className="student-name" style={{ fontWeight: 700, color: 'var(--primary-color)' }}>{`${mentor.first_name} ${mentor.last_name}`}</h5>
-                          <div className="student-details mb-2">
-                            <div className="detail-item d-flex align-items-center mb-1"><FaGraduationCap className="icon me-2" /><span>{mentor.department}</span></div>
-                            <div className="detail-item d-flex align-items-center mb-1"><FaCode className="icon me-2" />
-                              <span>{Array.isArray(mentor.experience)
-                                ? mentor.experience.length > 0
-                                  ? mentor.experience.map((exp, idx) =>
-                                      typeof exp === 'object' && exp !== null
-                                        ? `${exp.position || ''}${exp.company ? ' at ' + exp.company : ''}${exp.duration ? ' (' + exp.duration + ')' : ''}`
-                                        : exp
-                                    ).join(', ')
-                                  : 'No experience listed'
-                                : (typeof mentor.experience === 'object' && mentor.experience !== null)
-                                  ? `${mentor.experience.position || ''}${mentor.experience.company ? ' at ' + mentor.experience.company : ''}${mentor.experience.duration ? ' (' + mentor.experience.duration + ')' : ''}`
-                                  : mentor.experience || 'No experience listed'
-                              }</span>
-                            </div>
+                        <h5 className="mentor-name mb-1" style={{ fontWeight: 700, color: 'var(--primary-color)' }}>{`${mentor.first_name} ${mentor.last_name}`}</h5>
+                        <div className="mentor-details mb-2">
+                          <div className="detail-item d-flex align-items-center justify-content-center mb-1"><FaGraduationCap className="icon me-2" /><span>{mentor.department}</span></div>
+                          <div className="detail-item d-flex align-items-center justify-content-center mb-1"><FaEnvelope className="icon me-2" /><span>{mentor.email}</span></div>
+                          <div className="detail-item d-flex align-items-center justify-content-center mb-1"><FaBriefcase className="icon me-2" />
+                            <span>{Array.isArray(mentor.experience)
+                              ? mentor.experience.length > 0
+                                ? mentor.experience.map((exp, idx) =>
+                                    typeof exp === 'object' && exp !== null
+                                      ? `${exp.position || ''}${exp.company ? ' at ' + exp.company : ''}${exp.duration ? ' (' + exp.duration + ')' : ''}`
+                                      : exp
+                                  ).join(', ')
+                                : 'No experience listed'
+                              : (typeof mentor.experience === 'object' && mentor.experience !== null)
+                                ? `${mentor.experience.position || ''}${mentor.experience.company ? ' at ' + mentor.experience.company : ''}${mentor.experience.duration ? ' (' + mentor.experience.duration + ')' : ''}`
+                                : mentor.experience || 'No experience listed'
+                            }</span>
                           </div>
-                          <div className="skills-section mb-2">
-                            <h6 style={{ fontWeight: 600, color: 'var(--secondary-color)' }}>Skills</h6>
-                            <div className="skills-container d-flex flex-wrap gap-2">
-                              {mentor.skillset?.map((skill, index) => (
-                                <span key={index} className="badge bg-info" style={{ borderRadius: '1em', fontWeight: 500, fontSize: '0.95rem', background: 'var(--accent-color)', color: 'var(--background-white)', padding: '0.4em 1em' }}>{skill}</span>
-                              ))}
-                            </div>
-                          </div>
-                          {/* <button className="btn btn-primary btn-lg w-100 mt-3" style={{ minWidth: 160, borderRadius: '2em', boxShadow: '0 4px 15px rgba(26,42,108,0.15)', fontWeight: 600, transition: 'all 0.2s' }} onClick={() => handleRequestMentorship(mentor._id)}>
-                            Request Mentorship
-                          </button> */}
                         </div>
+                        <div className="skills-section mb-2 w-100">
+                          <h6 style={{ fontWeight: 600, color: 'var(--secondary-color)', marginBottom: 4 }}>Skills</h6>
+                          <div className="skills-container d-flex flex-wrap gap-2 justify-content-center">
+                            {mentor.skillset?.length > 0 ? mentor.skillset.map((skill, index) => (
+                              <span key={index} className="badge bg-info" style={{ borderRadius: '1em', fontWeight: 500, fontSize: '0.95rem', background: 'var(--accent-color)', color: 'var(--background-white)', padding: '0.4em 1em' }}>{skill}</span>
+                            )) : <span className="text-muted">No skills listed</span>}
+                          </div>
+                        </div>
+                        {/* Uncomment below to enable mentorship request button */}
+                        {/* <button className="btn btn-primary btn-lg w-100 mt-3" style={{ minWidth: 160, borderRadius: '2em', boxShadow: '0 4px 15px rgba(26,42,108,0.15)', fontWeight: 600, transition: 'all 0.2s' }} onClick={() => handleRequestMentorship(mentor._id)}>
+                          Request Mentorship
+                        </button> */}
                       </div>
                     </div>
                   </div>
