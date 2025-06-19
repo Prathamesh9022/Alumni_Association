@@ -11,7 +11,9 @@ import {
   FaTimes,
   FaExternalLinkAlt,
   FaClock,
-  FaStar
+  FaStar,
+  FaChevronDown,
+  FaChevronUp
 } from 'react-icons/fa';
 import { jobService } from '../services/api';
 import Header from './Header';
@@ -31,6 +33,7 @@ const Job = () => {
   const [filteredJobs, setFilteredJobs] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [expandedDescriptions, setExpandedDescriptions] = useState({});
 
   useEffect(() => {
     fetchJobs();
@@ -98,6 +101,8 @@ const Job = () => {
   };
 
   const getTimeAgo = (dateString) => {
+    if (!dateString) return 'Recently';
+    
     const date = new Date(dateString);
     const now = new Date();
     const diffInDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
@@ -107,6 +112,19 @@ const Job = () => {
     if (diffInDays < 7) return `${diffInDays} days ago`;
     if (diffInDays < 30) return `${Math.floor(diffInDays / 7)} weeks ago`;
     return `${Math.floor(diffInDays / 30)} months ago`;
+  };
+
+  const toggleDescription = (jobId) => {
+    setExpandedDescriptions(prev => ({
+      ...prev,
+      [jobId]: !prev[jobId]
+    }));
+  };
+
+  const truncateDescription = (description, maxLength = 150) => {
+    if (!description) return '';
+    if (description.length <= maxLength) return description;
+    return description.substring(0, maxLength) + '...';
   };
 
   if (loading) {
@@ -329,7 +347,30 @@ const Job = () => {
               </div>
 
               <div className="job-description">
-                <p>{job.description}</p>
+                <p>
+                  {expandedDescriptions[job._id] 
+                    ? job.description 
+                    : truncateDescription(job.description)
+                  }
+                </p>
+                {job.description && job.description.length > 150 && (
+                  <button 
+                    className="read-more-btn"
+                    onClick={() => toggleDescription(job._id)}
+                  >
+                    {expandedDescriptions[job._id] ? (
+                      <>
+                        <FaChevronUp />
+                        Read Less
+                      </>
+                    ) : (
+                      <>
+                        <FaChevronDown />
+                        Read More
+                      </>
+                    )}
+                  </button>
+                )}
               </div>
 
               {job.requirements && job.requirements.length > 0 && (

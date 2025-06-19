@@ -393,10 +393,37 @@
   margin: 0;
   color: var(--text-color);
   line-height: 1.6;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  margin-bottom: var(--spacing-sm);
+}
+
+.read-more-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  background: none;
+  border: none;
+  color: var(--primary-color);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  cursor: pointer;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--border-radius-md);
+  transition: all var(--transition-medium);
+  margin-top: var(--spacing-sm);
+}
+
+.read-more-btn:hover {
+  background: rgba(26, 42, 108, 0.1);
+  transform: translateY(-1px);
+}
+
+.read-more-btn svg {
+  font-size: var(--font-size-xs);
+  transition: transform var(--transition-medium);
+}
+
+.read-more-btn:hover svg {
+  transform: scale(1.1);
 }
 
 .job-requirements {
