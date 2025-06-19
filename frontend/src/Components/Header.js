@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { FaUser, FaSignOutAlt, FaBriefcase, FaCalendarAlt, FaHandshake, FaHome, FaUserFriends, FaBars, FaTimes, FaPlus, FaUserCircle } from 'react-icons/fa';
-import './Header.css';
+import './CommonStyles.css';
 import logo from '../img/logo.png';
 
 const Header = () => {
