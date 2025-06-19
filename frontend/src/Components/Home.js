@@ -889,7 +889,7 @@ export default function Home() {
         </section>
 
         {/* Reorganized Success Stories and Vision & Mission Section */}
-        <section style={styles.successVisionContainer}>
+        <div className="successVisionContainer">
           {/* Left Success Stories Carousel */}
           <div className="success-stories-carousel left" style={styles.successStoriesSlider}>
             {renderSuccessStoryCard(successStories[leftIndex])}
@@ -904,7 +904,7 @@ export default function Home() {
           <div className="success-stories-carousel right" style={styles.successStoriesSlider}>
             {renderSuccessStoryCard(successStories[rightIndex])}
           </div>
-        </section>
+        </div>
       </div>
     </>
   );
