@@ -326,7 +326,7 @@ const Job = () => {
                     <FaMapMarkerAlt className="detail-icon" />
                     <div className="detail-content">
                       <span className="detail-label">Location:</span>
-                      <span className="detail-value">{job.location}</span>
+                      <span className="detail-value">{job.location || 'Location not specified'}</span>
                     </div>
                   </div>
                   
@@ -334,7 +334,7 @@ const Job = () => {
                     <FaMoneyBillWave className="detail-icon" />
                     <div className="detail-content">
                       <span className="detail-label">Salary:</span>
-                      <span className="detail-value">{job.salary}</span>
+                      <span className="detail-value">{job.salary || 'Salary not specified'}</span>
                     </div>
                   </div>
                 </div>
@@ -344,7 +344,7 @@ const Job = () => {
                     <FaCalendarAlt className="detail-icon" />
                     <div className="detail-content">
                       <span className="detail-label">Deadline:</span>
-                      <span className="detail-value">{formatDate(job.expireDate)}</span>
+                      <span className="detail-value">{job.expireDate ? formatDate(job.expireDate) : 'No deadline set'}</span>
                     </div>
                   </div>
                   
