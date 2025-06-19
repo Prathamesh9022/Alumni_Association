@@ -94,6 +94,33 @@ const Header = () => {
     );
   };
 
+  // Render public header for unauthenticated users
+  const renderPublicHeader = () => {
+    return (
+      <header className="header">
+        <div className="header-container">
+          {/* Logo and Brand */}
+          <div className="header-brand">
+            <Link to="/home" className="brand-link">
+              <img src={logo} alt="Alumni Association" className="logo" />
+              <span className="brand-name">Alumni Association</span>
+            </Link>
+          </div>
+
+          {/* Navigation - Only Login for public users */}
+          <nav className="nav-menu">
+            <div className="nav-links">
+              <Link to="/auth" className={`nav-link ${location.pathname === '/auth' ? 'active' : ''}`}>
+                <FaUser className="nav-icon" />
+                <span>Login</span>
+              </Link>
+            </div>
+          </nav>
+        </div>
+      </header>
+    );
+  };
+
   // Render navigation links based on user role
   const renderNavLinks = () => {
     if (!userRole) {
@@ -208,52 +235,89 @@ const Header = () => {
     return null;
   };
 
+  // If user is not authenticated, render public header
+  if (!userRole) {
+    return renderPublicHeader();
+  }
+
   return (
     <header className="header">
       <div className="header-container">
-        <div className="header-left">
-          <Link to="/" className="logo">
-            <img src={logo} alt="Logo" className="logo-img" />
-            <span className="logo-text">Alumni Association</span>
+        {/* Logo and Brand */}
+        <div className="header-brand">
+          <Link to="/home" className="brand-link">
+            <img src={logo} alt="Alumni Association" className="logo" />
+            <span className="brand-name">Alumni Association</span>
           </Link>
         </div>
 
-        <div className="header-right">
-          <button className="mobile-menu-toggle" onClick={toggleMobileMenu}>
-            {mobileMenuOpen ? <FaTimes /> : <FaBars />}
-          </button>
-
-          <nav className={`nav-menu ${mobileMenuOpen ? 'active' : ''}`}>
+        {/* Navigation */}
+        <nav className="nav-menu">
+          <div className="nav-links">
             {renderNavLinks()}
-          </nav>
+          </div>
+        </nav>
 
-          {userRole && (
-            <div className="user-profile" ref={profileMenuRef}>
-              {renderAvatar()}
-              {showProfileMenu && (
-                <div className="profile-dropdown">
-                  <div className="profile-header" style={{ background: 'linear-gradient(135deg, #1a2a6c 0%, #b21f1f 50%, #fdbb2d 100%)' }}>
-                    <div className="profile-info">
-                      <p className="profile-email" style={{ color: 'white' }}>{userData?.email}</p>
-                      <p className="profile-role" style={{ color: 'white' }}>{userRole}</p>
-                    </div>
-                  </div>
-                  <div className="profile-actions">
-                    <Link to={getProfileLink()} className="profile-link" onClick={() => setShowProfileMenu(false)}>
-                      <FaUserCircle className="me-2" />
-                      <span>My Profile</span>
-                    </Link>
-                    <button onClick={handleLogout} className="logout-button">
-                      <FaSignOutAlt className="me-2" />
-                      <span>Logout</span>
-                    </button>
-                  </div>
+        {/* User Profile Section */}
+        <div className="user-section" ref={profileMenuRef}>
+          {renderAvatar()}
+          {showProfileMenu && (
+            <div className="profile-dropdown">
+              <div className="profile-info">
+                <div className="profile-name">
+                  {userData?.first_name} {userData?.last_name}
                 </div>
-              )}
+                <div className="profile-email">{userData?.email}</div>
+                <div className="profile-role">{userRole}</div>
+              </div>
+              <div className="profile-actions">
+                <Link to={getProfileLink()} className="profile-link">
+                  <FaUserCircle />
+                  Profile
+                </Link>
+                <button onClick={handleLogout} className="logout-btn">
+                  <FaSignOutAlt />
+                  Logout
+                </button>
+              </div>
             </div>
           )}
         </div>
+
+        {/* Mobile Menu Toggle */}
+        <div className="mobile-menu-toggle">
+          <button className="menu-btn" onClick={toggleMobileMenu}>
+            {mobileMenuOpen ? <FaTimes /> : <FaBars />}
+          </button>
+        </div>
       </div>
+
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <div className="mobile-menu">
+          <div className="mobile-nav-links">
+            {renderNavLinks()}
+          </div>
+          <div className="mobile-user-section">
+            <div className="mobile-profile-info">
+              <div className="mobile-profile-name">
+                {userData?.first_name} {userData?.last_name}
+              </div>
+              <div className="mobile-profile-email">{userData?.email}</div>
+            </div>
+            <div className="mobile-profile-actions">
+              <Link to={getProfileLink()} className="mobile-profile-link">
+                <FaUserCircle />
+                Profile
+              </Link>
+              <button onClick={handleLogout} className="mobile-logout-btn">
+                <FaSignOutAlt />
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 };

@@ -36,19 +36,11 @@ function App() {
           {/* Public Routes */}
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/logout" element={<Logout />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="/" element={<Navigate to="/home" replace />} />
 
           {/* Protected Routes */}
           <Route path="/dashboard" element={
-            <ProtectedRoute roles={["alumni", "student", "admin"]}>
-              <Home />
-            </ProtectedRoute>
-          } />
-          <Route path="/home" element={
-            <ProtectedRoute roles={["alumni", "student", "admin"]}>
-              <Home />
-            </ProtectedRoute>
-          } />
-          <Route path="/" element={
             <ProtectedRoute roles={["alumni", "student", "admin"]}>
               <Home />
             </ProtectedRoute>
@@ -158,11 +150,8 @@ function App() {
             </ProtectedRoute>
           } />
 
-          {/* Root Route */}
-          <Route path="/" element={<Navigate to="/auth" replace />} />
-
           {/* Default Route */}
-          <Route path="*" element={<Navigate to="/auth" replace />} />
+          <Route path="*" element={<Navigate to="/home" replace />} />
         </Routes>
       </Router>
       <ChatBot />

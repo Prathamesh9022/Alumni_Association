@@ -689,34 +689,60 @@ export default function Home() {
   ];
   const heroCaptions = [
     {
-      title: userRole === 'student' ? 'Welcome to MGM Student Portal' : 'Welcome to MGM Alumni Association',
-      subtitle: userRole === 'student' ? 'Connect with alumni mentors and explore opportunities' : 'Connect with fellow alumni and grow your network',
+      title: isLoggedIn 
+        ? (userRole === 'student' ? 'Welcome to MGM Student Portal' : 'Welcome to MGM Alumni Association')
+        : 'Welcome to MGM Alumni Association',
+      subtitle: isLoggedIn
+        ? (userRole === 'student' ? 'Connect with alumni mentors and explore opportunities' : 'Connect with fellow alumni and grow your network')
+        : 'Connect with fellow alumni, explore opportunities, and grow your professional network',
       cta: renderCtaButtons()
     },
     {
       title: 'Discover Opportunities',
-      subtitle: userRole === 'student' ? 'Find internships, jobs, and mentorship programs' : 'Find job postings, mentorship programs and more',
-      cta: <Link to="/jobs" className="hero-button">Explore Jobs <FaArrowRight /></Link>
+      subtitle: isLoggedIn
+        ? (userRole === 'student' ? 'Find internships, jobs, and mentorship programs' : 'Find job postings, mentorship programs and more')
+        : 'Find internships, jobs, and mentorship programs',
+      cta: isLoggedIn 
+        ? <Link to="/jobs" className="hero-button">Explore Jobs <FaArrowRight /></Link>
+        : <Link to="/auth" className="hero-button">Join to Explore <FaArrowRight /></Link>
     },
     {
       title: 'Discover Opportunities',
-      subtitle: userRole === 'student' ? 'Find internships, jobs, and mentorship programs' : 'Find job postings, mentorship programs and more',
-      cta: <Link to="/jobs" className="hero-button">Explore Jobs <FaArrowRight /></Link>
+      subtitle: isLoggedIn
+        ? (userRole === 'student' ? 'Find internships, jobs, and mentorship programs' : 'Find job postings, mentorship programs and more')
+        : 'Find internships, jobs, and mentorship programs',
+      cta: isLoggedIn 
+        ? <Link to="/jobs" className="hero-button">Explore Jobs <FaArrowRight /></Link>
+        : <Link to="/auth" className="hero-button">Join to Explore <FaArrowRight /></Link>
     },
     {
       title: 'Discover Opportunities',
-      subtitle: userRole === 'student' ? 'Find internships, jobs, and mentorship programs' : 'Find job postings, mentorship programs and more',
-      cta: <Link to="/jobs" className="hero-button">Explore Jobs <FaArrowRight /></Link>
+      subtitle: isLoggedIn
+        ? (userRole === 'student' ? 'Find internships, jobs, and mentorship programs' : 'Find job postings, mentorship programs and more')
+        : 'Find internships, jobs, and mentorship programs',
+      cta: isLoggedIn 
+        ? <Link to="/jobs" className="hero-button">Explore Jobs <FaArrowRight /></Link>
+        : <Link to="/auth" className="hero-button">Join to Explore <FaArrowRight /></Link>
     },
     {
       title: 'Discover Opportunities',
-      subtitle: userRole === 'student' ? 'Find internships, jobs, and mentorship programs' : 'Find job postings, mentorship programs and more',
-      cta: <Link to="/jobs" className="hero-button">Explore Jobs <FaArrowRight /></Link>
+      subtitle: isLoggedIn
+        ? (userRole === 'student' ? 'Find internships, jobs, and mentorship programs' : 'Find job postings, mentorship programs and more')
+        : 'Find internships, jobs, and mentorship programs',
+      cta: isLoggedIn 
+        ? <Link to="/jobs" className="hero-button">Explore Jobs <FaArrowRight /></Link>
+        : <Link to="/auth" className="hero-button">Join to Explore <FaArrowRight /></Link>
     },
     {
-      title: userRole === 'student' ? 'Join Alumni Events' : 'Attend Alumni Events',
-      subtitle: userRole === 'student' ? 'Learn from industry experts and build connections' : 'Stay connected with reunions and knowledge sharing sessions',
-      cta: <Link to="/events" className="hero-button">View Events <FaArrowRight /></Link>
+      title: isLoggedIn 
+        ? (userRole === 'student' ? 'Join Alumni Events' : 'Attend Alumni Events')
+        : 'Join Alumni Events',
+      subtitle: isLoggedIn
+        ? (userRole === 'student' ? 'Learn from industry experts and build connections' : 'Stay connected with reunions and knowledge sharing sessions')
+        : 'Learn from industry experts and build connections',
+      cta: isLoggedIn 
+        ? <Link to="/events" className="hero-button">View Events <FaArrowRight /></Link>
+        : <Link to="/auth" className="hero-button">Join to View Events <FaArrowRight /></Link>
     }
   ];
 
@@ -805,10 +831,12 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Stats Counter Section */}
-        <section className="analytics-section">
-          {renderAnalyticsSection()}
-        </section>
+        {/* Stats Counter Section - Only for authenticated users */}
+        {isLoggedIn && (
+          <section className="analytics-section">
+            {renderAnalyticsSection()}
+          </section>
+        )}
 
         {/* About College Section */}
         <section className="about-section">
