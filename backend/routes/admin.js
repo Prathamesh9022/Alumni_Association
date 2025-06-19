@@ -88,7 +88,7 @@ router.get('/dashboard', auth, checkRole(['admin']), async (req, res) => {
   }
 });
 
-// Update admin profile
+// Update admin profile - Fixed validation issue
 router.put('/profile', auth, checkRole(['admin']), async (req, res) => {
   try {
     console.log('Admin profile update request received:', {
