@@ -324,24 +324,36 @@ const Job = () => {
                 <div className="detail-row">
                   <div className="detail-item">
                     <FaMapMarkerAlt className="detail-icon" />
-                    <span>{job.location}</span>
+                    <div className="detail-content">
+                      <span className="detail-label">Location:</span>
+                      <span className="detail-value">{job.location}</span>
+                    </div>
                   </div>
                   
                   <div className="detail-item">
                     <FaMoneyBillWave className="detail-icon" />
-                    <span>{job.salary}</span>
+                    <div className="detail-content">
+                      <span className="detail-label">Salary:</span>
+                      <span className="detail-value">{job.salary}</span>
+                    </div>
                   </div>
                 </div>
                 
                 <div className="detail-row">
                   <div className="detail-item">
                     <FaCalendarAlt className="detail-icon" />
-                    <span>Deadline: {formatDate(job.expireDate)}</span>
+                    <div className="detail-content">
+                      <span className="detail-label">Deadline:</span>
+                      <span className="detail-value">{formatDate(job.expireDate)}</span>
+                    </div>
                   </div>
                   
                   <div className="detail-item">
                     <FaClock className="detail-icon" />
-                    <span>Posted {getTimeAgo(job.createdAt || job.expireDate)}</span>
+                    <div className="detail-content">
+                      <span className="detail-label">Posted:</span>
+                      <span className="detail-value">{getTimeAgo(job.createdAt || job.expireDate)}</span>
+                    </div>
                   </div>
                 </div>
               </div>

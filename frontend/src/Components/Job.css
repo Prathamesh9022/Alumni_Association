@@ -368,7 +368,7 @@
 
 .detail-item {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--spacing-sm);
   color: var(--text-light);
   font-size: var(--font-size-sm);
@@ -379,6 +379,30 @@
   color: var(--primary-color);
   font-size: var(--font-size-md);
   min-width: 16px;
+  margin-top: 2px;
+}
+
+.detail-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  flex: 1;
+}
+
+.detail-label {
+  color: var(--text-light);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  opacity: 0.8;
+}
+
+.detail-value {
+  color: var(--text-color);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  line-height: 1.4;
 }
 
 .job-description {
