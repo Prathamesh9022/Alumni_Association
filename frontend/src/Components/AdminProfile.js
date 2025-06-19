@@ -121,10 +121,16 @@ const AdminProfile = () => {
       console.log('Starting profile update...');
       
       // Validate profile image if present
-      if (form.profile && !form.profile.startsWith('data:image/')) {
-        console.log('Invalid profile image format');
-        setError('Invalid profile image format');
-        return;
+      if (form.profile) {
+        // Check if it's a valid image URL (base64 or HTTP/HTTPS)
+        const isValidBase64 = form.profile.startsWith('data:image/');
+        const isValidUrl = form.profile.startsWith('http://') || form.profile.startsWith('https://');
+        
+        if (!isValidBase64 && !isValidUrl) {
+          console.log('Invalid profile image format');
+          setError('Invalid profile image format');
+          return;
+        }
       }
 
       console.log('Sending update request...');

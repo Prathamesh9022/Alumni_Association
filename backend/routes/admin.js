@@ -114,24 +114,30 @@ router.put('/profile', auth, checkRole(['admin']), async (req, res) => {
     if (profile) {
       console.log('Processing profile image...');
       
-      // Check if it's a valid base64 image
-      if (!profile.startsWith('data:image/')) {
+      // Check if it's a valid base64 image or HTTP/HTTPS URL
+      const isValidBase64 = profile.startsWith('data:image/');
+      const isValidUrl = profile.startsWith('http://') || profile.startsWith('https://');
+      
+      if (!isValidBase64 && !isValidUrl) {
         console.log('Invalid profile image format');
         return res.status(400).json({ error: 'Invalid profile image format', details: { field: 'profile' } });
       }
       
-      // Check if base64 string is too large (max 2MB)
-      const base64Data = profile.split(',')[1];
-      if (base64Data && base64Data.length > 2 * 1024 * 1024) {
-        console.log('Profile image too large');
-        return res.status(400).json({ error: 'Profile image too large (max 2MB)', details: { field: 'profile' } });
-      }
-      
-      // Validate image format
-      const imageFormat = profile.split(';')[0].split('/')[1];
-      if (!['jpeg', 'jpg', 'png', 'gif'].includes(imageFormat.toLowerCase())) {
-        console.log('Invalid image format:', imageFormat);
-        return res.status(400).json({ error: 'Invalid image format. Supported formats: JPEG, PNG, GIF', details: { field: 'profile' } });
+      // Additional validation for base64 images
+      if (isValidBase64) {
+        // Check if base64 string is too large (max 2MB)
+        const base64Data = profile.split(',')[1];
+        if (base64Data && base64Data.length > 2 * 1024 * 1024) {
+          console.log('Profile image too large');
+          return res.status(400).json({ error: 'Profile image too large (max 2MB)', details: { field: 'profile' } });
+        }
+        
+        // Validate image format
+        const imageFormat = profile.split(';')[0].split('/')[1];
+        if (!['jpeg', 'jpg', 'png', 'gif'].includes(imageFormat.toLowerCase())) {
+          console.log('Invalid image format:', imageFormat);
+          return res.status(400).json({ error: 'Invalid image format. Supported formats: JPEG, PNG, GIF', details: { field: 'profile' } });
+        }
       }
       
       console.log('Profile image validation passed, updating...');
@@ -337,4 +343,4 @@ router.delete('/students/:id', auth, checkRole(['admin']), async (req, res) => {
   }
 });
 
-module.exports = router; 
+module.exports = router;
