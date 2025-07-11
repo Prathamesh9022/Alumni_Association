@@ -1,5 +1,6 @@
 import axios from 'axios';
-import API_URL from '../config';
+
+const API_URL = 'https://alumni-association-1b6g.onrender.com';
 
 // Create axios instance with default config
 const api = axios.create({
